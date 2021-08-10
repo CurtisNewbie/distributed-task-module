@@ -32,10 +32,10 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
     private static final String LOCK_KEY_PREFIX = "task:master:group:";
     private static final int INTERVAL = 1000;
-    private static final long DEFAULT_TTL = 10;
+    private static final long DEFAULT_TTL = 1;
     private static final String APP_GROUP_PROP_KEY = "distributed-task-module.application-group";
     private static final String DEFAULT_APP_GROUP = "default";
-    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.SECONDS;
+    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MINUTES;
     private final AtomicBoolean isMainNode = new AtomicBoolean(false);
 
     @Autowired
