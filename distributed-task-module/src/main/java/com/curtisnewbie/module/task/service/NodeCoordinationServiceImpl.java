@@ -7,10 +7,8 @@ import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.scheduling.JobDetailUtil;
 import com.curtisnewbie.module.task.scheduling.TaskJobDetailWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.JobDetail;
-import org.quartz.SchedulerException;
-import org.quartz.SimpleTrigger;
-import org.quartz.Trigger;
+import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
@@ -18,12 +16,12 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.curtisnewbie.module.task.scheduling.JobDetailUtil.getIdFromJobKey;
+import static com.curtisnewbie.module.task.scheduling.JobDetailUtil.getNameFromJobKey;
 
 /**
  * @author yongjie.zhuang
@@ -35,13 +33,15 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     private static final String LOCK_KEY_PREFIX = "task:master:group:";
     private static final int INTERVAL = 1000;
     private static final long DEFAULT_TTL = 10;
+    private static final String APP_GROUP_PROP_KEY = "distributed-task-module.application-group";
+    private static final String DEFAULT_APP_GROUP = "default";
     private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.SECONDS;
     private final AtomicBoolean isMainNode = new AtomicBoolean(false);
 
     @Autowired
     private RedisController redisController;
 
-    @Value("${distributed-task-module.application-group}")
+    @Value("${" + APP_GROUP_PROP_KEY + ":" + DEFAULT_APP_GROUP + "}")
     private String appGroup;
 
     @Autowired
@@ -52,6 +52,11 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
     @PostConstruct
     void coordinateThread() {
+        if (Objects.equals(appGroup, DEFAULT_APP_GROUP)) {
+            log.info("You are using default value for app/scheduling group, consider changing it for you cluster " +
+                    "by setting '{}=yourClusterName'", APP_GROUP_PROP_KEY);
+        }
+
         Thread bg = new Thread(() -> {
             while (true) {
                 try {
@@ -85,11 +90,21 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     }
 
     /**
-     * Reload the changed tasks and add tasks that are new
+     * Reload the changed tasks and add tasks that are new, delete those that no-longer exists in database
      */
     private void refreshScheduledTasks() throws SchedulerException {
+        loadJobFromDatabase();
+        dropNonExistingJobs();
+    }
+
+    private void loadJobFromDatabase() throws SchedulerException {
         List<TaskEntity> tasks = taskService.selectAll();
         for (TaskEntity te : tasks) {
+
+            // only when the group matches, this job shall be added
+            if (!Objects.equals(te.getAppGroup(), appGroup))
+                continue;
+
             Optional<JobDetail> optionalJobDetail = schedulerService.getJob(JobDetailUtil.getJobKey(te));
             if (!optionalJobDetail.isPresent()) {
                 TaskEnabled enabled = EnumUtils.parse(te.getEnabled(), TaskEnabled.class);
@@ -105,11 +120,32 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
                 if (JobDetailUtil.isJobDetailChanged(oldJd, te)) {
                     // changed, delete the old one, and add the new one
                     schedulerService.removeJob(oldJd.getKey());
+
+                    TaskEnabled enabled = EnumUtils.parse(te.getEnabled(), TaskEnabled.class);
+                    Objects.requireNonNull(enabled, "task's field enabled value illegal, unable to parse it");
+                    if (!enabled.equals(TaskEnabled.ENABLED)) {
+                        log.info("Task '{}' disabled, removed from scheduler", te.getJobName());
+                        continue;
+                    }
+
+                    log.info("Detected change on task '{}', reloading", te.getJobName());
                     scheduleJob(te);
                 }
             }
         }
     }
+
+    private void dropNonExistingJobs() throws SchedulerException {
+        GroupMatcher<JobKey> any = GroupMatcher.anyJobGroup();
+        Set<JobKey> jobKeySet = schedulerService.getJobKeySet(any);
+        for (JobKey jk : jobKeySet) {
+            if (!taskService.exists(getIdFromJobKey(jk))) {
+                log.info("Task '{}' not found in database, removing it from scheduler", getNameFromJobKey(jk));
+                schedulerService.removeJob(jk);
+            }
+        }
+    }
+
 
     private void scheduleJob(TaskEntity te) throws SchedulerException {
         try {

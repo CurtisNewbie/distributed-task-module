@@ -4,12 +4,14 @@ import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author yongjie.zhuang
@@ -34,4 +36,10 @@ public class SchedulerServiceImpl implements SchedulerService {
     public Optional<JobDetail> getJob(JobKey jobKey) throws SchedulerException {
         return Optional.ofNullable(schedulerFactoryBean.getScheduler().getJobDetail(jobKey));
     }
+
+    @Override
+    public Set<JobKey> getJobKeySet(GroupMatcher<JobKey> gm) throws SchedulerException {
+        return schedulerFactoryBean.getScheduler().getJobKeys(gm);
+    }
+
 }

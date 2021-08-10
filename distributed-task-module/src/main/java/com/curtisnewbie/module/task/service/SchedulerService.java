@@ -4,9 +4,11 @@ import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.impl.matchers.GroupMatcher;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service for quartz scheduler
@@ -35,5 +37,10 @@ public interface SchedulerService {
      * @param jobKey jobKey
      */
     Optional<JobDetail> getJob(JobKey jobKey) throws SchedulerException;
+
+    /**
+     * Get set of JobKey by group matcher
+     */
+    Set<JobKey> getJobKeySet(GroupMatcher<JobKey> gm) throws SchedulerException;
 
 }

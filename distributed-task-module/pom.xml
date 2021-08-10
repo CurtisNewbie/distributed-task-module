@@ -46,6 +46,12 @@
       <version>0.0.1</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.mybatis.spring.boot</groupId>
+      <artifactId>mybatis-spring-boot-starter</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+
     <!--     https://github.com/CurtisNewbie/comment-generator-->
 <!--    <dependency>-->
 <!--      <groupId>com.curtisnewbie</groupId>-->

@@ -27,4 +27,9 @@ public class TaskServiceImpl implements TaskService {
     public void updateLastRunInfo(TaskEntity te) {
         taskMapper.updateLastRunInfo(te);
     }
+
+    @Override
+    public boolean exists(int taskId) {
+        return taskMapper.findOneById(taskId) != null;
+    }
 }

@@ -20,4 +20,9 @@ public interface TaskService {
      * Update last run info
      */
     void updateLastRunInfo(TaskEntity te);
+
+    /**
+     * Check if a task exists by its id
+     */
+    boolean exists(int taskId);
 }

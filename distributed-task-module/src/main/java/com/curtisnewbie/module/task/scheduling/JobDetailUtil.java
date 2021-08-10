@@ -22,7 +22,28 @@ public final class JobDetailUtil {
      * Get {@link JobKey} from {@link TaskEntity}
      */
     public static JobKey getJobKey(TaskEntity te) {
-        return new JobKey(te.getJobName(), te.getAppGroup());
+        return new JobKey(te.getId() + "-" + te.getJobName(), te.getAppGroup());
+    }
+
+    /**
+     * Get task.id from {@link JobKey}
+     */
+    public static int getIdFromJobKey(JobKey jobKey) {
+        String name = jobKey.getName();
+        return Integer.parseInt(name.split("-")[0]);
+    }
+
+    /**
+     * Get task.name from {@link JobKey}
+     */
+    public static String getNameFromJobKey(JobKey jobKey) {
+        String name = jobKey.getName();
+        String[] sp = name.split("-");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < sp.length; i++) {
+            sb.append(sp[i]);
+        }
+        return sb.toString();
     }
 
     /** See if the job detail has changed */

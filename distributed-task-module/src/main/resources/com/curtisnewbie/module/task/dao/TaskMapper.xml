@@ -36,4 +36,8 @@
     last_run_by, last_run_result, enabled, concurrent_enabled
     from task
   </select>
+  <select id="findOneById" resultType="java.lang.Integer">
+    select 1 from task
+    where id = #{id}
+  </select>
 </mapper>

@@ -1,5 +1,7 @@
 package com.curtisnewbie.module.task.dao;
 
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -16,4 +18,6 @@ public interface TaskMapper {
     List<TaskEntity> selectAll();
 
     void updateLastRunInfo(TaskEntity te);
+
+    Integer findOneById(@Param("id") int taskId);
 }
