@@ -25,9 +25,33 @@
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-quartz</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.curtisnewbie</groupId>
+      <artifactId>redis-util-module</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.curtisnewbie</groupId>
+      <artifactId>service-module</artifactId>
+      <version>0.0.1</version>
+    </dependency>
+
+    <!--     https://github.com/CurtisNewbie/comment-generator-->
+<!--    <dependency>-->
+<!--      <groupId>com.curtisnewbie</groupId>-->
+<!--      <artifactId>comment-generator</artifactId>-->
+<!--      <version>1.0-SNAPSHOT</version>-->
+<!--    </dependency>-->
   </dependencies>
 
   <build>
@@ -59,6 +83,22 @@
           </execution>
         </executions>
       </plugin>
+
+<!--      <plugin>-->
+<!--        <groupId>org.mybatis.generator</groupId>-->
+<!--        <artifactId>mybatis-generator-maven-plugin</artifactId>-->
+<!--        <version>1.4.0</version>-->
+<!--        <dependencies>-->
+<!--          <dependency>-->
+<!--            <groupId>com.curtisnewbie</groupId>-->
+<!--            <artifactId>comment-generator</artifactId>-->
+<!--            <version>1.0-SNAPSHOT</version>-->
+<!--          </dependency>-->
+<!--        </dependencies>-->
+<!--        <configuration>-->
+<!--          <configurationFile>generatorConfig.xml</configurationFile>-->
+<!--        </configuration>-->
+<!--      </plugin>-->
     </plugins>
   </build>
 

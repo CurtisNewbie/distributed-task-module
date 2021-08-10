@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.curtisnewbie.module.task.dao.TaskMapper">
+
+  <insert id="insert" parameterType="com.curtisnewbie.module.task.dao.TaskEntity">
+    insert into task (id, job_name, cron_expr,
+    app_group, last_run_start_time, last_run_end_time,
+    last_run_by, enabled, concurrent_enabled
+    )
+    values (#{id,jdbcType=INTEGER}, #{jobName,jdbcType=VARCHAR}, #{cronExpr,jdbcType=VARCHAR},
+    #{appGroup,jdbcType=VARCHAR}, #{lastRunStartTime,jdbcType=TIMESTAMP}, #{lastRunEndTime,jdbcType=TIMESTAMP},
+    #{lastRunBy,jdbcType=VARCHAR}, #{enabled,jdbcType=INTEGER}, #{concurrentEnabled,jdbcType=INTEGER}
+    )
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.curtisnewbie.module.task.dao.TaskEntity">
+    update task
+    set job_name = #{jobName,jdbcType=VARCHAR},
+    cron_expr = #{cronExpr,jdbcType=VARCHAR},
+    app_group = #{appGroup,jdbcType=VARCHAR},
+    last_run_start_time = #{lastRunStartTime,jdbcType=TIMESTAMP},
+    last_run_end_time = #{lastRunEndTime,jdbcType=TIMESTAMP},
+    last_run_by = #{lastRunBy,jdbcType=VARCHAR},
+    enabled = #{enabled,jdbcType=INTEGER},
+    concurrent_enabled = #{concurrentEnabled,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+          resultType="com.curtisnewbie.module.task.dao.TaskEntity">
+    select id, job_name, cron_expr, app_group, last_run_start_time, last_run_end_time,
+    last_run_by, enabled, concurrent_enabled
+    from task
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAll" resultType="com.curtisnewbie.module.task.dao.TaskEntity">
+    select id, job_name, cron_expr, app_group, last_run_start_time, last_run_end_time,
+    last_run_by, enabled, concurrent_enabled
+    from task
+  </select>
+</mapper>
