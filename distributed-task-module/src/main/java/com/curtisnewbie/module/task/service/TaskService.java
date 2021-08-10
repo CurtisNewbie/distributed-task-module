@@ -16,4 +16,8 @@ public interface TaskService {
      */
     List<TaskEntity> selectAll();
 
+    /**
+     * Update last run info
+     */
+    void updateLastRunInfo(TaskEntity te);
 }

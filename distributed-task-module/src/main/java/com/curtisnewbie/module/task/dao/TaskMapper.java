@@ -15,5 +15,5 @@ public interface TaskMapper {
 
     List<TaskEntity> selectAll();
 
-    int updateByPrimaryKey(TaskEntity record);
+    void updateLastRunInfo(TaskEntity te);
 }

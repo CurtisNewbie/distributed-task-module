@@ -7,17 +7,21 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 /**
  * Customize {@link SchedulerFactoryBean}
+ * <p>
+ * Set the customized job factory
+ * </p>
  *
  * @author yongjie.zhuang
+ * @see ManagedBeanJobFactory
  */
 @Configuration
 public class SchedulerFactoryBeanConfig implements SchedulerFactoryBeanCustomizer {
 
     @Autowired
-    private SpringManagedBeanJobFactory springManagedBeanJobFactory;
+    private ManagedBeanJobFactory managedBeanJobFactory;
 
     @Override
     public void customize(SchedulerFactoryBean schedulerFactoryBean) {
-        schedulerFactoryBean.setJobFactory(springManagedBeanJobFactory);
+        schedulerFactoryBean.setJobFactory(managedBeanJobFactory);
     }
 }

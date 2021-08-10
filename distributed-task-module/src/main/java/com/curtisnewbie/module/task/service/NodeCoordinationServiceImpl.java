@@ -78,7 +78,9 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
         });
         bg.setDaemon(true);
         bg.start();
-        log.info("Starting node coordination daemon thread, thread_id: {}, scheduling group: {}, lock_key: {}", bg.getId(),
+
+        log.info("Started node coordination daemon thread for distributed task scheduling, " +
+                        "thread_id: {}, scheduling group: {}, lock_key: {}", bg.getId(),
                 appGroup, getLockKey());
     }
 
@@ -94,7 +96,7 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
                 Objects.requireNonNull(enabled, "task's field enabled value illegal, unable to parse it");
                 // new task, add it into scheduler
                 if (enabled.equals(TaskEnabled.ENABLED)) {
-                    log.info("Found new task, add it into scheduler");
+                    log.info("Found new task '{}', add it into scheduler", te.getJobName());
                     scheduleJob(te);
                 }
             } else {
@@ -112,7 +114,7 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     private void scheduleJob(TaskEntity te) throws SchedulerException {
         try {
             Date d = schedulerService.scheduleJob(new TaskJobDetailWrapper(te), createTrigger(te));
-            log.info("Task: {} scheduled at {}", te.getJobName(), d);
+            log.info("Task '{}' scheduled at {}", te.getJobName(), d);
         } catch (ParseException e) {
             log.error("Invalid cron expression found in task.id: " + te.getId(), e);
         }

@@ -35,6 +35,9 @@ public class TaskEntity {
     /** app that previously ran this task */
     private String lastRunBy;
 
+    /** result of last execution */
+    private String lastRunResult;
+
     /** whether the task is enabled: 0-disabled, 1-enabled */
     private Integer enabled;
 

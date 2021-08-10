@@ -22,4 +22,9 @@ public class TaskServiceImpl implements TaskService {
     public List<TaskEntity> selectAll() {
         return taskMapper.selectAll();
     }
+
+    @Override
+    public void updateLastRunInfo(TaskEntity te) {
+        taskMapper.updateLastRunInfo(te);
+    }
 }

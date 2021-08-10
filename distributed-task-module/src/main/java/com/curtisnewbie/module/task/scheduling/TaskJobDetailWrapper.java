@@ -8,7 +8,7 @@ import org.quartz.*;
 import java.util.Objects;
 
 /**
- * Wrapper of {@link com.curtisnewbie.module.task.dao.TaskEntity} for {@link JobDetail}
+ * Wrapper of {@link com.curtisnewbie.module.task.dao.TaskEntity} as {@link JobDetail}
  *
  * @author yongjie.zhuang
  */
@@ -22,11 +22,11 @@ public class TaskJobDetailWrapper implements JobDetail {
     private final String desc;
     private final JobDataMap jobDataMap = new JobDataMap();
     private final boolean concurrentEnabled;
-    private final Class<? extends SpringManagedJob> jobClz;
+    private final Class<? extends Job> jobClz;
 
     public TaskJobDetailWrapper(TaskEntity t) {
         this.te = t;
-        this.jobClz = SpringManagedJob.class;
+        this.jobClz = Job.class;
         this.jobKey = JobDetailUtil.getJobKey(t);
         this.desc = t.getJobName();
         TaskConcurrentEnabled tce = EnumUtils.parse(t.getConcurrentEnabled(), TaskConcurrentEnabled.class);

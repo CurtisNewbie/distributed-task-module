@@ -10,6 +10,7 @@ import java.util.Objects;
  * Util for {@link org.quartz.JobDetail}
  *
  * @author yongjie.zhuang
+ * @see TaskJobDetailWrapper
  */
 public final class JobDetailUtil {
 
@@ -39,5 +40,12 @@ public final class JobDetailUtil {
         if (!Objects.equals(oldTe.getCronExpr(), te.getCronExpr()))
             return true;
         return false;
+    }
+
+    /**
+     * Get {@link TaskEntity} from JobDetail's jobDataMap
+     */
+    public static TaskEntity getTaskEntityFromJobDataMap(JobDetail jobDetail) {
+        return (TaskEntity) jobDetail.getJobDataMap().get(TaskJobDetailWrapper.JOD_DATA_MAP_TASK_ENTITY);
     }
 }
