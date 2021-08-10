@@ -111,7 +111,7 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
                 Objects.requireNonNull(enabled, "task's field enabled value illegal, unable to parse it");
                 // new task, add it into scheduler
                 if (enabled.equals(TaskEnabled.ENABLED)) {
-                    log.info("Found new task '{}', add it into scheduler", te.getJobName());
+                    log.info("Found new task '{}', add it into scheduler", te.getJobName(), te.getCronExpr());
                     scheduleJob(te);
                 }
             } else {
@@ -149,6 +149,7 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
     private void scheduleJob(TaskEntity te) throws SchedulerException {
         try {
+            log.info("Scheduling task: '{}' cron_expr: '{}'", te.getJobName(), te.getCronExpr());
             Date d = schedulerService.scheduleJob(new TaskJobDetailWrapper(te), createTrigger(te));
             log.info("Task '{}' scheduled at {}", te.getJobName(), d);
         } catch (ParseException e) {
