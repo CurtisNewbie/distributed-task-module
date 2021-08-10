@@ -3,11 +3,11 @@
 <mapper namespace="com.curtisnewbie.module.task.dao.TaskMapper">
 
   <insert id="insert" parameterType="com.curtisnewbie.module.task.dao.TaskEntity">
-    insert into task (id, job_name, cron_expr,
+    insert into task (id, job_name, target_bean, cron_expr,
     app_group, last_run_start_time, last_run_end_time,
     last_run_by, enabled, concurrent_enabled
     )
-    values (#{id,jdbcType=INTEGER}, #{jobName,jdbcType=VARCHAR}, #{cronExpr,jdbcType=VARCHAR},
+    values (#{id,jdbcType=INTEGER}, #{jobName,jdbcType=VARCHAR}, #{targetBean}, #{cronExpr,jdbcType=VARCHAR},
     #{appGroup,jdbcType=VARCHAR}, #{lastRunStartTime,jdbcType=TIMESTAMP}, #{lastRunEndTime,jdbcType=TIMESTAMP},
     #{lastRunBy,jdbcType=VARCHAR}, #{enabled,jdbcType=INTEGER}, #{concurrentEnabled,jdbcType=INTEGER}
     )
@@ -35,7 +35,7 @@
   </select>
 
   <select id="selectAll" resultType="com.curtisnewbie.module.task.dao.TaskEntity">
-    select id, job_name, cron_expr, app_group, last_run_start_time, last_run_end_time,
+    select id, job_name, target_bean, cron_expr, app_group, last_run_start_time, last_run_end_time,
     last_run_by, enabled, concurrent_enabled
     from task
   </select>

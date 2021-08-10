@@ -1,0 +1,91 @@
+package com.curtisnewbie.module.task.scheduling;
+
+import com.curtisnewbie.common.util.EnumUtils;
+import com.curtisnewbie.module.task.constants.TaskConcurrentEnabled;
+import com.curtisnewbie.module.task.dao.TaskEntity;
+import org.quartz.*;
+
+import java.util.Objects;
+
+/**
+ * Wrapper of {@link com.curtisnewbie.module.task.dao.TaskEntity} for {@link JobDetail}
+ *
+ * @author yongjie.zhuang
+ */
+public class TaskJobDetailWrapper implements JobDetail {
+
+    /** Key to retrieve {@link com.curtisnewbie.module.task.dao.TaskEntity} from jobDataMap */
+    public static final String JOD_DATA_MAP_TASK_ENTITY = "taskEntity";
+
+    private final TaskEntity te;
+    private final JobKey jobKey;
+    private final String desc;
+    private final JobDataMap jobDataMap = new JobDataMap();
+    private final boolean concurrentEnabled;
+    private final Class<? extends SpringManagedJob> jobClz;
+
+    public TaskJobDetailWrapper(TaskEntity t) {
+        this.te = t;
+        this.jobClz = SpringManagedJob.class;
+        this.jobKey = JobDetailUtil.getJobKey(t);
+        this.desc = t.getJobName();
+        TaskConcurrentEnabled tce = EnumUtils.parse(t.getConcurrentEnabled(), TaskConcurrentEnabled.class);
+        Objects.requireNonNull(tce, "task's field 'concurrent_enabled' value illegal, unable to parse it");
+        this.concurrentEnabled = tce.equals(TaskConcurrentEnabled.ENABLED);
+        jobDataMap.put(JOD_DATA_MAP_TASK_ENTITY, te);
+    }
+
+    @Override
+    public JobKey getKey() {
+        return this.jobKey;
+    }
+
+    @Override
+    public String getDescription() {
+        return this.desc;
+    }
+
+    @Override
+    public Class<? extends Job> getJobClass() {
+        return jobClz;
+    }
+
+    @Override
+    public JobDataMap getJobDataMap() {
+        return jobDataMap;
+    }
+
+    @Override
+    public boolean isDurable() {
+        return true;
+    }
+
+    @Override
+    public boolean isPersistJobDataAfterExecution() {
+        return false;
+    }
+
+    @Override
+    public boolean isConcurrentExectionDisallowed() {
+        return concurrentEnabled;
+    }
+
+    @Override
+    public boolean requestsRecovery() {
+        return false;
+    }
+
+    @Override
+    public Object clone() {
+        return new TaskJobDetailWrapper(te);
+    }
+
+    @Override
+    public JobBuilder getJobBuilder() {
+        throw new UnsupportedOperationException();
+    }
+
+    public TaskEntity getTaskEntity() {
+        return te;
+    }
+}
