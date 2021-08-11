@@ -1,19 +1,20 @@
 package com.curtisnewbie.module.task.scheduling;
 
+import com.curtisnewbie.common.util.AppContextHolder;
+import com.curtisnewbie.module.redisutil.RedisController;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPreExecuteListener;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.quartz.*;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Delegate of a job
@@ -26,6 +27,7 @@ public class JobDelegate implements Job, ListenableJob {
     private final List<JobPostExecuteListener> jobPostExecuteListenerList = new LinkedList<>();
     private final List<JobPreExecuteListener> jobPreExecuteListenerList = new LinkedList<>();
     private JobExecContext ctx = new JobExecContext();
+    private boolean isLocked = false;
 
     public JobDelegate(Job job, JobDetail jobDetail) {
         log.debug("Creating delegate for job '{}'", jobDetail.getKey().getName());
@@ -35,6 +37,14 @@ public class JobDelegate implements Job, ListenableJob {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
+        if (ctx.getJobDetail().isConcurrentExectionDisallowed()) {
+            try {
+                acquireMutexLock(ctx.getJobDetail().getKey());
+            } catch (InterruptedException e) {
+                throw new JobExecutionException(e);
+            }
+        }
+
         doPreExecute();
 
         log.info("Execute job: '{}'", ctx.jobDetail.getKey().getName());
@@ -48,7 +58,31 @@ public class JobDelegate implements Job, ListenableJob {
         }
         ctx.endTime = new Date();
 
+        if (isLocked)
+            releaseMutexLock(ctx.getJobDetail().getKey());
+
         doPostExecute();
+    }
+
+    private void releaseMutexLock(JobKey key) {
+        ApplicationContext applicationContext = AppContextHolder.getApplicationContext();
+        Objects.requireNonNull(applicationContext, ApplicationContext.class.getSimpleName() + " not found");
+        RedisController redisController = applicationContext.getBean(RedisController.class);
+        Objects.requireNonNull(redisController);
+
+        redisController.unlock(getConcurrentLockKey(key));
+    }
+
+    private void acquireMutexLock(JobKey key) throws InterruptedException {
+        ApplicationContext applicationContext = AppContextHolder.getApplicationContext();
+        Objects.requireNonNull(applicationContext, ApplicationContext.class.getSimpleName() + " not found");
+        RedisController redisController = applicationContext.getBean(RedisController.class);
+        Objects.requireNonNull(redisController);
+
+        // looping until it gets the lock, the lock is hold for an hour to make sure the task is executed exclusively
+        while (!redisController.tryLock(getConcurrentLockKey(key), 0, 60, TimeUnit.HOURS))
+            ;
+        isLocked = true;
     }
 
     @Override
@@ -62,6 +96,11 @@ public class JobDelegate implements Job, ListenableJob {
         Objects.requireNonNull(l, JobPostExecuteListener.class.getSimpleName() + " can't be null");
         jobPostExecuteListenerList.add(l);
     }
+
+    private String getConcurrentLockKey(JobKey key) {
+        return "task:exec:concurrent:" + key.getGroup() + ":" + key.getName();
+    }
+
 
     private void doPreExecute() {
         log.debug("Invoking {} registered {} on '{}'",

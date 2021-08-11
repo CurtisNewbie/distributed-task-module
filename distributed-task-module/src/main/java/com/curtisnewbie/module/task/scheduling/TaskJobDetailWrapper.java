@@ -67,7 +67,7 @@ public class TaskJobDetailWrapper implements JobDetail {
 
     @Override
     public boolean isConcurrentExectionDisallowed() {
-        return concurrentEnabled;
+        return !concurrentEnabled;
     }
 
     @Override
