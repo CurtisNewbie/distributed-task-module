@@ -22,6 +22,7 @@
  * }
  * }
  * </pre>
+ *
  * <p>
  * In our table:
  * </p>
@@ -43,6 +44,7 @@
  * </tr>
  * </table>
  * </pre>
+ *
  * <br>
  * <p>
  * Finally, in our property file:
@@ -53,6 +55,19 @@
  * distributed-task-module.application-group=file-server
  * }
  * </pre>
+ * <br>
+ * More on services:
+ * <ul>
+ * <li>
+ * {@link com.curtisnewbie.module.task.service.TaskService} is merely a service for inserting/updating data in databse
+ * </li>
+ * <li>
+ * {@link com.curtisnewbie.module.task.service.NodeCoordinationService} is used to coordinate task scheduling
+ * between nodes of same cluster, use
+ * {@link com.curtisnewbie.module.task.service.NodeCoordinationService#coordinateJobTriggering(com.curtisnewbie.module.task.dao.TaskEntity)}
+ * to trigger job if you want it to run immediately.
+ * </li>
+ * </ul>
  *
  * @author yongjie.zhuang
  */

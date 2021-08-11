@@ -14,11 +14,15 @@ import java.util.Set;
 
 /**
  * Service for quartz scheduler
- * <p>
- * This service works for the scheduler in this application instance, tasks are executed by the main node,  so in most
+ * <br>
+ * <br>
+ * This service works for the scheduler in current application node. Tasks are executed by the main node,  so in most
  * cases you should use {@link TaskService} to read / write task entities, and {@link NodeCoordinationService} for
- * coordinating distributed nodes.
- * </p>
+ * coordinating task scheduling between nodes.
+ * <br>
+ * <br>
+ * When you are using RPC frameworks, you don't know which node you are calling, you should be aware of it before you
+ * use this service.
  *
  * @author yongjie.zhuang
  */
