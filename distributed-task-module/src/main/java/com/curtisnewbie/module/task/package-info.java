@@ -12,8 +12,8 @@
  * </p>
  * <br>
  * <p>
- * For example, in our code:
- * </p>
+ * For example, our job is declared as a spring managed bean with bean name 'physicalDeletingFileJob' (this should be
+ * same as the target_bean).
  * <pre>
  * {@code
  * @Component
@@ -22,32 +22,19 @@
  * }
  * }
  * </pre>
- *
  * <p>
- * In our table:
- * </p>
- * <pre>
- * <table>
- * <tr>
- * <td>id</td>
- * <td>name</td>
- * <td>target_bean</td>
- * <td>cron_expr</td>
- * <td>group</td>
- * </tr>
- * <tr>
- * <td>1 </td>
- * <td>fileDeleteJob</td>
- * <td>physicalDeletingFileJob</td>
- * <td>0 0/2 * ? * *</td>
- * <td>file-server</td>
- * </tr>
- * </table>
- * </pre>
+ * Then in our table, we have
+ * <ul>
+ *    <li>id=1</li>
+ *    <li>name='fileDeleteJob'</li>
+ *    <li>target_bean='physicalDeletingFileJob'</li>
+ *    <li>cron_expr='0 0/2 * ? * *'</li>
+ *    <li>group='file-server'</li>
+ * </ul>
  *
  * <br>
  * <p>
- * Finally, in our property file:
+ * Finally, in our property file, we configure the following property using the same value as the group in database.
  * </p>
  * <pre>
  * {@code
@@ -66,6 +53,11 @@
  * between nodes of same cluster, use
  * {@link com.curtisnewbie.module.task.service.NodeCoordinationService#coordinateJobTriggering(com.curtisnewbie.module.task.dao.TaskEntity)}
  * to trigger job if you want it to run immediately.
+ * </li>
+ * <li>
+ * You can also inject {@link com.curtisnewbie.module.task.scheduling.RunningTaskCounter} to get how many tasks
+ * are currently running in this node (not for the whole cluster, if current node is not a main node, there won't be
+ * any tasks running)
  * </li>
  * </ul>
  *
