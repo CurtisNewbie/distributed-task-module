@@ -1,7 +1,7 @@
 package com.curtisnewbie.module.task.scheduling.listeners.internal;
 
 import com.curtisnewbie.module.task.dao.TaskEntity;
-import com.curtisnewbie.module.task.scheduling.JobDetailUtil;
+import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.JobDelegate;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
 import com.curtisnewbie.module.task.service.TaskService;
@@ -25,7 +25,7 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
                 "exception " + ctx.getException().getClass().getSimpleName() + " occurred"
                 : "success";
 
-        TaskEntity te = JobDetailUtil.getTaskEntityFromJobDataMap(ctx.getJobDetail());
+        TaskEntity te = JobUtils.getTaskEntityFromJobDataMap(ctx.getJobDetail());
         te.setLastRunResult(result);
         te.setLastRunStartTime(ctx.getStartTime());
         te.setLastRunEndTime(ctx.getEndTime());

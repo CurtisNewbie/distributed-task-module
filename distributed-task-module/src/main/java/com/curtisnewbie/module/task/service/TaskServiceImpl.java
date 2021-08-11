@@ -35,12 +35,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void disableTask(int taskId) {
+    public void setTaskDisabled(int taskId) {
         taskMapper.updateEnabled(taskId, TaskEnabled.DISABLED.getValue());
     }
 
     @Override
-    public void disableTask(int taskId, String result) {
+    public void setTaskDisabled(int taskId, String result) {
         taskMapper.updateEnabledAndResult(taskId, TaskEnabled.DISABLED.getValue(), result);
     }
 }

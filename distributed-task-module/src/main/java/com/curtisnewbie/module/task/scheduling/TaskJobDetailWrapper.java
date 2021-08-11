@@ -27,7 +27,7 @@ public class TaskJobDetailWrapper implements JobDetail {
     public TaskJobDetailWrapper(TaskEntity t) {
         this.te = t;
         this.jobClz = Job.class;
-        this.jobKey = JobDetailUtil.getJobKey(t);
+        this.jobKey = JobUtils.getJobKey(t);
         this.desc = t.getJobName();
         TaskConcurrentEnabled tce = EnumUtils.parse(t.getConcurrentEnabled(), TaskConcurrentEnabled.class);
         Objects.requireNonNull(tce, "task's field 'concurrent_enabled' value illegal, unable to parse it");

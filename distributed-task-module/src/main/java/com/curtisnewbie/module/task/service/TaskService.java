@@ -6,6 +6,10 @@ import java.util.List;
 
 /**
  * Service for task
+ * <p>
+ * This service is used for inserting or updating data, for changing the task scheduled, use {@link SchedulerService}
+ * instead.
+ * </p>
  *
  * @author yongjie.zhuang
  */
@@ -27,16 +31,16 @@ public interface TaskService {
     boolean exists(int taskId);
 
     /**
-     * Disable task
+     * Set task as disabled in database
      *
      * @param taskId taskId
      */
-    void disableTask(int taskId);
+    void setTaskDisabled(int taskId);
 
     /**
-     * Disable task
+     * Set task as disabled in database
      *
      * @param taskId taskId
      */
-    void disableTask(int taskId, String result);
+    void setTaskDisabled(int taskId, String result);
 }

@@ -7,14 +7,14 @@ import org.quartz.JobKey;
 import java.util.Objects;
 
 /**
- * Util for {@link org.quartz.JobDetail}
+ * Util for {@link org.quartz.Job} , {@link JobDetail}, and {@link JobKey}
  *
  * @author yongjie.zhuang
  * @see TaskJobDetailWrapper
  */
-public final class JobDetailUtil {
+public final class JobUtils {
 
-    private JobDetailUtil() {
+    private JobUtils() {
 
     }
 
