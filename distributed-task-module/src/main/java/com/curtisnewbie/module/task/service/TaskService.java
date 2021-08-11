@@ -25,4 +25,18 @@ public interface TaskService {
      * Check if a task exists by its id
      */
     boolean exists(int taskId);
+
+    /**
+     * Disable task
+     *
+     * @param taskId taskId
+     */
+    void disableTask(int taskId);
+
+    /**
+     * Disable task
+     *
+     * @param taskId taskId
+     */
+    void disableTask(int taskId, String result);
 }

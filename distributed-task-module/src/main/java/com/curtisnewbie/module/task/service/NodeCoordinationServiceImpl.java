@@ -149,11 +149,14 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
     private void scheduleJob(TaskEntity te) throws SchedulerException {
         try {
-            log.info("Scheduling task: '{}' cron_expr: '{}', target_bean: '{}'", te.getJobName(), te.getCronExpr(), te.getTargetBean());
+            log.info("Scheduling task: id: '{}', name: '{}' cron_expr: '{}', target_bean: '{}'", te.getId(), te.getJobName(),
+                    te.getCronExpr(), te.getTargetBean());
             Date d = schedulerService.scheduleJob(new TaskJobDetailWrapper(te), createTrigger(te));
             log.info("Task '{}' scheduled at {}", te.getJobName(), d);
         } catch (ParseException e) {
-            log.error("Invalid cron expression found in task.id: " + te.getId(), e);
+            log.error("Invalid cron expression found in task, id: '{}', name: '{}', cron_expr: '{}', task has been disabled",
+                    te.getId(), te.getJobName(), te.getCronExpr());
+            taskService.disableTask(te.getId(), "Invalid cron expression");
         }
     }
 

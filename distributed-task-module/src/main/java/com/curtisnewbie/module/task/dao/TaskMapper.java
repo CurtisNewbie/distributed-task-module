@@ -20,4 +20,8 @@ public interface TaskMapper {
     void updateLastRunInfo(TaskEntity te);
 
     Integer findOneById(@Param("id") int taskId);
+
+    void updateEnabled(@Param("id") int taskId, @Param("enabled") int enabled);
+
+    void updateEnabledAndResult(@Param("id") int taskId, @Param("enabled") int enabled, @Param("result") String result);
 }

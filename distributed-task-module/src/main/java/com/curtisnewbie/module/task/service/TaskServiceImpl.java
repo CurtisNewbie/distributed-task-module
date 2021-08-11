@@ -1,5 +1,6 @@
 package com.curtisnewbie.module.task.service;
 
+import com.curtisnewbie.module.task.constants.TaskEnabled;
 import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.dao.TaskMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,5 +32,15 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public boolean exists(int taskId) {
         return taskMapper.findOneById(taskId) != null;
+    }
+
+    @Override
+    public void disableTask(int taskId) {
+        taskMapper.updateEnabled(taskId, TaskEnabled.DISABLED.getValue());
+    }
+
+    @Override
+    public void disableTask(int taskId, String result) {
+        taskMapper.updateEnabledAndResult(taskId, TaskEnabled.DISABLED.getValue(), result);
     }
 }
