@@ -6,9 +6,9 @@
  * To use this module, make sure you properly configure your database and redis.
  * <p>
  * <br>
- * Then, all you have to do is to create your {@link org.quartz.Job} instances being the spring managed beans. And
- * configure your {@code task} table, set the {@code target_bean} field using the same name as bean, as well as the cron
- * expression and 'group' property (which is the name of your cluster). It should work just fine.
+ * Then, all you have to do is to create your {@link org.quartz.Job} instances, and make them spring managed beans. And
+ * configure your {@code task} table, set the {@code target_bean} field using the same name as the bean, as well as the
+ * cron expression and 'group' property (which is the name of your cluster). It should work just fine.
  * </p>
  * <br>
  * <p>
