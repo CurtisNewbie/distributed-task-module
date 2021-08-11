@@ -4,7 +4,8 @@ import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.exceptions.JobBeanNotFoundException;
 import com.curtisnewbie.module.task.scheduling.JobDetailUtil;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
-import com.curtisnewbie.module.task.scheduling.JobProxy;
+import com.curtisnewbie.module.task.scheduling.JobDelegate;
+import com.curtisnewbie.module.task.scheduling.listeners.JobPreExecuteListener;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -22,7 +23,7 @@ import java.util.Objects;
  * Job Factory with managed beans
  * <p>
  * Instead of creating a new Job instance, we simply return an autowired bean that already exists in spring container.
- * Also, before we return it, we create a proxy for these job to better handle their lifecycle
+ * Also, before we return it, we create a delegate for these job to better handle their lifecycle
  * </p>
  *
  * @author yongjie.zhuang
@@ -36,6 +37,9 @@ public class ManagedBeanJobFactory implements JobFactory {
 
     @Autowired
     private List<JobPostExecuteListener> jobPostExecuteListenerList;
+
+    @Autowired
+    private List<JobPreExecuteListener> jobPreExecuteListenerList;
 
     @Override
     public Job newJob(TriggerFiredBundle triggerFiredBundle, Scheduler scheduler) throws SchedulerException {
@@ -51,16 +55,19 @@ public class ManagedBeanJobFactory implements JobFactory {
         if (job == null) {
             throw JobBeanNotFoundException.forBeanName(beanName);
         }
-        // create a proxy of the job to better handle it's lifecycle
-        JobProxy jobProxy = new JobProxy(job, jd);
+        // create a delegate of the job to better handle it's lifecycle
+        JobDelegate jobDelegate = new JobDelegate(job, jd);
         // register listeners
-        registerListener(jobProxy);
-        return jobProxy;
+        registerListener(jobDelegate);
+        return jobDelegate;
     }
 
-    private void registerListener(JobProxy jobProxy) {
+    private void registerListener(JobDelegate jobDelegate) {
+        for (JobPreExecuteListener listener : jobPreExecuteListenerList)
+            jobDelegate.onPreExecute(listener);
+
         for (JobPostExecuteListener listener : jobPostExecuteListenerList) {
-            jobProxy.onPostExecute(listener);
+            jobDelegate.onPostExecute(listener);
         }
     }
 }

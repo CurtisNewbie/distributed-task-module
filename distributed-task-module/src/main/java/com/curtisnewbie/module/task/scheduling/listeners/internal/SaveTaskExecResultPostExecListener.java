@@ -2,7 +2,7 @@ package com.curtisnewbie.module.task.scheduling.listeners.internal;
 
 import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.scheduling.JobDetailUtil;
-import com.curtisnewbie.module.task.scheduling.JobProxy;
+import com.curtisnewbie.module.task.scheduling.JobDelegate;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
 import com.curtisnewbie.module.task.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
     private TaskService taskService;
 
     @Override
-    public void postExecute(JobProxy.JobExecContext ctx) {
+    public void postExecute(JobDelegate.JobExecContext ctx) {
         String result = ctx.getException() != null ?
                 "exception " + ctx.getException().getClass().getSimpleName() + " occurred"
                 : "success";

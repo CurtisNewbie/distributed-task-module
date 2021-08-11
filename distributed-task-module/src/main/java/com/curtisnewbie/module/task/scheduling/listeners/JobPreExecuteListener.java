@@ -3,7 +3,7 @@ package com.curtisnewbie.module.task.scheduling.listeners;
 import com.curtisnewbie.module.task.scheduling.JobDelegate;
 
 /**
- * Listener of job's post-execute events
+ * Listener of job's pre-execute events
  * <p>
  * To add a listener, simple create one as spring managed bean, it will be registered automatically
  * <p>
@@ -11,7 +11,7 @@ import com.curtisnewbie.module.task.scheduling.JobDelegate;
  * <pre>
  * {@code
  * @Component
- * public class MyListener implements JobPostExecuteListener {
+ * public class MyListener implements JobPreExecuteListener {
  *      // ...
  * }
  * }
@@ -20,10 +20,10 @@ import com.curtisnewbie.module.task.scheduling.JobDelegate;
  * @author yongjie.zhuang
  */
 @FunctionalInterface
-public interface JobPostExecuteListener {
+public interface JobPreExecuteListener {
 
     /**
      * After execution
      */
-    void postExecute(JobDelegate.JobExecContext context);
+    void preExecute(JobDelegate.JobExecContext context);
 }
