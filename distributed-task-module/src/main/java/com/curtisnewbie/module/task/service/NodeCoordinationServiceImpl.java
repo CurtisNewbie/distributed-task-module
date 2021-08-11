@@ -66,15 +66,19 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
                     log.debug("Try to become main node, is main node? {}", isMainNode.get());
 
                     // only the main node of its group can actually run the tasks
-                    if (isMain) {
-                        try {
+
+                    try {
+                        if (isMain) {
                             // refresh jobs, compare scheduled jobs with records in database
                             refreshScheduledTasks();
                             // trigger jobs that need to be executed immediately
                             triggerRunImmediatelyJobs();
-                        } catch (SchedulerException e) {
-                            log.error("Exception occurred while refreshing scheduled tasks from database", e);
+                        } else {
+                            // if it's no-longer a main node, simply clear the scheduler
+                            cleanUpScheduledTasks();
                         }
+                    } catch (SchedulerException e) {
+                        log.error("Exception occurred while refreshing scheduled tasks from database", e);
                     }
 
                     Thread.sleep(INTERVAL);
@@ -90,6 +94,13 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
         log.info("Started node coordination daemon thread for distributed task scheduling, " +
                         "thread_id: {}, scheduling group: {}, lock_key: {}", bg.getId(),
                 appGroup, getMainNodeLockKey());
+    }
+
+    /**
+     * Clean up scheduled tasks
+     */
+    private void cleanUpScheduledTasks() throws SchedulerException {
+        schedulerService.removeAllJobs();
     }
 
     /**

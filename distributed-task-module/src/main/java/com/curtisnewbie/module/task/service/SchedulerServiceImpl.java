@@ -70,6 +70,11 @@ public class SchedulerServiceImpl implements SchedulerService {
         return factoryBean.getObject();
     }
 
+    @Override
+    public void removeAllJobs() throws SchedulerException {
+        scheduler().clear();
+    }
+
     private Scheduler scheduler() {
         return this.schedulerFactoryBean.getScheduler();
     }

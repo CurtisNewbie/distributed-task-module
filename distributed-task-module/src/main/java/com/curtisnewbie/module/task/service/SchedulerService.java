@@ -85,4 +85,8 @@ public interface SchedulerService {
      */
     Trigger createTrigger(TaskEntity te) throws ParseException;
 
+    /**
+     * Remove all jobs
+     */
+    void removeAllJobs() throws SchedulerException;
 }
