@@ -52,4 +52,20 @@
     select 1 from task
     where id = #{id}
   </select>
+  <select id="selectBy" resultType="com.curtisnewbie.module.task.dao.TaskEntity">
+    select *
+    from task
+    <where>
+      <if test="jobName != null and jobName != ''">
+        job_name like "%"#{jobName}"%"
+      </if>
+      <if test="enabled != null">
+        and enabled = #{enabled}
+      </if>
+      <if test="appGroup != null and appGroup != ''">
+        and app_group like "%"#{appGroup}"%"
+      </if>
+    </where>
+    order by enabled desc
+  </select>
 </mapper>
