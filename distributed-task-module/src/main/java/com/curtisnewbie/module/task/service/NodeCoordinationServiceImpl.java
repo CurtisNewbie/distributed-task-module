@@ -6,6 +6,7 @@ import com.curtisnewbie.module.task.constants.TaskEnabled;
 import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.SerializableJobKey;
+import com.curtisnewbie.module.task.vo.TaskVo;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -112,38 +113,38 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     }
 
     private void loadJobFromDatabase() throws SchedulerException {
-        List<TaskEntity> tasks = taskService.selectAll();
-        for (TaskEntity te : tasks) {
+        List<TaskVo> tasks = taskService.selectAll();
+        for (TaskVo tv : tasks) {
 
             // only when the group matches, this job shall be added
-            if (!Objects.equals(te.getAppGroup(), appGroup))
+            if (!Objects.equals(tv.getAppGroup(), appGroup))
                 continue;
 
-            Optional<JobDetail> optionalJobDetail = schedulerService.getJob(JobUtils.getJobKey(te));
+            Optional<JobDetail> optionalJobDetail = schedulerService.getJob(JobUtils.getJobKey(tv));
             if (!optionalJobDetail.isPresent()) {
-                TaskEnabled enabled = EnumUtils.parse(te.getEnabled(), TaskEnabled.class);
+                TaskEnabled enabled = EnumUtils.parse(tv.getEnabled(), TaskEnabled.class);
                 Objects.requireNonNull(enabled, "task's field enabled value illegal, unable to parse it");
                 // new task, add it into scheduler
                 if (enabled.equals(TaskEnabled.ENABLED)) {
-                    log.info("Found new task '{}', add it into scheduler", te.getJobName(), te.getCronExpr());
-                    scheduleJob(te);
+                    log.info("Found new task '{}', add it into scheduler", tv.getJobName(), tv.getCronExpr());
+                    scheduleJob(tv);
                 }
             } else {
                 // old task, see if it's changed
                 JobDetail oldJd = optionalJobDetail.get();
-                if (JobUtils.isJobDetailChanged(oldJd, te)) {
+                if (JobUtils.isJobDetailChanged(oldJd, tv)) {
                     // changed, delete the old one, and add the new one
                     schedulerService.removeJob(oldJd.getKey());
 
-                    TaskEnabled enabled = EnumUtils.parse(te.getEnabled(), TaskEnabled.class);
+                    TaskEnabled enabled = EnumUtils.parse(tv.getEnabled(), TaskEnabled.class);
                     Objects.requireNonNull(enabled, "task's field enabled value illegal, unable to parse it");
                     if (!enabled.equals(TaskEnabled.ENABLED)) {
-                        log.info("Task '{}' disabled, removed from scheduler", te.getJobName());
+                        log.info("Task '{}' disabled, removed from scheduler", tv.getJobName());
                         continue;
                     }
 
-                    log.info("Detected change on task '{}', reloading", te.getJobName());
-                    scheduleJob(te);
+                    log.info("Detected change on task '{}', reloading", tv.getJobName());
+                    scheduleJob(tv);
                 }
             }
         }
@@ -160,7 +161,7 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
         }
     }
 
-    private void scheduleJob(TaskEntity te) throws SchedulerException {
+    private void scheduleJob(TaskVo te) throws SchedulerException {
         try {
             log.info("Scheduling task: id: '{}', name: '{}' cron_expr: '{}', target_bean: '{}'", te.getId(), te.getJobName(),
                     te.getCronExpr(), te.getTargetBean());
@@ -195,8 +196,8 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     }
 
     @Override
-    public void coordinateJobTriggering(TaskEntity te) {
-        this.redisController.listLeftPush(getTriggeredJobListKey(), SerializableJobKey.fromJobKey(JobUtils.getJobKey(te)));
+    public void coordinateJobTriggering(TaskVo tv) {
+        this.redisController.listLeftPush(getTriggeredJobListKey(), SerializableJobKey.fromJobKey(JobUtils.getJobKey(tv)));
     }
 
     /**

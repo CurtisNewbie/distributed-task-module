@@ -1,6 +1,6 @@
 package com.curtisnewbie.module.task.service;
 
-import com.curtisnewbie.module.task.dao.TaskEntity;
+import com.curtisnewbie.module.task.vo.TaskVo;
 
 /**
  * Service that coordinates between nodes for task scheduling
@@ -23,8 +23,8 @@ public interface NodeCoordinationService {
      * This method doesn't try to run the job immediately, rather, it let the main node to trigger this job because jobs
      * are loaded in main node as well.
      *
-     * @param te task entity
+     * @param tv task
      */
-    void coordinateJobTriggering(TaskEntity te);
+    void coordinateJobTriggering(TaskVo tv);
 
 }

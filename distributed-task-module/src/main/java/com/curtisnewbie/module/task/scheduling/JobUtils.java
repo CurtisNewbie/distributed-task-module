@@ -1,6 +1,7 @@
 package com.curtisnewbie.module.task.scheduling;
 
 import com.curtisnewbie.module.task.dao.TaskEntity;
+import com.curtisnewbie.module.task.vo.TaskVo;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 
@@ -19,9 +20,9 @@ public final class JobUtils {
     }
 
     /**
-     * Get {@link JobKey} from {@link TaskEntity}
+     * Get {@link JobKey} from {@link TaskVo}
      */
-    public static JobKey getJobKey(TaskEntity te) {
+    public static JobKey getJobKey(TaskVo te) {
         return new JobKey(te.getId() + "-" + te.getJobName(), te.getAppGroup());
     }
 
@@ -47,18 +48,18 @@ public final class JobUtils {
     }
 
     /** See if the job detail has changed */
-    public static boolean isJobDetailChanged(JobDetail oldJd, TaskEntity te) {
+    public static boolean isJobDetailChanged(JobDetail oldJd, TaskVo tv) {
         TaskJobDetailWrapper oldJdw = (TaskJobDetailWrapper) oldJd;
-        TaskEntity oldTe = oldJdw.getTaskEntity();
-        if (!Objects.equals(oldTe.getEnabled(), te.getEnabled()))
+        TaskVo oldTe = oldJdw.getTaskVo();
+        if (!Objects.equals(oldTe.getEnabled(), tv.getEnabled()))
             return true;
-        if (!Objects.equals(oldTe.getJobName(), te.getJobName()))
+        if (!Objects.equals(oldTe.getJobName(), tv.getJobName()))
             return true;
-        if (!Objects.equals(oldTe.getAppGroup(), te.getAppGroup()))
+        if (!Objects.equals(oldTe.getAppGroup(), tv.getAppGroup()))
             return true;
-        if (!Objects.equals(oldTe.getConcurrentEnabled(), te.getConcurrentEnabled()))
+        if (!Objects.equals(oldTe.getConcurrentEnabled(), tv.getConcurrentEnabled()))
             return true;
-        if (!Objects.equals(oldTe.getCronExpr(), te.getCronExpr()))
+        if (!Objects.equals(oldTe.getCronExpr(), tv.getCronExpr()))
             return true;
         return false;
     }

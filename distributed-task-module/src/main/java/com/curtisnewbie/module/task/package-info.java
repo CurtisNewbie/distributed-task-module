@@ -51,7 +51,7 @@
  * <li>
  * {@link com.curtisnewbie.module.task.service.NodeCoordinationService} is used to coordinate task scheduling
  * between nodes of same cluster, use
- * {@link com.curtisnewbie.module.task.service.NodeCoordinationService#coordinateJobTriggering(com.curtisnewbie.module.task.dao.TaskEntity)}
+ * {@link com.curtisnewbie.module.task.service.NodeCoordinationService#coordinateJobTriggering(com.curtisnewbie.module.task.vo.TaskVo)}
  * to trigger job if you want it to run immediately.
  * </li>
  * <li>

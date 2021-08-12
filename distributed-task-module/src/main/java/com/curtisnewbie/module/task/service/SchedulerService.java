@@ -1,6 +1,6 @@
 package com.curtisnewbie.module.task.service;
 
-import com.curtisnewbie.module.task.dao.TaskEntity;
+import com.curtisnewbie.module.task.vo.TaskVo;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
@@ -35,7 +35,7 @@ public interface SchedulerService {
      * </p>
      * <p>
      * Job should only be executed by main node, so do not call this method just to trigger a job, please use {@link
-     * NodeCoordinationService#coordinateJobTriggering(TaskEntity)}
+     * NodeCoordinationService#coordinateJobTriggering(TaskVo)}
      * </p>
      * <p>
      * Execution of this job might be affected by {@code TaskEntity#concurrentEnabled}, if it can't be executed
@@ -63,12 +63,12 @@ public interface SchedulerService {
     /**
      * Schedule job for the given task entity
      *
-     * @param te task entity
+     * @param tv task
      * @return next date scheduled
      * @throws SchedulerException
      * @throws ParseException     when the cron expression is invalid
      */
-    Date scheduleJob(TaskEntity te) throws SchedulerException, ParseException;
+    Date scheduleJob(TaskVo tv) throws SchedulerException, ParseException;
 
     /**
      * Get job by jobKey
@@ -87,7 +87,7 @@ public interface SchedulerService {
      *
      * @throws ParseException when cron expression is illegal
      */
-    Trigger createTrigger(TaskEntity te) throws ParseException;
+    Trigger createTrigger(TaskVo tv) throws ParseException;
 
     /**
      * Remove all jobs

@@ -1,7 +1,7 @@
 package com.curtisnewbie.module.task.service;
 
-import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.scheduling.TaskJobDetailWrapper;
+import com.curtisnewbie.module.task.vo.TaskVo;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -45,8 +45,8 @@ public class SchedulerServiceImpl implements SchedulerService {
     }
 
     @Override
-    public Date scheduleJob(TaskEntity te) throws SchedulerException, ParseException {
-        return scheduleJob(new TaskJobDetailWrapper(te), createTrigger(te));
+    public Date scheduleJob(TaskVo tv) throws SchedulerException, ParseException {
+        return scheduleJob(new TaskJobDetailWrapper(tv), createTrigger(tv));
     }
 
     @Override
@@ -60,11 +60,11 @@ public class SchedulerServiceImpl implements SchedulerService {
     }
 
     @Override
-    public Trigger createTrigger(TaskEntity te) throws ParseException {
+    public Trigger createTrigger(TaskVo tv) throws ParseException {
         CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
-        factoryBean.setName(te.getJobName());
+        factoryBean.setName(tv.getJobName());
         factoryBean.setStartTime(new Date());
-        factoryBean.setCronExpression(te.getCronExpr());
+        factoryBean.setCronExpression(tv.getCronExpr());
         factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
         factoryBean.afterPropertiesSet();
         return factoryBean.getObject();

@@ -2,7 +2,7 @@ package com.curtisnewbie.module.task.scheduling;
 
 import com.curtisnewbie.common.util.EnumUtils;
 import com.curtisnewbie.module.task.constants.TaskConcurrentEnabled;
-import com.curtisnewbie.module.task.dao.TaskEntity;
+import com.curtisnewbie.module.task.vo.TaskVo;
 import org.quartz.*;
 
 import java.util.Objects;
@@ -17,22 +17,22 @@ public class TaskJobDetailWrapper implements JobDetail {
     /** Key to retrieve {@link com.curtisnewbie.module.task.dao.TaskEntity} from jobDataMap */
     public static final String JOD_DATA_MAP_TASK_ENTITY = "taskEntity";
 
-    private final TaskEntity te;
+    private final TaskVo tv;
     private final JobKey jobKey;
     private final String desc;
     private final JobDataMap jobDataMap = new JobDataMap();
     private final boolean concurrentEnabled;
     private final Class<? extends Job> jobClz;
 
-    public TaskJobDetailWrapper(TaskEntity t) {
-        this.te = t;
+    public TaskJobDetailWrapper(TaskVo t) {
+        this.tv = t;
         this.jobClz = Job.class;
         this.jobKey = JobUtils.getJobKey(t);
         this.desc = t.getJobName();
         TaskConcurrentEnabled tce = EnumUtils.parse(t.getConcurrentEnabled(), TaskConcurrentEnabled.class);
         Objects.requireNonNull(tce, "task's field 'concurrent_enabled' value illegal, unable to parse it");
         this.concurrentEnabled = tce.equals(TaskConcurrentEnabled.ENABLED);
-        jobDataMap.put(JOD_DATA_MAP_TASK_ENTITY, te);
+        jobDataMap.put(JOD_DATA_MAP_TASK_ENTITY, tv);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class TaskJobDetailWrapper implements JobDetail {
 
     @Override
     public Object clone() {
-        return new TaskJobDetailWrapper(te);
+        return new TaskJobDetailWrapper(tv);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class TaskJobDetailWrapper implements JobDetail {
         throw new UnsupportedOperationException();
     }
 
-    public TaskEntity getTaskEntity() {
-        return te;
+    public TaskVo getTaskVo() {
+        return tv;
     }
 }

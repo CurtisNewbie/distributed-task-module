@@ -1,6 +1,11 @@
 package com.curtisnewbie.module.task.service;
 
+import com.curtisnewbie.common.vo.PagingVo;
 import com.curtisnewbie.module.task.dao.TaskEntity;
+import com.curtisnewbie.module.task.vo.ListTaskByPageReqVo;
+import com.curtisnewbie.module.task.vo.ListTaskByPageRespVo;
+import com.curtisnewbie.module.task.vo.TaskVo;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -18,7 +23,12 @@ public interface TaskService {
     /**
      * Select all task entities
      */
-    List<TaskEntity> selectAll();
+    List<TaskVo> selectAll();
+
+    /**
+     * Select with pagination
+     */
+    PageInfo<ListTaskByPageRespVo> listByPage(ListTaskByPageReqVo param, PagingVo pagingVo);
 
     /**
      * Update last run info
