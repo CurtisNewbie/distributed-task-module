@@ -7,6 +7,7 @@ import com.curtisnewbie.module.task.constants.TaskConcurrentEnabled;
 import com.curtisnewbie.module.task.constants.TaskEnabled;
 import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.dao.TaskMapper;
+import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.vo.ListTaskByPageReqVo;
 import com.curtisnewbie.module.task.vo.TaskVo;
 import com.curtisnewbie.module.task.vo.UpdateTaskReqVo;
@@ -38,7 +39,11 @@ public class TaskServiceImpl implements TaskService {
     public void updateById(UpdateTaskReqVo vo) {
         Objects.requireNonNull(vo);
         Objects.requireNonNull(vo.getId());
+
         // null value are not updated, only non-null value are validated
+        if (vo.getCronExpr() != null && !JobUtils.isCronExprValid(vo.getCronExpr())) {
+            throw new IllegalArgumentException(vo.getCronExpr());
+        }
         if (vo.getEnabled() != null) {
             TaskEnabled tce = EnumUtils.parse(vo.getEnabled(), TaskEnabled.class);
             Objects.requireNonNull(tce, "task's field 'enabled' value illegal");

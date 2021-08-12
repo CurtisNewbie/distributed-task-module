@@ -2,8 +2,10 @@ package com.curtisnewbie.module.task.scheduling;
 
 import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.vo.TaskVo;
+import org.quartz.CronExpression;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
+import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -17,6 +19,15 @@ public final class JobUtils {
 
     private JobUtils() {
 
+    }
+
+    /**
+     * Check if cron expression is valid
+     */
+    public static boolean isCronExprValid(String cronExpr) {
+        if (!StringUtils.hasText(cronExpr))
+            return false;
+        return CronExpression.isValidExpression(cronExpr);
     }
 
     /**
