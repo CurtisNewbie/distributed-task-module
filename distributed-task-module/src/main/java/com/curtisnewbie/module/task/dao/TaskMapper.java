@@ -50,4 +50,9 @@ public interface TaskMapper {
      * Select * by job_name, enabled, app_group
      */
     List<TaskEntity> selectBy(TaskEntity param);
+
+    /**
+     * Update job_name, target_bean, cron_expr, app_group, enabled, concurrent_enabled by id
+     */
+    void updateById(TaskEntity entity);
 }

@@ -6,8 +6,8 @@ import com.curtisnewbie.module.task.constants.TaskEnabled;
 import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.dao.TaskMapper;
 import com.curtisnewbie.module.task.vo.ListTaskByPageReqVo;
-import com.curtisnewbie.module.task.vo.ListTaskByPageRespVo;
 import com.curtisnewbie.module.task.vo.TaskVo;
+import com.curtisnewbie.module.task.vo.UpdateTaskReqVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +33,22 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public PageInfo<ListTaskByPageRespVo> listByPage(ListTaskByPageReqVo param, PagingVo pagingVo) {
-        Objects.requireNonNull(param, "TaskEntity shouldn't be null"); Objects.requireNonNull(pagingVo, "Paging param shouldn't be null");
+    public void updateById(UpdateTaskReqVo vo) {
+        Objects.requireNonNull(vo);
+        Objects.requireNonNull(vo.getId());
+        taskMapper.updateById(BeanCopyUtils.toType(vo, TaskEntity.class));
+    }
+
+    @Override
+    public PageInfo<TaskVo> listByPage(ListTaskByPageReqVo param, PagingVo pagingVo) {
+        Objects.requireNonNull(param, "TaskEntity shouldn't be null");
+        Objects.requireNonNull(pagingVo, "Paging param shouldn't be null");
         Objects.requireNonNull(pagingVo.getPage(), "Paging param shouldn't be null");
         Objects.requireNonNull(pagingVo.getLimit(), "Paging param shouldn't be null");
 
         PageHelper.startPage(pagingVo.getPage(), pagingVo.getLimit());
         PageInfo<TaskEntity> tp = PageInfo.of(taskMapper.selectBy(BeanCopyUtils.toType(param, TaskEntity.class)));
-        return BeanCopyUtils.toPageList(tp, ListTaskByPageRespVo.class);
+        return BeanCopyUtils.toPageList(tp, TaskVo.class);
     }
 
     @Override
