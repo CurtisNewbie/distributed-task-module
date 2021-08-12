@@ -3,7 +3,6 @@ package com.curtisnewbie.module.task.service;
 import com.curtisnewbie.common.util.EnumUtils;
 import com.curtisnewbie.module.redisutil.RedisController;
 import com.curtisnewbie.module.task.constants.TaskEnabled;
-import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.SerializableJobKey;
 import com.curtisnewbie.module.task.vo.TaskVo;
@@ -185,7 +184,7 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
                 log.info("Triggering job id: '{}', name: '{}'", id, name);
                 schedulerService.triggerJob(jk);
             } else {
-                log.warn("Job id: '{}', name: '{}' not found, can't be triggered", id, name);
+                log.warn("Job id: '{}', name: '{}' not found, can't be triggered (only enabled job can be triggered)", id, name);
             }
         }
     }

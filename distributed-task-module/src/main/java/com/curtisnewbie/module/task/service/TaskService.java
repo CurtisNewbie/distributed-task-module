@@ -1,7 +1,6 @@
 package com.curtisnewbie.module.task.service;
 
 import com.curtisnewbie.common.vo.PagingVo;
-import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.vo.ListTaskByPageReqVo;
 import com.curtisnewbie.module.task.vo.TaskVo;
 import com.curtisnewbie.module.task.vo.UpdateTaskReqVo;
@@ -36,9 +35,14 @@ public interface TaskService {
     PageInfo<TaskVo> listByPage(ListTaskByPageReqVo param, PagingVo pagingVo);
 
     /**
+     * Select by id
+     */
+    TaskVo selectById(int id);
+
+    /**
      * Update last run info
      */
-    void updateLastRunInfo(TaskEntity te);
+    void updateLastRunInfo(TaskVo tv);
 
     /**
      * Check if a task exists by its id

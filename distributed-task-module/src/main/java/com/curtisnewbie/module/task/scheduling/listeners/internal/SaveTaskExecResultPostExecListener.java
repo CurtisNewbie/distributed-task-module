@@ -1,10 +1,10 @@
 package com.curtisnewbie.module.task.scheduling.listeners.internal;
 
-import com.curtisnewbie.module.task.dao.TaskEntity;
-import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.JobDelegate;
+import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
 import com.curtisnewbie.module.task.service.TaskService;
+import com.curtisnewbie.module.task.vo.TaskVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +25,10 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
                 "exception " + ctx.getException().getClass().getSimpleName() + " occurred"
                 : "success";
 
-        TaskEntity te = JobUtils.getTaskEntityFromJobDataMap(ctx.getJobDetail());
-        te.setLastRunResult(result);
-        te.setLastRunStartTime(ctx.getStartTime());
-        te.setLastRunEndTime(ctx.getEndTime());
-        taskService.updateLastRunInfo(te);
+        TaskVo tv = JobUtils.getTaskFromJobDataMap(ctx.getJobDetail());
+        tv.setLastRunResult(result);
+        tv.setLastRunStartTime(ctx.getStartTime());
+        tv.setLastRunEndTime(ctx.getEndTime());
+        taskService.updateLastRunInfo(tv);
     }
 }

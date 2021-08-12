@@ -1,11 +1,11 @@
 package com.curtisnewbie.module.task.config;
 
-import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.exceptions.JobBeanNotFoundException;
+import com.curtisnewbie.module.task.scheduling.JobDelegate;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
-import com.curtisnewbie.module.task.scheduling.JobDelegate;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPreExecuteListener;
+import com.curtisnewbie.module.task.vo.TaskVo;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -45,10 +45,10 @@ public class ManagedBeanJobFactory implements JobFactory {
     public Job newJob(TriggerFiredBundle triggerFiredBundle, Scheduler scheduler) throws SchedulerException {
         JobDetail jd = triggerFiredBundle.getJobDetail();
 
-        TaskEntity te = JobUtils.getTaskEntityFromJobDataMap(jd);
-        Objects.requireNonNull(te, "TaskEntity not found in jodDataMap");
+        TaskVo tv = JobUtils.getTaskFromJobDataMap(jd);
+        Objects.requireNonNull(tv, "Task not found in jodDataMap");
 
-        String beanName = te.getTargetBean();
+        String beanName = tv.getTargetBean();
         Objects.requireNonNull(beanName, "Task.target_bean is null");
 
         Job job = applicationContext.getBean(beanName, Job.class);

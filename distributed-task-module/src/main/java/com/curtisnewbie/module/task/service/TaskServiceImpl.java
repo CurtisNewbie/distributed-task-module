@@ -52,8 +52,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void updateLastRunInfo(TaskEntity te) {
-        taskMapper.updateLastRunInfo(te);
+    public TaskVo selectById(int id) {
+        return BeanCopyUtils.toType(taskMapper.selectByPrimaryKey(id), TaskVo.class);
+    }
+
+    @Override
+    public void updateLastRunInfo(TaskVo te) {
+        taskMapper.updateLastRunInfo(BeanCopyUtils.toType(te, TaskEntity.class));
     }
 
     @Override

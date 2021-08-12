@@ -67,7 +67,7 @@ public final class JobUtils {
     /**
      * Get {@link TaskEntity} from JobDetail's jobDataMap
      */
-    public static TaskEntity getTaskEntityFromJobDataMap(JobDetail jobDetail) {
-        return (TaskEntity) jobDetail.getJobDataMap().get(TaskJobDetailWrapper.JOD_DATA_MAP_TASK_ENTITY);
+    public static TaskVo getTaskFromJobDataMap(JobDetail jobDetail) {
+        return (TaskVo) jobDetail.getJobDataMap().get(TaskJobDetailWrapper.JOD_DATA_MAP_TASK_ENTITY);
     }
 }

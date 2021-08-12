@@ -48,10 +48,10 @@
         cron_expr = #{cronExpr},
       </if>
       <if test="appGroup != null and appGroup != ''">
-        app_group = #{appGroup}
+        app_group = #{appGroup},
       </if>
       <if test="enabled != null">
-        enabled = #{enabled}
+        enabled = #{enabled},
       </if>
       <if test="concurrentEnabled != null">
         concurrent_enabled = #{concurrentEnabled}
