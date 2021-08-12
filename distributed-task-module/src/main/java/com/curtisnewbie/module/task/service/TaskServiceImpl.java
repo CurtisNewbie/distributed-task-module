@@ -1,7 +1,9 @@
 package com.curtisnewbie.module.task.service;
 
 import com.curtisnewbie.common.util.BeanCopyUtils;
+import com.curtisnewbie.common.util.EnumUtils;
 import com.curtisnewbie.common.vo.PagingVo;
+import com.curtisnewbie.module.task.constants.TaskConcurrentEnabled;
 import com.curtisnewbie.module.task.constants.TaskEnabled;
 import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.dao.TaskMapper;
@@ -36,6 +38,15 @@ public class TaskServiceImpl implements TaskService {
     public void updateById(UpdateTaskReqVo vo) {
         Objects.requireNonNull(vo);
         Objects.requireNonNull(vo.getId());
+        // null value are not updated, only non-null value are validated
+        if (vo.getEnabled() != null) {
+            TaskEnabled tce = EnumUtils.parse(vo.getEnabled(), TaskEnabled.class);
+            Objects.requireNonNull(tce, "task's field 'enabled' value illegal");
+        }
+        if (vo.getConcurrentEnabled() != null) {
+            TaskConcurrentEnabled tce = EnumUtils.parse(vo.getConcurrentEnabled(), TaskConcurrentEnabled.class);
+            Objects.requireNonNull(tce, "task's field 'concurrent_enabled' value illegal");
+        }
         taskMapper.updateById(BeanCopyUtils.toType(vo, TaskEntity.class));
     }
 

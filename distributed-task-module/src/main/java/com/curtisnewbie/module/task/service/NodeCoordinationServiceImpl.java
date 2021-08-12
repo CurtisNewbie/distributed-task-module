@@ -162,8 +162,6 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
     private void scheduleJob(TaskVo te) throws SchedulerException {
         try {
-            log.info("Scheduling task: id: '{}', name: '{}' cron_expr: '{}', target_bean: '{}'", te.getId(), te.getJobName(),
-                    te.getCronExpr(), te.getTargetBean());
             Date d = schedulerService.scheduleJob(te);
             log.info("Task '{}' scheduled at {}", te.getJobName(), d);
         } catch (ParseException e) {

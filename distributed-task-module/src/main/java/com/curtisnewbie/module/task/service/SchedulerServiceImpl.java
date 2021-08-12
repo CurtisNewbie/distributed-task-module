@@ -1,5 +1,7 @@
 package com.curtisnewbie.module.task.service;
 
+import com.curtisnewbie.common.util.EnumUtils;
+import com.curtisnewbie.module.task.constants.TaskConcurrentEnabled;
 import com.curtisnewbie.module.task.scheduling.TaskJobDetailWrapper;
 import com.curtisnewbie.module.task.vo.TaskVo;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +48,10 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     @Override
     public Date scheduleJob(TaskVo tv) throws SchedulerException, ParseException {
+        log.info("Scheduling task: id: '{}', name: '{}' cron_expr: '{}', target_bean: '{}', concurrent_enabled: '{}'",
+                tv.getId(), tv.getJobName(),
+                tv.getCronExpr(), tv.getTargetBean(),
+                EnumUtils.parse(tv.getConcurrentEnabled(), TaskConcurrentEnabled.class));
         return scheduleJob(new TaskJobDetailWrapper(tv), createTrigger(tv));
     }
 
