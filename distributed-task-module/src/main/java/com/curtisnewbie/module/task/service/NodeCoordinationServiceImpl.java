@@ -154,6 +154,10 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
         GroupMatcher<JobKey> any = GroupMatcher.anyJobGroup();
         Set<JobKey> jobKeySet = schedulerService.getJobKeySet(any);
         for (JobKey jk : jobKeySet) {
+            // temporary jobs are not validated, they are deleted by themselves in listener
+            if (JobUtils.isTempJob(schedulerService.getJob(jk).get()))
+                continue;
+
             if (!taskService.exists(getIdFromJobKey(jk))) {
                 log.info("Task '{}' not found in database, removing it from scheduler", getNameFromJobKey(jk));
                 schedulerService.removeJob(jk);
@@ -183,12 +187,11 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
             if (opt.isPresent()) {
                 log.info("Triggering job id: '{}', name: '{}'", id, name);
 
-                // record who triggers the job
-                JobDetail jd = opt.get();
-                JobUtils.setIsTriggered(jd);
-                JobUtils.setRunBy(jd, sjk.getTriggerBy());
-                schedulerService.replaceJobDetail(jd);
-                schedulerService.triggerJob(jk);
+                // create temporary job (not scheduled), and triggers them, once they are done, remove them in listener
+                JobDetail tempJob = JobUtils.createTempJob(opt.get());
+                JobUtils.setRunBy(tempJob, sjk.getTriggerBy());
+                schedulerService.addUnscheduledJob(tempJob, true);
+                schedulerService.triggerJob(tempJob.getKey());
             } else {
                 log.warn("Job id: '{}', name: '{}' not found, can't be triggered (only enabled job can be triggered)", id, name);
             }

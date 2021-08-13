@@ -37,6 +37,7 @@ public final class JobUtils {
      *
      * @param jobDetail job detail
      */
+    @Deprecated
     public static void setIsTriggered(JobDetail jobDetail) {
         jobDetail.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TRIGGERED, "true");
     }
@@ -46,6 +47,7 @@ public final class JobUtils {
      *
      * @param jobDetail job detail
      */
+    @Deprecated
     public static boolean isJobTriggered(JobDetail jobDetail) {
         Object o = jobDetail.getJobDataMap().get(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TRIGGERED);
         if (o == null)
@@ -122,5 +124,41 @@ public final class JobUtils {
      */
     public static TaskVo getTaskFromJobDataMap(JobDetail jobDetail) {
         return (TaskVo) jobDetail.getJobDataMap().get(TaskJobDetailWrapper.JOB_DATA_MAP_TASK_ENTITY);
+    }
+
+    /**
+     * Create a temporary version of the given job
+     * <br><br>
+     * It's by modifying 'group' in {@link JobKey}, so it doesn't contradict to the original job, while at the same
+     * time preserve the ability to retrieve it's id by {@link #getIdFromJobKey(JobKey)}
+     */
+    public static JobDetail createTempJob(JobDetail jobDetail) {
+        TaskJobDetailWrapper oldTjw = (TaskJobDetailWrapper) jobDetail;
+
+        if (isTempJob(oldTjw))
+            throw new IllegalArgumentException("This job is already a temporary job, can't create tempJob from it");
+
+        TaskVo taskVo = oldTjw.getTaskVo();
+        taskVo.setAppGroup("temporary");
+        TaskJobDetailWrapper ntjw = new TaskJobDetailWrapper(taskVo);
+        setIsTempJob(ntjw);
+        return ntjw;
+    }
+
+    /**
+     * Check if the job is a temporary job
+     */
+    public static boolean isTempJob(JobDetail jobDetail) {
+        TaskJobDetailWrapper tjw = (TaskJobDetailWrapper) jobDetail;
+        Object b = tjw.getJobDataMap().get(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TEMPORARY);
+        return b != null && Boolean.valueOf(b.toString());
+    }
+
+    /**
+     * Mark the job as a temporary job
+     */
+    public static void setIsTempJob(JobDetail jobDetail) {
+        TaskJobDetailWrapper tjw = (TaskJobDetailWrapper) jobDetail;
+        tjw.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TEMPORARY, "true");
     }
 }

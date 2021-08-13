@@ -23,6 +23,9 @@ public class TaskJobDetailWrapper implements JobDetail {
     /** Key to check if job is triggered from jobDataMap */
     public static final String JOB_DATA_MAP_IS_TRIGGERED = "isTriggered";
 
+    /** Key in jobDataMap to check if a job is a temporary job */
+    public static final String JOB_DATA_MAP_IS_TEMPORARY = "isTemp";
+
     private final TaskVo tv;
     private final JobKey jobKey;
     private final String desc;

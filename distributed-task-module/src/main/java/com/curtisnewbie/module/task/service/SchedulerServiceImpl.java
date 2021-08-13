@@ -42,6 +42,11 @@ public class SchedulerServiceImpl implements SchedulerService {
     }
 
     @Override
+    public void addUnscheduledJob(JobDetail jobDetail, boolean replace) throws SchedulerException {
+        scheduler().addJob(jobDetail, replace);
+    }
+
+    @Override
     public Date scheduleJob(JobDetail jobDetail, Trigger trigger) throws SchedulerException {
         return scheduler().scheduleJob(jobDetail, trigger);
     }

@@ -54,6 +54,15 @@ public interface SchedulerService {
     boolean removeJob(JobKey jobKey) throws SchedulerException;
 
     /**
+     * Add a job, but it's not scheduled
+     *
+     * @param jobDetail jobDetail
+     * @param replace replace
+     * @throws SchedulerException
+     */
+    void addUnscheduledJob(JobDetail jobDetail, boolean replace) throws SchedulerException;
+
+    /**
      * Schedule job
      *
      * @return next date scheduled
