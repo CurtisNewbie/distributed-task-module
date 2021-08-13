@@ -31,6 +31,7 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
 
         TaskVo utv = new TaskVo();
         utv.setId(tv.getId());
+
         utv.setLastRunBy(JobUtils.getRunBy(jd));
         utv.setLastRunResult(result);
         utv.setLastRunStartTime(ctx.getStartTime());

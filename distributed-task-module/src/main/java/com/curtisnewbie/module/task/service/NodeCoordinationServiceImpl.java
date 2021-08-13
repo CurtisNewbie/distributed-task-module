@@ -182,6 +182,10 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
             Optional<JobDetail> opt = schedulerService.getJob(jk);
             if (opt.isPresent()) {
                 log.info("Triggering job id: '{}', name: '{}'", id, name);
+
+                // todo: current implementation doesn't allow us to set runBy directly from web endpoints,
+                //  because scheduler always return clone of JobDetail, need to fix it, maybe create a proxy of the run shell
+                //  instead of the job ???
                 // record who triggers the job
                 taskService.updateUpdateBy(id, sjk.getTriggerBy());
                 schedulerService.triggerJob(jk);

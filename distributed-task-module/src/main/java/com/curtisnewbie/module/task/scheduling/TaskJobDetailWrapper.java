@@ -38,6 +38,15 @@ public class TaskJobDetailWrapper implements JobDetail {
         jobDataMap.put(JOB_DATA_MAP_TASK_ENTITY, tv);
     }
 
+    public TaskJobDetailWrapper(TaskJobDetailWrapper w) {
+        this.tv = w.tv;
+        this.jobClz = w.jobClz;
+        this.jobKey = w.jobKey;
+        this.desc = w.desc;
+        this.concurrentEnabled = w.concurrentEnabled;
+        this.jobDataMap.putAll(w.jobDataMap);
+    }
+
     @Override
     public JobKey getKey() {
         return this.jobKey;
@@ -80,7 +89,7 @@ public class TaskJobDetailWrapper implements JobDetail {
 
     @Override
     public Object clone() {
-        return new TaskJobDetailWrapper(tv);
+        return new TaskJobDetailWrapper(this);
     }
 
     @Override
