@@ -71,9 +71,16 @@ public interface SchedulerService {
     Date scheduleJob(TaskVo tv) throws SchedulerException, ParseException;
 
     /**
+     * Replace existing {@link JobDetail}, if it previously has {@link Trigger} associated with it, it will still be
+     * triggered.
+     */
+    void replaceJobDetail(JobDetail jobDetail) throws SchedulerException;
+
+    /**
      * Get job by jobKey
      *
      * @param jobKey jobKey
+     * @return a copy of jobDetail (modifying it doesn't change the jobDetail in scheduler)
      */
     Optional<JobDetail> getJob(JobKey jobKey) throws SchedulerException;
 

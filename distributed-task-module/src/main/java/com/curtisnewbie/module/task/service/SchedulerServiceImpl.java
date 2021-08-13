@@ -1,9 +1,7 @@
 package com.curtisnewbie.module.task.service;
 
 import com.curtisnewbie.common.util.EnumUtils;
-import com.curtisnewbie.module.task.constants.NamingConstants;
 import com.curtisnewbie.module.task.constants.TaskConcurrentEnabled;
-import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.TaskJobDetailWrapper;
 import com.curtisnewbie.module.task.vo.TaskVo;
 import lombok.extern.slf4j.Slf4j;
@@ -55,9 +53,12 @@ public class SchedulerServiceImpl implements SchedulerService {
                 tv.getCronExpr(), tv.getTargetBean(),
                 EnumUtils.parse(tv.getConcurrentEnabled(), TaskConcurrentEnabled.class));
         JobDetail jd = new TaskJobDetailWrapper(tv);
-        // by default, we consider the job is run by scheduler, unless the user triggers the job manually
-        JobUtils.setRunBy(jd, NamingConstants.SCHEDULER);
         return scheduleJob(jd, createTrigger(tv));
+    }
+
+    @Override
+    public void replaceJobDetail(JobDetail jobDetail) throws SchedulerException {
+        scheduler().addJob(jobDetail, true);
     }
 
     @Override

@@ -29,6 +29,28 @@ public final class JobUtils {
      */
     public static void setRunBy(JobDetail jobDetail, String runBy) {
         jobDetail.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_RUN_BY, runBy);
+        jobDetail.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TRIGGERED, "true");
+    }
+
+    /**
+     * Set job is triggered
+     *
+     * @param jobDetail job detail
+     */
+    public static void setIsTriggered(JobDetail jobDetail) {
+        jobDetail.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TRIGGERED, "true");
+    }
+
+    /**
+     * Set job is triggered
+     *
+     * @param jobDetail job detail
+     */
+    public static boolean isJobTriggered(JobDetail jobDetail) {
+        Object o = jobDetail.getJobDataMap().get(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TRIGGERED);
+        if (o == null)
+            return false;
+        return Boolean.valueOf(o.toString());
     }
 
     /**

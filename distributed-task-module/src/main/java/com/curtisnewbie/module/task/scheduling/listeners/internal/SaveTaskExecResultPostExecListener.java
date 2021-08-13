@@ -1,5 +1,6 @@
 package com.curtisnewbie.module.task.scheduling.listeners.internal;
 
+import com.curtisnewbie.module.task.constants.NamingConstants;
 import com.curtisnewbie.module.task.scheduling.JobDelegate;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
@@ -7,6 +8,8 @@ import com.curtisnewbie.module.task.service.TaskService;
 import com.curtisnewbie.module.task.vo.TaskVo;
 import org.quartz.JobDetail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Component;
  *
  * @author yongjie.zhuang
  */
+@Order(value = Ordered.HIGHEST_PRECEDENCE)
 @Component
 public class SaveTaskExecResultPostExecListener implements JobPostExecuteListener {
 
@@ -32,7 +36,12 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
         TaskVo utv = new TaskVo();
         utv.setId(tv.getId());
 
-        utv.setLastRunBy(JobUtils.getRunBy(jd));
+        String runBy = JobUtils.getRunBy(jd);
+        if (runBy == null) {
+            runBy = NamingConstants.SCHEDULER;
+            // by default, we consider the job is run by scheduler, unless the user triggers the job manually
+        }
+        utv.setLastRunBy(runBy);
         utv.setLastRunResult(result);
         utv.setLastRunStartTime(ctx.getStartTime());
         utv.setLastRunEndTime(ctx.getEndTime());
