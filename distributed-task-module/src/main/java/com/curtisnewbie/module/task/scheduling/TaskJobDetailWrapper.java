@@ -15,7 +15,10 @@ import java.util.Objects;
 public class TaskJobDetailWrapper implements JobDetail {
 
     /** Key to retrieve {@link com.curtisnewbie.module.task.dao.TaskEntity} from jobDataMap */
-    public static final String JOD_DATA_MAP_TASK_ENTITY = "taskEntity";
+    public static final String JOB_DATA_MAP_TASK_ENTITY = "taskEntity";
+
+    /** Key to retrieve runBy from jobDataMap */
+    public static final String JOB_DATA_MAP_RUN_BY = "runBy";
 
     private final TaskVo tv;
     private final JobKey jobKey;
@@ -32,7 +35,7 @@ public class TaskJobDetailWrapper implements JobDetail {
         TaskConcurrentEnabled tce = EnumUtils.parse(t.getConcurrentEnabled(), TaskConcurrentEnabled.class);
         Objects.requireNonNull(tce, "task's field 'concurrent_enabled' value illegal, unable to parse it");
         this.concurrentEnabled = tce.equals(TaskConcurrentEnabled.ENABLED);
-        jobDataMap.put(JOD_DATA_MAP_TASK_ENTITY, tv);
+        jobDataMap.put(JOB_DATA_MAP_TASK_ENTITY, tv);
     }
 
     @Override

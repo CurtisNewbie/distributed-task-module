@@ -2,6 +2,7 @@ package com.curtisnewbie.module.task.service;
 
 import com.curtisnewbie.common.util.EnumUtils;
 import com.curtisnewbie.module.redisutil.RedisController;
+import com.curtisnewbie.module.task.constants.NamingConstants;
 import com.curtisnewbie.module.task.constants.TaskEnabled;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.SerializableJobKey;
@@ -167,7 +168,7 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
         } catch (ParseException e) {
             log.error("Invalid cron expression found in task, id: '{}', name: '{}', cron_expr: '{}', task has been disabled",
                     te.getId(), te.getJobName(), te.getCronExpr());
-            taskService.setTaskDisabled(te.getId(), "Invalid cron expression");
+            taskService.setTaskDisabled(te.getId(), "Invalid cron expression", NamingConstants.SCHEDULER);
         }
     }
 
@@ -178,8 +179,11 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
             JobKey jk = sjk.toJobKey();
             int id = JobUtils.getIdFromJobKey(jk);
             String name = JobUtils.getNameFromJobKey(jk);
-            if (schedulerService.getJob(jk).isPresent()) {
+            Optional<JobDetail> opt = schedulerService.getJob(jk);
+            if (opt.isPresent()) {
                 log.info("Triggering job id: '{}', name: '{}'", id, name);
+                // record who triggers the job
+                taskService.updateUpdateBy(id, sjk.getTriggerBy());
                 schedulerService.triggerJob(jk);
             } else {
                 log.warn("Job id: '{}', name: '{}' not found, can't be triggered (only enabled job can be triggered)", id, name);
@@ -193,8 +197,10 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     }
 
     @Override
-    public void coordinateJobTriggering(TaskVo tv) {
-        this.redisController.listLeftPush(getTriggeredJobListKey(), SerializableJobKey.fromJobKey(JobUtils.getJobKey(tv)));
+    public void coordinateJobTriggering(TaskVo tv, String triggerBy) {
+        SerializableJobKey sjk = SerializableJobKey.fromJobKey(JobUtils.getJobKey(tv));
+        sjk.setTriggerBy(triggerBy);
+        this.redisController.listLeftPush(getTriggeredJobListKey(), sjk);
     }
 
     /**

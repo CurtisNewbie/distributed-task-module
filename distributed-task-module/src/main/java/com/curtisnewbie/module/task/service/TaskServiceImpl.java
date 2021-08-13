@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,7 +53,9 @@ public class TaskServiceImpl implements TaskService {
             TaskConcurrentEnabled tce = EnumUtils.parse(vo.getConcurrentEnabled(), TaskConcurrentEnabled.class);
             Objects.requireNonNull(tce, "task's field 'concurrent_enabled' value illegal");
         }
-        taskMapper.updateById(BeanCopyUtils.toType(vo, TaskEntity.class));
+        TaskEntity param = BeanCopyUtils.toType(vo, TaskEntity.class);
+        param.setUpdateDate(new Date());
+        taskMapper.updateById(param);
     }
 
     @Override
@@ -83,12 +86,21 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void setTaskDisabled(int taskId) {
-        taskMapper.updateEnabled(taskId, TaskEnabled.DISABLED.getValue());
+    public void setTaskDisabled(int taskId, String result, String updateBy) {
+        TaskEntity t = new TaskEntity();
+        t.setId(taskId);
+        t.setEnabled(TaskEnabled.DISABLED.getValue());
+        t.setUpdateDate(new Date());
+        t.setUpdateBy(t.getUpdateBy());
+        t.setLastRunResult(result);
+        taskMapper.updateEnabledAndResult(t);
     }
 
     @Override
-    public void setTaskDisabled(int taskId, String result) {
-        taskMapper.updateEnabledAndResult(taskId, TaskEnabled.DISABLED.getValue(), result);
+    public void updateUpdateBy(int taskId, String updateBy) {
+        TaskEntity te = new TaskEntity();
+        te.setId(taskId);
+        te.setUpdateBy(updateBy);
+        taskMapper.updateUpdateBy(te);
     }
 }

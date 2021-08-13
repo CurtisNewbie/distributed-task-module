@@ -52,14 +52,17 @@ public interface TaskService {
     /**
      * Set task as disabled in database
      *
-     * @param taskId taskId
+     * @param taskId   taskId
+     * @param updateBy updated by
+     * @param result   result (nullable)
      */
-    void setTaskDisabled(int taskId);
+    void setTaskDisabled(int taskId, String result, String updateBy);
 
     /**
-     * Set task as disabled in database
+     * Update updateBy
      *
-     * @param taskId taskId
+     * @param taskId
+     * @param updateBy
      */
-    void setTaskDisabled(int taskId, String result);
+    void updateUpdateBy(int taskId, String updateBy);
 }

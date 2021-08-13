@@ -30,4 +30,7 @@ public class UpdateTaskReqVo {
 
     /** whether the task can be executed concurrently: 0-disabled, 1-enabled */
     private Integer concurrentEnabled;
+
+    /** updated by */
+    private String updateBy;
 }

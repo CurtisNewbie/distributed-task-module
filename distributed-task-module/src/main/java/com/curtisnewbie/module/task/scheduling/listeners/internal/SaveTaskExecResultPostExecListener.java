@@ -5,8 +5,11 @@ import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
 import com.curtisnewbie.module.task.service.TaskService;
 import com.curtisnewbie.module.task.vo.TaskVo;
+import org.quartz.JobDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * JobPostExecuteListener that update last_run_* result for tasks
@@ -25,10 +28,15 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
                 "exception " + ctx.getException().getClass().getSimpleName() + " occurred"
                 : "success";
 
-        TaskVo tv = JobUtils.getTaskFromJobDataMap(ctx.getJobDetail());
-        tv.setLastRunResult(result);
-        tv.setLastRunStartTime(ctx.getStartTime());
-        tv.setLastRunEndTime(ctx.getEndTime());
+        JobDetail jd = ctx.getJobDetail();
+        TaskVo tv = JobUtils.getTaskFromJobDataMap(jd);
+
+        TaskVo utv = new TaskVo();
+        utv.setId(tv.getId());
+        utv.setLastRunBy(JobUtils.getRunBy(jd));
+        utv.setLastRunResult(result);
+        utv.setLastRunStartTime(ctx.getStartTime());
+        utv.setLastRunEndTime(ctx.getEndTime());
         taskService.updateLastRunInfo(tv);
     }
 }

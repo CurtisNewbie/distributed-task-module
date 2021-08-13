@@ -22,6 +22,26 @@ public final class JobUtils {
     }
 
     /**
+     * Set run by
+     *
+     * @param jobDetail job detail
+     * @param runBy     runBy
+     */
+    public static void setRunBy(JobDetail jobDetail, String runBy) {
+        jobDetail.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_RUN_BY, runBy);
+    }
+
+    /**
+     * Get run by
+     *
+     * @param jobDetail job detail
+     * @return runBy
+     */
+    public static String getRunBy(JobDetail jobDetail) {
+        return jobDetail.getJobDataMap().getString(TaskJobDetailWrapper.JOB_DATA_MAP_RUN_BY);
+    }
+
+    /**
      * Check if cron expression is valid
      */
     public static boolean isCronExprValid(String cronExpr) {
@@ -79,6 +99,6 @@ public final class JobUtils {
      * Get {@link TaskEntity} from JobDetail's jobDataMap
      */
     public static TaskVo getTaskFromJobDataMap(JobDetail jobDetail) {
-        return (TaskVo) jobDetail.getJobDataMap().get(TaskJobDetailWrapper.JOD_DATA_MAP_TASK_ENTITY);
+        return (TaskVo) jobDetail.getJobDataMap().get(TaskJobDetailWrapper.JOB_DATA_MAP_TASK_ENTITY);
     }
 }

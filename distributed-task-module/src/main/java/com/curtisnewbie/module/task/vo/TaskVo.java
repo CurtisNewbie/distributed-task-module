@@ -43,4 +43,10 @@ public class TaskVo {
 
     /** whether the task can be executed concurrently: 0-disabled, 1-enabled */
     private Integer concurrentEnabled;
+
+    /** update date */
+    private Date updateDate;
+
+    /** updated by */
+    private String updateBy;
 }

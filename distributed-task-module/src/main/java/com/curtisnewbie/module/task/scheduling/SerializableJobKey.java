@@ -15,6 +15,8 @@ public class SerializableJobKey {
 
     private String group;
 
+    private String triggerBy;
+
     public JobKey toJobKey() {
         return new JobKey(name, group);
     }

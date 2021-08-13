@@ -23,8 +23,9 @@ public interface NodeCoordinationService {
      * This method doesn't try to run the job immediately, rather, it let the main node to trigger this job because jobs
      * are loaded in main node as well.
      *
+     * @param triggerBy
      * @param tv task
      */
-    void coordinateJobTriggering(TaskVo tv);
+    void coordinateJobTriggering(TaskVo tv, String triggerBy);
 
 }

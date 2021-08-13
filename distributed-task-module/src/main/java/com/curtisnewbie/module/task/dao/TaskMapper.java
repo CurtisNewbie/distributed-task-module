@@ -37,14 +37,9 @@ public interface TaskMapper {
     Integer findOneById(@Param("id") int taskId);
 
     /**
-     * Update enabled by id
+     * Update enabled, result, last_run_result (if non-null), update_by, update_date by id
      */
-    void updateEnabled(@Param("id") int taskId, @Param("enabled") int enabled);
-
-    /**
-     * Update enabled, result by id
-     */
-    void updateEnabledAndResult(@Param("id") int taskId, @Param("enabled") int enabled, @Param("result") String result);
+    void updateEnabledAndResult(TaskEntity taskEntity);
 
     /**
      * Select * by job_name, enabled, app_group
@@ -55,4 +50,9 @@ public interface TaskMapper {
      * Update job_name, target_bean, cron_expr, app_group, enabled, concurrent_enabled by id
      */
     void updateById(TaskEntity entity);
+
+    /**
+     * Update update_by by id
+     */
+    void updateUpdateBy(TaskEntity te);
 }

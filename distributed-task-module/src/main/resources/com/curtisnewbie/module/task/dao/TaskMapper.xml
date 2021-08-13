@@ -13,7 +13,7 @@
     )
   </insert>
 
-  <update id="updateLastRunInfo">
+  <update id="updateLastRunInfo" parameterType="com.curtisnewbie.module.task.dao.TaskEntity">
     update task
     set
     last_run_start_time = #{lastRunStartTime},
@@ -22,16 +22,17 @@
     last_run_by = #{lastRunBy}
     where id = #{id}
   </update>
-  <update id="updateEnabled">
-    update task
-    set enabled = #{enabled}
-    where id = #{id}
-  </update>
 
   <update id="updateEnabledAndResult">
     update task
-    set enabled = #{enabled},
-    last_run_result = #{result}
+    <set>
+      enabled = #{enabled},
+      <if test="lastRunResult != null">
+        last_run_result = #{lastRunResult},
+      </if>
+      update_by = #{updateBy},
+      update_date = #{updateDate}
+    </set>
     where id = #{id}
   </update>
 
@@ -54,11 +55,26 @@
         enabled = #{enabled},
       </if>
       <if test="concurrentEnabled != null">
-        concurrent_enabled = #{concurrentEnabled}
+        concurrent_enabled = #{concurrentEnabled},
       </if>
+      <choose>
+        <when test="updateDate == null">
+          update_date = NOW(),
+        </when>
+        <otherwise>
+          update_date = #{updateDate},
+        </otherwise>
+      </choose>
+      update_by = #{updateBy},
     </set>
     where id = #{id}
 
+  </update>
+
+  <update id="updateUpdateBy">
+    update task
+    set update_by = #{updateBy}
+    where id = #{id}
   </update>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer"

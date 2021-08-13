@@ -35,7 +35,7 @@ public interface SchedulerService {
      * </p>
      * <p>
      * Job should only be executed by main node, so do not call this method just to trigger a job, please use {@link
-     * NodeCoordinationService#coordinateJobTriggering(TaskVo)}
+     * NodeCoordinationService#coordinateJobTriggering(TaskVo, String)}}
      * </p>
      * <p>
      * Execution of this job might be affected by {@code TaskEntity#concurrentEnabled}, if it can't be executed
