@@ -4,7 +4,6 @@ import com.curtisnewbie.module.task.scheduling.JobDelegate;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
 import com.curtisnewbie.module.task.service.SchedulerService;
-import com.curtisnewbie.module.task.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
@@ -19,9 +18,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class TemporaryJobPostExecuteListener implements JobPostExecuteListener {
-
-    @Autowired
-    private TaskService taskService;
 
     @Autowired
     private SchedulerService schedulerService;

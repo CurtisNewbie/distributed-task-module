@@ -1,5 +1,6 @@
 package com.curtisnewbie.module.task.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.quartz.SchedulerFactoryBeanCustomizer;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
  * @author yongjie.zhuang
  * @see ManagedBeanJobFactory
  */
+@Slf4j
 @Configuration
 public class SchedulerFactoryBeanConfig implements SchedulerFactoryBeanCustomizer {
 
@@ -23,5 +25,6 @@ public class SchedulerFactoryBeanConfig implements SchedulerFactoryBeanCustomize
     @Override
     public void customize(SchedulerFactoryBean schedulerFactoryBean) {
         schedulerFactoryBean.setJobFactory(managedBeanJobFactory);
+        log.info("Configured JobFactory to use: {}", managedBeanJobFactory.getClass());
     }
 }

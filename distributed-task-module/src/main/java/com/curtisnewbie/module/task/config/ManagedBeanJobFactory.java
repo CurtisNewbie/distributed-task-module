@@ -3,8 +3,6 @@ package com.curtisnewbie.module.task.config;
 import com.curtisnewbie.module.task.exceptions.JobBeanNotFoundException;
 import com.curtisnewbie.module.task.scheduling.JobDelegate;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
-import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
-import com.curtisnewbie.module.task.scheduling.listeners.JobPreExecuteListener;
 import com.curtisnewbie.module.task.vo.TaskVo;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -16,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -36,10 +33,7 @@ public class ManagedBeanJobFactory implements JobFactory {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private List<JobPostExecuteListener> jobPostExecuteListenerList;
-
-    @Autowired
-    private List<JobPreExecuteListener> jobPreExecuteListenerList;
+    private JobListenerRegistrar jobListenerRegistrar;
 
     @Override
     public Job newJob(TriggerFiredBundle triggerFiredBundle, Scheduler scheduler) throws SchedulerException {
@@ -58,16 +52,9 @@ public class ManagedBeanJobFactory implements JobFactory {
         // create a delegate of the job to better handle it's lifecycle
         JobDelegate jobDelegate = new JobDelegate(job, jd);
         // register listeners
-        registerListener(jobDelegate);
+        jobListenerRegistrar.registerListener(jobDelegate);
         return jobDelegate;
     }
 
-    private void registerListener(JobDelegate jobDelegate) {
-        for (JobPreExecuteListener listener : jobPreExecuteListenerList)
-            jobDelegate.onPreExecute(listener);
 
-        for (JobPostExecuteListener listener : jobPostExecuteListenerList) {
-            jobDelegate.onPostExecute(listener);
-        }
-    }
 }
