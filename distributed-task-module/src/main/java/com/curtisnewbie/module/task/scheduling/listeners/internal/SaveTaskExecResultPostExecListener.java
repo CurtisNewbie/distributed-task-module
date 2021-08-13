@@ -35,6 +35,6 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
         utv.setLastRunResult(result);
         utv.setLastRunStartTime(ctx.getStartTime());
         utv.setLastRunEndTime(ctx.getEndTime());
-        taskService.updateLastRunInfo(tv);
+        taskService.updateLastRunInfo(utv);
     }
 }
