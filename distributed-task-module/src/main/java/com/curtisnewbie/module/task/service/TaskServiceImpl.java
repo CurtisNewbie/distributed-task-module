@@ -9,6 +9,7 @@ import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.dao.TaskMapper;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.vo.ListTaskByPageReqVo;
+import com.curtisnewbie.module.task.vo.ListTaskByPageRespVo;
 import com.curtisnewbie.module.task.vo.TaskVo;
 import com.curtisnewbie.module.task.vo.UpdateTaskReqVo;
 import com.github.pagehelper.PageHelper;
@@ -59,7 +60,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public PageInfo<TaskVo> listByPage(ListTaskByPageReqVo param, PagingVo pagingVo) {
+    public PageInfo<ListTaskByPageRespVo> listByPage(ListTaskByPageReqVo param, PagingVo pagingVo) {
         Objects.requireNonNull(param, "TaskEntity shouldn't be null");
         Objects.requireNonNull(pagingVo, "Paging param shouldn't be null");
         Objects.requireNonNull(pagingVo.getPage(), "Paging param shouldn't be null");
@@ -67,7 +68,7 @@ public class TaskServiceImpl implements TaskService {
 
         PageHelper.startPage(pagingVo.getPage(), pagingVo.getLimit());
         PageInfo<TaskEntity> tp = PageInfo.of(taskMapper.selectBy(BeanCopyUtils.toType(param, TaskEntity.class)));
-        return BeanCopyUtils.toPageList(tp, TaskVo.class);
+        return BeanCopyUtils.toPageList(tp, ListTaskByPageRespVo.class);
     }
 
     @Override
