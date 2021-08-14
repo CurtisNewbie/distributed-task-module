@@ -17,8 +17,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.curtisnewbie.module.task.scheduling.JobUtils.getIdFromJobKey;
 import static com.curtisnewbie.module.task.scheduling.JobUtils.getNameFromJobKey;
@@ -38,6 +40,8 @@ public class MainNodeThread implements Runnable {
     private static final int THREAD_SLEEP_INTERVAL = 500;
     private static final String APP_GROUP_PROP_KEY = "distributed-task-module.application-group";
     private static final String DEFAULT_APP_GROUP = "default";
+    private final AtomicBoolean isShutdown = new AtomicBoolean(false);
+    private Thread backgroundThread;
 
     @Value("${" + APP_GROUP_PROP_KEY + ":" + DEFAULT_APP_GROUP + "}")
     private String appGroup;
@@ -51,11 +55,21 @@ public class MainNodeThread implements Runnable {
     @Autowired
     private NodeCoordinationService nodeCoordinationService;
 
+    @PreDestroy
+    void shutdownBackgroundThread() {
+        isShutdown.set(true);
+        if (backgroundThread.isAlive()) {
+            log.info("Application shutting down, interrupting main node daemon thread");
+            backgroundThread.interrupt();
+        }
+    }
+
     @PostConstruct
     void startMainNodeThread() {
-        Thread bg = new Thread(this);
-        bg.setDaemon(true);
-        bg.start();
+        // background thread
+        backgroundThread = new Thread(this);
+        backgroundThread.setDaemon(true);
+        backgroundThread.start();
         log.info("Started main node daemon thread for distributed task scheduling");
     }
 
@@ -63,6 +77,11 @@ public class MainNodeThread implements Runnable {
     public void run() {
         while (true) {
             try {
+                if (isShutdown.get()) {
+                    log.info("Application shutting down, terminate thread");
+                    return;
+                }
+
                 // try to obtain lock
                 boolean isMain = nodeCoordinationService.tryToBecomeMainNode();
                 log.debug("Try to become main node, is main node? {}", isMain);
@@ -84,8 +103,9 @@ public class MainNodeThread implements Runnable {
 
                 Thread.sleep(THREAD_SLEEP_INTERVAL);
             } catch (InterruptedException e) {
-                // never stop
-                Thread.currentThread().interrupt();
+                // never stop unless the application is shutting down
+                if (!isShutdown.get())
+                    Thread.currentThread().interrupt();
             }
         }
     }
