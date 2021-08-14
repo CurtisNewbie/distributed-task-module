@@ -104,8 +104,7 @@ public final class JobUtils {
 
     /** See if the job detail has changed */
     public static boolean isJobDetailChanged(JobDetail oldJd, TaskVo tv) {
-        TaskJobDetailWrapper oldJdw = (TaskJobDetailWrapper) oldJd;
-        TaskVo oldTe = oldJdw.getTaskVo();
+        TaskVo oldTe = getTask(oldJd);
         if (!Objects.equals(oldTe.getEnabled(), tv.getEnabled()))
             return true;
         if (!Objects.equals(oldTe.getJobName(), tv.getJobName()))
@@ -122,23 +121,29 @@ public final class JobUtils {
     /**
      * Get {@link TaskEntity} from JobDetail's jobDataMap
      */
-    public static TaskVo getTaskFromJobDataMap(JobDetail jobDetail) {
+    public static TaskVo getTask(JobDetail jobDetail) {
         return (TaskVo) jobDetail.getJobDataMap().get(TaskJobDetailWrapper.JOB_DATA_MAP_TASK_ENTITY);
+    }
+
+    /**
+     * Set {@link TaskEntity} to JobDetail's jobDataMap
+     */
+    public static void setTask(JobDetail jd, TaskVo taskVo) {
+        jd.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_TASK_ENTITY, taskVo);
     }
 
     /**
      * Create a temporary version of the given job
      * <br><br>
-     * It's by modifying 'group' in {@link JobKey}, so it doesn't contradict to the original job, while at the same
-     * time preserve the ability to retrieve it's id by {@link #getIdFromJobKey(JobKey)}
+     * It's by modifying 'group' in {@link JobKey}, so it doesn't contradict to the original job, while at the same time
+     * preserve the ability to retrieve it's id by {@link #getIdFromJobKey(JobKey)}
      */
-    public static JobDetail createTempJob(JobDetail jobDetail) {
-        TaskJobDetailWrapper oldTjw = (TaskJobDetailWrapper) jobDetail;
+    public static JobDetail createTempJob(JobDetail oldJobDetail) {
 
-        if (isTempJob(oldTjw))
+        if (isTempJob(oldJobDetail))
             throw new IllegalArgumentException("This job is already a temporary job, can't create tempJob from it");
 
-        TaskVo taskVo = oldTjw.getTaskVo();
+        TaskVo taskVo = getTask(oldJobDetail);
         taskVo.setAppGroup("temporary");
         TaskJobDetailWrapper ntjw = new TaskJobDetailWrapper(taskVo);
         setIsTempJob(ntjw);
@@ -149,8 +154,7 @@ public final class JobUtils {
      * Check if the job is a temporary job
      */
     public static boolean isTempJob(JobDetail jobDetail) {
-        TaskJobDetailWrapper tjw = (TaskJobDetailWrapper) jobDetail;
-        Object b = tjw.getJobDataMap().get(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TEMPORARY);
+        Object b = jobDetail.getJobDataMap().get(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TEMPORARY);
         return b != null && Boolean.valueOf(b.toString());
     }
 
@@ -158,7 +162,6 @@ public final class JobUtils {
      * Mark the job as a temporary job
      */
     public static void setIsTempJob(JobDetail jobDetail) {
-        TaskJobDetailWrapper tjw = (TaskJobDetailWrapper) jobDetail;
-        tjw.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TEMPORARY, "true");
+        jobDetail.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TEMPORARY, "true");
     }
 }

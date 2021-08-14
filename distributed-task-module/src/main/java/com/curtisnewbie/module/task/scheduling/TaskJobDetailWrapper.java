@@ -41,7 +41,7 @@ public class TaskJobDetailWrapper implements JobDetail {
         TaskConcurrentEnabled tce = EnumUtils.parse(t.getConcurrentEnabled(), TaskConcurrentEnabled.class);
         Objects.requireNonNull(tce, "task's field 'concurrent_enabled' value illegal, unable to parse it");
         this.concurrentEnabled = tce.equals(TaskConcurrentEnabled.ENABLED);
-        jobDataMap.put(JOB_DATA_MAP_TASK_ENTITY, tv);
+        JobUtils.setTask(this, t);
     }
 
     public TaskJobDetailWrapper(TaskJobDetailWrapper w) {
@@ -101,9 +101,5 @@ public class TaskJobDetailWrapper implements JobDetail {
     @Override
     public JobBuilder getJobBuilder() {
         throw new UnsupportedOperationException();
-    }
-
-    public TaskVo getTaskVo() {
-        return tv;
     }
 }

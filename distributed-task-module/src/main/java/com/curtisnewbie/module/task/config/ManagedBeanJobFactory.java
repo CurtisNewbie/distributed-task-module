@@ -39,7 +39,7 @@ public class ManagedBeanJobFactory implements JobFactory {
     public Job newJob(TriggerFiredBundle triggerFiredBundle, Scheduler scheduler) throws SchedulerException {
         JobDetail jd = triggerFiredBundle.getJobDetail();
 
-        TaskVo tv = JobUtils.getTaskFromJobDataMap(jd);
+        TaskVo tv = JobUtils.getTask(jd);
         Objects.requireNonNull(tv, "Task not found in jodDataMap");
 
         String beanName = tv.getTargetBean();
