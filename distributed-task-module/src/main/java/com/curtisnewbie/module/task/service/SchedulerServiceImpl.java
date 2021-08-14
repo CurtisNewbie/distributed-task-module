@@ -62,11 +62,6 @@ public class SchedulerServiceImpl implements SchedulerService {
     }
 
     @Override
-    public void replaceJobDetail(JobDetail jobDetail) throws SchedulerException {
-        scheduler().addJob(jobDetail, true);
-    }
-
-    @Override
     public Optional<JobDetail> getJob(JobKey jobKey) throws SchedulerException {
         return Optional.ofNullable(scheduler().getJobDetail(jobKey));
     }
