@@ -4,12 +4,12 @@ import lombok.Data;
 import org.quartz.JobKey;
 
 /**
- * Serializable jobKey
+ * JobKey for manually triggered jobs
  *
  * @author yongjie.zhuang
  */
 @Data
-public class SerializableJobKey {
+public class TriggeredJobKey {
 
     private String name;
 
@@ -21,8 +21,8 @@ public class SerializableJobKey {
         return new JobKey(name, group);
     }
 
-    public static SerializableJobKey fromJobKey(JobKey jobKey) {
-        SerializableJobKey sjk = new SerializableJobKey();
+    public static TriggeredJobKey fromJobKey(JobKey jobKey) {
+        TriggeredJobKey sjk = new TriggeredJobKey();
         sjk.setName(jobKey.getName());
         sjk.setGroup(jobKey.getGroup());
         return sjk;
