@@ -36,6 +36,6 @@ public interface NodeCoordinationService {
      *
      * @return true if current node is now the main node else false
      */
-    boolean tryToBecomeMainNode() throws InterruptedException;
+    boolean tryToBecomeMainNode();
 
 }

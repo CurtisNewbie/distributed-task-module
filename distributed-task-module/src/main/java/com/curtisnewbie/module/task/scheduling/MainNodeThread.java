@@ -106,6 +106,8 @@ public class MainNodeThread implements Runnable {
                 // never stop unless the application is shutting down
                 if (!isShutdown.get())
                     Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                log.error("Main node daemon thread has stopped due to exception, distributed task scheduling will no longer works", e);
             }
         }
     }

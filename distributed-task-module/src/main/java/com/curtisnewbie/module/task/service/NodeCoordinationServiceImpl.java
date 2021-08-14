@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
+    private static final String UUID = java.util.UUID.randomUUID().toString();
     private static final String APP_GROUP_PROP_KEY = "distributed-task-module.application-group";
     private static final String DEFAULT_APP_GROUP = "default";
     private static final long DEFAULT_TTL = 1;
@@ -38,7 +39,8 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
             log.info("You are using default value for app/scheduling group, consider changing it for you cluster " +
                     "by setting '{}=yourClusterName'", APP_GROUP_PROP_KEY);
         }
-        log.info("Distributed task scheduling for scheduling group: {}, main_node_lock_key: {}", appGroup, getMainNodeLockKey());
+        log.info("Distributed task scheduling for scheduling group: {}, main_node_lock_key: {}, identifier: {}",
+                appGroup, getMainNodeLockKey(), UUID);
     }
 
     @Override
@@ -54,8 +56,25 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     }
 
     @Override
-    public boolean tryToBecomeMainNode() throws InterruptedException {
-        return redisController.tryLock(getMainNodeLockKey(), 0, DEFAULT_TTL, DEFAULT_TIME_UNIT);
+    public boolean tryToBecomeMainNode() {
+        if (hasMainLock()) {
+            // we are still the main node, refresh the expiration
+            redisController.expire(getMainNodeLockKey(), DEFAULT_TTL, DEFAULT_TIME_UNIT);
+            // pessimistic lock, just in case if the key expires before we attempt to refresh it
+            return hasMainLock();
+        }
+        return tryMainLock();
+    }
+
+    private boolean hasMainLock() {
+        String id = redisController.get(getMainNodeLockKey());
+        if (Objects.equals(id, UUID))
+            return true;
+        return false;
+    }
+
+    private boolean tryMainLock() {
+        return redisController.setIfNotExists(getMainNodeLockKey(), UUID, DEFAULT_TTL, DEFAULT_TIME_UNIT);
     }
 
     /**
