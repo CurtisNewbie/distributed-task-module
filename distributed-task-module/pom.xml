@@ -2,12 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>2.5.3</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
+
   <groupId>com.curtisnewbie</groupId>
   <artifactId>distributed-task-module</artifactId>
   <version>1.0.0</version>
@@ -37,33 +39,24 @@
     <dependency>
       <groupId>com.curtisnewbie</groupId>
       <artifactId>redis-util-module</artifactId>
-      <version>1.0.0</version>
     </dependency>
-
-<!--    <dependency>-->
-<!--      <groupId>com.curtisnewbie</groupId>-->
-<!--      <artifactId>service-module</artifactId>-->
-<!--      <version>0.0.1</version>-->
-<!--    </dependency>-->
 
     <dependency>
       <groupId>com.curtisnewbie</groupId>
       <artifactId>common-module</artifactId>
-      <version>1.0.0</version>
     </dependency>
 
     <dependency>
       <groupId>org.mybatis.spring.boot</groupId>
       <artifactId>mybatis-spring-boot-starter</artifactId>
-      <version>1.2.1</version>
     </dependency>
 
     <!--     https://github.com/CurtisNewbie/comment-generator-->
-<!--    <dependency>-->
-<!--      <groupId>com.curtisnewbie</groupId>-->
-<!--      <artifactId>comment-generator</artifactId>-->
-<!--      <version>1.0-SNAPSHOT</version>-->
-<!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>com.curtisnewbie</groupId>-->
+    <!--      <artifactId>comment-generator</artifactId>-->
+    <!--      <version>1.0-SNAPSHOT</version>-->
+    <!--    </dependency>-->
   </dependencies>
 
   <build>
@@ -96,22 +89,35 @@
         </executions>
       </plugin>
 
-<!--      <plugin>-->
-<!--        <groupId>org.mybatis.generator</groupId>-->
-<!--        <artifactId>mybatis-generator-maven-plugin</artifactId>-->
-<!--        <version>1.4.0</version>-->
-<!--        <dependencies>-->
-<!--          <dependency>-->
-<!--            <groupId>com.curtisnewbie</groupId>-->
-<!--            <artifactId>comment-generator</artifactId>-->
-<!--            <version>1.0-SNAPSHOT</version>-->
-<!--          </dependency>-->
-<!--        </dependencies>-->
-<!--        <configuration>-->
-<!--          <configurationFile>generatorConfig.xml</configurationFile>-->
-<!--        </configuration>-->
-<!--      </plugin>-->
+      <!--      <plugin>-->
+      <!--        <groupId>org.mybatis.generator</groupId>-->
+      <!--        <artifactId>mybatis-generator-maven-plugin</artifactId>-->
+      <!--        <version>1.4.0</version>-->
+      <!--        <dependencies>-->
+      <!--          <dependency>-->
+      <!--            <groupId>com.curtisnewbie</groupId>-->
+      <!--            <artifactId>comment-generator</artifactId>-->
+      <!--            <version>1.0-SNAPSHOT</version>-->
+      <!--          </dependency>-->
+      <!--        </dependencies>-->
+      <!--        <configuration>-->
+      <!--          <configurationFile>generatorConfig.xml</configurationFile>-->
+      <!--        </configuration>-->
+      <!--      </plugin>-->
     </plugins>
   </build>
+
+  <dependencyManagement>
+    <!-- https://github.com/CurtisNewbie/curtisnewbie-bom/tree/main/microservice -->
+    <dependencies>
+      <dependency>
+        <groupId>com.curtisnewbie</groupId>
+        <artifactId>curtisnewbie-bom</artifactId>
+        <version>micro-0.0.1</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
 </project>
