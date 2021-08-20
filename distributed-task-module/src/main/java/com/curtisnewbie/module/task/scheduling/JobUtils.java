@@ -7,6 +7,7 @@ import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -95,11 +96,7 @@ public final class JobUtils {
     public static String getNameFromJobKey(JobKey jobKey) {
         String name = jobKey.getName();
         String[] sp = name.split("-");
-        StringBuilder sb = new StringBuilder();
-        for (int i = 1; i < sp.length; i++) {
-            sb.append(sp[i]);
-        }
-        return sb.toString();
+        return String.join("-", Arrays.copyOfRange(sp, 1, sp.length));
     }
 
     /** See if the job detail has changed */
