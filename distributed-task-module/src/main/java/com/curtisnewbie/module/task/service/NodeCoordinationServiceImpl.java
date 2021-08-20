@@ -1,6 +1,7 @@
 package com.curtisnewbie.module.task.service;
 
 import com.curtisnewbie.module.redisutil.RedisController;
+import com.curtisnewbie.module.task.config.TaskProperties;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.TriggeredJobKey;
 import com.curtisnewbie.module.task.vo.TaskVo;
@@ -22,25 +23,26 @@ import java.util.concurrent.TimeUnit;
 public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
     private static final String UUID = java.util.UUID.randomUUID().toString();
-    private static final String APP_GROUP_PROP_KEY = "distributed-task-module.application-group";
-    private static final String DEFAULT_APP_GROUP = "default";
     private static final long DEFAULT_TTL = 1;
     private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MINUTES;
 
     @Autowired
     private RedisController redisController;
 
-    @Value("${" + APP_GROUP_PROP_KEY + ":" + DEFAULT_APP_GROUP + "}")
-    private String appGroup;
+    @Autowired
+    private TaskProperties taskProperties;
 
     @PostConstruct
     void postConstruct() {
-        if (Objects.equals(appGroup, DEFAULT_APP_GROUP)) {
+        if (!taskProperties.isEnabled())
+            return;
+
+        if (Objects.equals(taskProperties.getAppGroup(), TaskProperties.DEFAULT_APP_GROUP)) {
             log.info("You are using default value for app/scheduling group, consider changing it for you cluster " +
-                    "by setting '{}=yourClusterName'", APP_GROUP_PROP_KEY);
+                    "by setting '{}=yourClusterName'", TaskProperties.APP_GROUP_PROP_KEY);
         }
         log.info("Distributed task scheduling for scheduling group: {}, main_node_lock_key: {}, identifier: {}",
-                appGroup, getMainNodeLockKey(), UUID);
+                taskProperties.getAppGroup(), getMainNodeLockKey(), UUID);
     }
 
     @Override
@@ -83,7 +85,7 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
      * Applications are grouped (in different clusters), we only try to become main node of our cluster
      */
     private String getMainNodeLockKey() {
-        return "task:master:group:" + appGroup;
+        return "task:master:group:" + taskProperties.getAppGroup();
     }
 
     /**
@@ -92,7 +94,7 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
      * Applications are grouped (different clusters), each group has a queue for these triggered job
      */
     private String getTriggeredJobListKey() {
-        return "task:trigger:group:" + appGroup;
+        return "task:trigger:group:" + taskProperties.getAppGroup();
     }
 
 }

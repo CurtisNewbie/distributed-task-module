@@ -1,6 +1,7 @@
 package com.curtisnewbie.module.task.scheduling;
 
 import com.curtisnewbie.common.util.EnumUtils;
+import com.curtisnewbie.module.task.config.TaskProperties;
 import com.curtisnewbie.module.task.constants.NamingConstants;
 import com.curtisnewbie.module.task.constants.TaskEnabled;
 import com.curtisnewbie.module.task.service.NodeCoordinationService;
@@ -38,13 +39,11 @@ import static com.curtisnewbie.module.task.scheduling.JobUtils.getNameFromJobKey
 public class MainNodeThread implements Runnable {
 
     private static final int THREAD_SLEEP_INTERVAL = 500;
-    private static final String APP_GROUP_PROP_KEY = "distributed-task-module.application-group";
-    private static final String DEFAULT_APP_GROUP = "default";
     private final AtomicBoolean isShutdown = new AtomicBoolean(false);
     private Thread backgroundThread;
 
-    @Value("${" + APP_GROUP_PROP_KEY + ":" + DEFAULT_APP_GROUP + "}")
-    private String appGroup;
+    @Autowired
+    private TaskProperties taskProperties;
 
     @Autowired
     private SchedulerService schedulerService;
@@ -55,22 +54,34 @@ public class MainNodeThread implements Runnable {
     @Autowired
     private NodeCoordinationService nodeCoordinationService;
 
+    MainNodeThread() {
+    }
+
     @PreDestroy
     void shutdownBackgroundThread() {
+        if (!taskProperties.isEnabled())
+            return;
+
+        log.info("Application shutting down, interrupting main node daemon thread");
         isShutdown.set(true);
-        if (backgroundThread.isAlive()) {
-            log.info("Application shutting down, interrupting main node daemon thread");
+        if (backgroundThread != null && backgroundThread.isAlive()) {
             backgroundThread.interrupt();
         }
     }
 
     @PostConstruct
     void startMainNodeThread() {
+        if (!taskProperties.isEnabled()) {
+            log.info("Current node has disabled distributed task scheduling, it will not attempt to become the main node");
+            return;
+        }
+
         // background thread
         backgroundThread = new Thread(this);
         backgroundThread.setDaemon(true);
         backgroundThread.start();
-        log.info("Started main node daemon thread for distributed task scheduling");
+        log.info("Started main node daemon thread for distributed task scheduling, you can disable it by setting '{}=false'",
+                TaskProperties.IS_ENABLED_PROP_KEY);
     }
 
     @Override
@@ -132,7 +143,7 @@ public class MainNodeThread implements Runnable {
         for (TaskVo tv : tasks) {
 
             // only when the group matches, this job shall be added
-            if (!Objects.equals(tv.getAppGroup(), appGroup))
+            if (!Objects.equals(tv.getAppGroup(), taskProperties.getAppGroup()))
                 continue;
 
             Optional<JobDetail> optionalJobDetail = schedulerService.getJob(JobUtils.getJobKey(tv));
