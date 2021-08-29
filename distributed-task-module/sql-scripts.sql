@@ -11,7 +11,7 @@ CREATE TABLE task (
     last_run_result VARCHAR(255) COMMENT "result of last execution",
     enabled INT NOT NULL DEFAULT 0 COMMENT "whether the task is enabled: 0-disabled, 1-enabled",
     concurrent_enabled INT NULL DEFAULT 0 COMMENT "whether the task can be executed concurrently: 0-disabled, 1-enabled",
-    update_date TIMESTAMP NOT NULL COMMENT 'update time',
-    update_by VARCHAR(255) COMMENT 'updated by',
+    update_date TIMESTAMP COMMENT 'update time',
+    update_by VARCHAR(255) COMMENT 'updated by'
 ) ENGINE=InnoDB COMMENT "task";
 
