@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
     private static final String UUID = java.util.UUID.randomUUID().toString();
-    private static final long DEFAULT_TTL = 1;
-    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MINUTES;
+    private static final long DEFAULT_TTL = 15;
+    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.SECONDS;
 
     @Autowired
     private RedisController redisController;

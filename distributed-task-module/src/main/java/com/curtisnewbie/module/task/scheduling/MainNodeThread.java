@@ -21,6 +21,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.curtisnewbie.module.task.scheduling.JobUtils.getIdFromJobKey;
@@ -40,6 +42,7 @@ public class MainNodeThread implements Runnable {
 
     private static final int THREAD_SLEEP_INTERVAL = 500;
     private final AtomicBoolean isShutdown = new AtomicBoolean(false);
+    private ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
     private Thread backgroundThread;
 
     @Autowired
@@ -100,10 +103,19 @@ public class MainNodeThread implements Runnable {
                 // only the main node of its group can actually run the tasks
                 try {
                     if (isMain) {
-                        // refresh jobs, compare scheduled jobs with records in database
-                        refreshScheduledTasks();
-                        // trigger jobs that need to be executed immediately
-                        runTriggeredJobs();
+                        // making this part async is intentional, so that this thread doesn't block here
+                        // when the database is exceptionally slow, and we don't exceed our lock time because
+                        // of it
+                        singleThreadExecutor.execute(() -> {
+                            try {
+                                // refresh jobs, compare scheduled jobs with records in database
+                                refreshScheduledTasks();
+                                // trigger jobs that need to be executed immediately
+                                runTriggeredJobs();
+                            } catch (SchedulerException e) {
+                                log.error("Exception occurred while refreshing scheduled tasks from database", e);
+                            }
+                        });
                     } else {
                         // if it's no-longer a main node, simply clear the scheduler
                         cleanUpScheduledTasks();

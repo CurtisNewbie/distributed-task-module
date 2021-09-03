@@ -10,6 +10,8 @@ import com.curtisnewbie.module.task.vo.TaskVo;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -21,6 +23,8 @@ import java.util.Date;
  *
  * @author yongjie.zhuang
  */
+// in ascending order, right after TaskHistoryPostExecListener
+@Order(value = Ordered.HIGHEST_PRECEDENCE + 1)
 @Component
 @Slf4j
 public class TaskHistoryPostExecListener implements JobPostExecuteListener {
