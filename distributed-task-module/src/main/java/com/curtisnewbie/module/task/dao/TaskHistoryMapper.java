@@ -14,7 +14,7 @@ public interface TaskHistoryMapper {
     int insert(TaskHistoryEntity record);
 
     /**
-     * Select id, start_time, end_time, run_by, run_result, create_time
+     * Select id, start_time, end_time, run_by, run_result
      */
     List<TaskHistoryEntity> findList(TaskHistoryEntity param);
 }

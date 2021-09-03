@@ -5,6 +5,7 @@ import com.curtisnewbie.common.vo.PagingVo;
 import com.curtisnewbie.module.task.dao.TaskHistoryEntity;
 import com.curtisnewbie.module.task.dao.TaskHistoryMapper;
 import com.curtisnewbie.module.task.vo.ListTaskHistoryByPageReqVo;
+import com.curtisnewbie.module.task.vo.ListTaskHistoryByPageRespVo;
 import com.curtisnewbie.module.task.vo.TaskHistoryVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -30,14 +31,14 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
     }
 
     @Override
-    public PageInfo<TaskHistoryVo> findByPage(ListTaskHistoryByPageReqVo param) {
+    public PageInfo<ListTaskHistoryByPageRespVo> findByPage(ListTaskHistoryByPageReqVo param) {
         final PagingVo p = param.getPagingVo();
         Objects.requireNonNull(p);
         PageHelper.startPage(p.getPage(), p.getLimit());
         PageInfo<TaskHistoryEntity> pl = PageInfo.of(
                 mapper.findList(BeanCopyUtils.toType(param, TaskHistoryEntity.class))
         );
-        return BeanCopyUtils.toPageList(pl, TaskHistoryVo.class);
+        return BeanCopyUtils.toPageList(pl, ListTaskHistoryByPageRespVo.class);
     }
 
 }

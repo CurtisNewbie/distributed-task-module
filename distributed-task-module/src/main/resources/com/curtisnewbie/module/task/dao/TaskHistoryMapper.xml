@@ -13,7 +13,7 @@
   </insert>
 
   <select id="findList" resultType="com.curtisnewbie.module.task.dao.TaskHistoryEntity">
-    select id, task_id, start_time, end_time, run_by, run_result, create_time
+    select id, task_id, start_time, end_time, run_by, run_result
     from task_history
     <where>
       <if test="taskId != null">

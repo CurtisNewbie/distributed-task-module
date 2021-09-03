@@ -1,6 +1,7 @@
 package com.curtisnewbie.module.task.service;
 
 import com.curtisnewbie.module.task.vo.ListTaskHistoryByPageReqVo;
+import com.curtisnewbie.module.task.vo.ListTaskHistoryByPageRespVo;
 import com.curtisnewbie.module.task.vo.TaskHistoryVo;
 import com.github.pagehelper.PageInfo;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +24,6 @@ public interface TaskHistoryService {
     /**
      * Find task history in pages
      */
-    PageInfo<TaskHistoryVo> findByPage(@NotNull ListTaskHistoryByPageReqVo param);
+    PageInfo<ListTaskHistoryByPageRespVo> findByPage(@NotNull ListTaskHistoryByPageReqVo param);
 
 }
