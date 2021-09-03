@@ -3,6 +3,7 @@ package com.curtisnewbie.module.task.vo;
 import com.curtisnewbie.common.vo.PageableVo;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
@@ -11,6 +12,7 @@ import java.util.Date;
  *
  * @author yongjie.zhuang
  */
+@NoArgsConstructor
 @Data
 public class ListTaskHistoryByPageRespVo extends PageableVo {
     /** id */
