@@ -6,9 +6,10 @@
  * To use this module, make sure you properly configure your database and redis.
  * <p>
  * <br>
- * Then, all you have to do is to create your {@link org.quartz.Job} instances, and make them spring managed beans. And
- * configure your {@code task} table, set the {@code target_bean} field using the same name as the bean, as well as the
- * cron expression and 'group' property (which is the name of your cluster). It should work just fine.
+ * Then, all you have to do is to create your job instances by extending {@link com.curtisnewbie.module.task.scheduling.AbstractJob},
+ * and make them spring managed beans. And configure your {@code task} table, set the {@code target_bean} field using
+ * the same name as the bean, as well as the cron expression and 'group' property (which is the name of your cluster).
+ * It should work just fine.
  * </p>
  * <br>
  * <p>
@@ -17,8 +18,12 @@
  * <pre>
  * {@code
  * @Component
- * public class PhysicalDeletingFileJob implements Job {
- *      //...
+ * public class PhysicalDeletingFileJob extends AbstractJob {
+ *
+ *     @Override
+ *     protected void executeInternal(TaskVo task) throws JobExecutionException {
+ *          // write your logic here
+ *     }
  * }
  * }
  * </pre>
@@ -46,7 +51,7 @@
  * More on services:
  * <ul>
  * <li>
- * {@link com.curtisnewbie.module.task.service.TaskService} is merely a service for inserting/updating data in databse
+ * {@link com.curtisnewbie.module.task.service.TaskService} is merely a service for inserting/updating data in database
  * </li>
  * <li>
  * {@link com.curtisnewbie.module.task.service.NodeCoordinationService} is used to coordinate task scheduling
