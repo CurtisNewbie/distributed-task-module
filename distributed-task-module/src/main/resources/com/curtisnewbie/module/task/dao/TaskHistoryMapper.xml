@@ -12,12 +12,16 @@
     )
   </insert>
 
-  <select id="findList" resultType="com.curtisnewbie.module.task.dao.TaskHistoryEntity">
-    select id, task_id, start_time, end_time, run_by, run_result
+  <select id="findList" resultType="com.curtisnewbie.module.task.dao.TaskHistoryInfo">
+    select task_history.id, job_name, task_id, start_time, end_time, run_by, run_result
     from task_history
+    left join task on task_history.task_id = task.id
     <where>
       <if test="taskId != null">
         and task_id = #{taskId}
+      </if>
+      <if test="jobName != null and jobName != ''">
+        and job_name like "%"#{jobName}"%"
       </if>
       <if test="startTime != null">
         and start_time <![CDATA[ >= ]]> #{startTime}
@@ -26,7 +30,7 @@
         and end_time <![CDATA[ <= ]]> #{endTime}
       </if>
       <if test="runBy != null and runBy != ''">
-        and run_by like %#{runBy}%
+        and run_by like "%"#{runBy}"%"
       </if>
     </where>
     order by id desc

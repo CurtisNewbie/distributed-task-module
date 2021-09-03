@@ -1,6 +1,5 @@
-package com.curtisnewbie.module.task.vo;
+package com.curtisnewbie.module.task.dao;
 
-import com.curtisnewbie.common.vo.PageableVo;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,12 +10,14 @@ import java.util.Date;
  * @author yongjie.zhuang
  */
 @Data
-public class ListTaskHistoryByPageReqVo extends PageableVo {
+public class TaskHistoryInfo {
+    /** id */
+    private Integer id;
 
     /** task's id */
     private Integer taskId;
 
-    /** task' name */
+    /** job name */
     private String jobName;
 
     /** start time */
@@ -27,4 +28,10 @@ public class ListTaskHistoryByPageReqVo extends PageableVo {
 
     /** task triggered by */
     private String runBy;
+
+    /** result of last execution */
+    private String runResult;
+
+    /** create time */
+    private Date createTime;
 }

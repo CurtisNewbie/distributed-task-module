@@ -18,6 +18,9 @@ public class ListTaskHistoryByPageRespVo extends PageableVo {
     /** id */
     private Integer id;
 
+    /** job name */
+    private String jobName;
+
     /** task's id */
     private Integer taskId;
 
@@ -34,13 +37,14 @@ public class ListTaskHistoryByPageRespVo extends PageableVo {
     private String runResult;
 
     @Builder
-    public ListTaskHistoryByPageRespVo(Integer id, Integer taskId, Date startTime, Date endTime, String runBy, String runResult) {
+    public ListTaskHistoryByPageRespVo(Integer id, String jobName, Integer taskId, Date startTime, Date endTime, String runBy,
+                                       String runResult) {
         this.id = id;
+        this.jobName = jobName;
         this.taskId = taskId;
         this.startTime = startTime;
         this.endTime = endTime;
         this.runBy = runBy;
         this.runResult = runResult;
     }
-
 }
