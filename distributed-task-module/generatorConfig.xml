@@ -31,7 +31,7 @@
       <property name="enableSubPackages" value="true"/>
     </javaClientGenerator>
 
-    <table tableName="task" mapperName="TaskMapper" domainObjectName="TaskEntity">
+    <table tableName="task_history" mapperName="TaskHistoryMapper" domainObjectName="TaskHistoryEntity">
       <property name="enableSelectByExample" value="false"/>
       <property name="enableDeleteByExample" value="false"/>
       <property name="enableCountByExample" value="false"/>

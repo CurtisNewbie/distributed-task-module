@@ -1,7 +1,6 @@
 package com.curtisnewbie.module.task.scheduling.listeners;
 
 import com.curtisnewbie.module.task.scheduling.JobDelegate;
-import org.quartz.SchedulerException;
 
 /**
  * Listener of job's post-execute events
@@ -26,5 +25,5 @@ public interface JobPostExecuteListener {
     /**
      * After execution
      */
-    void postExecute(JobDelegate.JobExecContext context);
+    void postExecute(JobDelegate.DelegatedJobContext context);
 }

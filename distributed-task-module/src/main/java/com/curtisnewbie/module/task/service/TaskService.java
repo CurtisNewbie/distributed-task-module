@@ -1,11 +1,9 @@
 package com.curtisnewbie.module.task.service;
 
 import com.curtisnewbie.common.vo.PagingVo;
-import com.curtisnewbie.module.task.vo.ListTaskByPageReqVo;
-import com.curtisnewbie.module.task.vo.ListTaskByPageRespVo;
-import com.curtisnewbie.module.task.vo.TaskVo;
-import com.curtisnewbie.module.task.vo.UpdateTaskReqVo;
+import com.curtisnewbie.module.task.vo.*;
 import com.github.pagehelper.PageInfo;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
@@ -18,6 +16,7 @@ import java.util.List;
  *
  * @author yongjie.zhuang
  */
+@Validated
 public interface TaskService {
 
     /**

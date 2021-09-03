@@ -25,5 +25,5 @@ public interface JobPreExecuteListener {
     /**
      * After execution
      */
-    void preExecute(JobDelegate.JobExecContext context);
+    void preExecute(JobDelegate.DelegatedJobContext context);
 }

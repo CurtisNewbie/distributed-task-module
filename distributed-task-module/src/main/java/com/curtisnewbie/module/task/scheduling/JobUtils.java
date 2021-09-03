@@ -161,4 +161,13 @@ public final class JobUtils {
     public static void setIsTempJob(JobDetail jobDetail) {
         jobDetail.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TEMPORARY, "true");
     }
+
+    /**
+     * Convert result string
+     */
+    public static String convertResult(JobDelegate.DelegatedJobContext ctx) {
+        return ctx.getException() != null ?
+                "exception " + ctx.getException().getClass().getSimpleName() + " occurred"
+                : "success";
+    }
 }

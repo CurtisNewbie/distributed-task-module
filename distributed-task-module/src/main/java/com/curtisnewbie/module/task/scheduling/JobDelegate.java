@@ -26,7 +26,7 @@ public class JobDelegate implements Job, ListenableJob {
 
     private final List<JobPostExecuteListener> jobPostExecuteListenerList = new LinkedList<>();
     private final List<JobPreExecuteListener> jobPreExecuteListenerList = new LinkedList<>();
-    private JobExecContext ctx = new JobExecContext();
+    private DelegatedJobContext ctx = new DelegatedJobContext();
     private boolean isLocked = false;
 
     public JobDelegate(Job job, JobDetail jobDetail) {
@@ -34,8 +34,7 @@ public class JobDelegate implements Job, ListenableJob {
         ctx.job = job;
         ctx.jobDetail = jobDetail;
     }
-
-    @Override
+@Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         if (ctx.getJobDetail().isConcurrentExectionDisallowed()) {
             try {
@@ -125,7 +124,8 @@ public class JobDelegate implements Job, ListenableJob {
      */
     @Data
     @NoArgsConstructor
-    public static class JobExecContext {
+    public static class DelegatedJobContext {
+
         /** actual job that is executed */
         private Job job;
 
@@ -137,13 +137,14 @@ public class JobDelegate implements Job, ListenableJob {
 
         /** when the job ends */
         private Date endTime;
+
         /**
          * exception that may have occurred during the job execution, if not exception was thrown, it will be null
          */
         private Exception exception;
 
-        private JobExecContext copy() {
-            JobExecContext copy = new JobExecContext();
+        private DelegatedJobContext copy() {
+            DelegatedJobContext copy = new DelegatedJobContext();
             copy.job = job;
             copy.jobDetail = jobDetail;
             copy.startTime = startTime;

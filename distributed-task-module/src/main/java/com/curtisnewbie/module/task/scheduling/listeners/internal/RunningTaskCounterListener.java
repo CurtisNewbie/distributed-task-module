@@ -21,13 +21,13 @@ public class RunningTaskCounterListener implements JobPreExecuteListener, JobPos
     private AtomicInteger atomicInteger = new AtomicInteger(0);
 
     @Override
-    public void postExecute(JobDelegate.JobExecContext context) {
+    public void postExecute(JobDelegate.DelegatedJobContext context) {
         int c = atomicInteger.decrementAndGet();
         log.info("{} tasks running...", c);
     }
 
     @Override
-    public void preExecute(JobDelegate.JobExecContext context) {
+    public void preExecute(JobDelegate.DelegatedJobContext context) {
         int c = atomicInteger.incrementAndGet();
         log.info("{} tasks running...", c);
     }
