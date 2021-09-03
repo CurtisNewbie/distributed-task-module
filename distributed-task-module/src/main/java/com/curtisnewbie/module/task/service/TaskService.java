@@ -5,6 +5,7 @@ import com.curtisnewbie.module.task.vo.*;
 import com.github.pagehelper.PageInfo;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -27,12 +28,12 @@ public interface TaskService {
     /**
      * Update record by id
      */
-    void updateById(UpdateTaskReqVo reqVo);
+    void updateById(@NotNull UpdateTaskReqVo reqVo);
 
     /**
      * Select with pagination
      */
-    PageInfo<ListTaskByPageRespVo> listByPage(ListTaskByPageReqVo param, PagingVo pagingVo);
+    PageInfo<ListTaskByPageRespVo> listByPage(@NotNull ListTaskByPageReqVo param, @NotNull PagingVo pagingVo);
 
     /**
      * Select by id
@@ -42,7 +43,7 @@ public interface TaskService {
     /**
      * Update last run info
      */
-    void updateLastRunInfo(TaskVo tv);
+    void updateLastRunInfo(@NotNull TaskVo tv);
 
     /**
      * Check if a task exists by its id
@@ -56,7 +57,7 @@ public interface TaskService {
      * @param updateBy updated by
      * @param result   result (nullable)
      */
-    void setTaskDisabled(int taskId, String result, String updateBy);
+    void setTaskDisabled(int taskId, @NotNull String result, @NotNull String updateBy);
 
     /**
      * Update updateBy
@@ -64,5 +65,5 @@ public interface TaskService {
      * @param taskId
      * @param updateBy
      */
-    void updateUpdateBy(int taskId, String updateBy);
+    void updateUpdateBy(int taskId, @NotNull String updateBy);
 }

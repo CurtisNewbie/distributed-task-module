@@ -16,11 +16,11 @@ import java.util.List;
 @Component
 public class JobListenerRegistrar {
 
-    @Autowired
-    private List<JobPostExecuteListener> jobPostExecuteListenerList;
+    @Autowired(required = false)
+    private List<JobPostExecuteListener> postExecList;
 
-    @Autowired
-    private List<JobPreExecuteListener> jobPreExecuteListenerList;
+    @Autowired(required = false)
+    private List<JobPreExecuteListener> preExecList;
 
     /**
      * Register listeners
@@ -29,11 +29,13 @@ public class JobListenerRegistrar {
      */
     void registerListener(ListenableJob job) {
 
-        for (JobPreExecuteListener listener : jobPreExecuteListenerList)
-            job.onPreExecute(listener);
+        if (preExecList != null)
+            for (JobPreExecuteListener listener : preExecList)
+                job.onPreExecute(listener);
 
-        for (JobPostExecuteListener listener : jobPostExecuteListenerList) {
-            job.onPostExecute(listener);
-        }
+        if (postExecList != null)
+            for (JobPostExecuteListener listener : postExecList) {
+                job.onPostExecute(listener);
+            }
     }
 }

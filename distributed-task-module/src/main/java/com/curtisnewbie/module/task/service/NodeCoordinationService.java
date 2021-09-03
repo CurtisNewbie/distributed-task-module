@@ -2,7 +2,9 @@ package com.curtisnewbie.module.task.service;
 
 import com.curtisnewbie.module.task.scheduling.TriggeredJobKey;
 import com.curtisnewbie.module.task.vo.TaskVo;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -11,6 +13,7 @@ import java.util.List;
  * @author yongjie.zhuang
  * @see com.curtisnewbie.module.task.scheduling.MainNodeThread
  */
+@Validated
 public interface NodeCoordinationService {
 
     /**
@@ -22,7 +25,7 @@ public interface NodeCoordinationService {
      * @param triggerBy triggered by
      * @param tv        task
      */
-    void coordinateJobTriggering(TaskVo tv, String triggerBy);
+    void coordinateJobTriggering(@NotNull TaskVo tv, @NotNull String triggerBy);
 
     /**
      * Poll triggered jobs' jobKey

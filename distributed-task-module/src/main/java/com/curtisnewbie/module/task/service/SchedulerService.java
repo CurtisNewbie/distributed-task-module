@@ -6,7 +6,9 @@ import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.impl.matchers.GroupMatcher;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Optional;
@@ -26,6 +28,7 @@ import java.util.Set;
  *
  * @author yongjie.zhuang
  */
+@Validated
 public interface SchedulerService {
 
     /**
@@ -44,14 +47,14 @@ public interface SchedulerService {
      *
      * @param jobKey jobKey
      */
-    void triggerJob(JobKey jobKey) throws SchedulerException;
+    void triggerJob(@NotNull JobKey jobKey) throws SchedulerException;
 
     /**
      * Remove job
      *
      * @return whether this job is found and deleted
      */
-    boolean removeJob(JobKey jobKey) throws SchedulerException;
+    boolean removeJob(@NotNull JobKey jobKey) throws SchedulerException;
 
     /**
      * Add a job, but it's not scheduled
@@ -60,14 +63,14 @@ public interface SchedulerService {
      * @param replace replace
      * @throws SchedulerException
      */
-    void addUnscheduledJob(JobDetail jobDetail, boolean replace) throws SchedulerException;
+    void addUnscheduledJob(@NotNull JobDetail jobDetail, boolean replace) throws SchedulerException;
 
     /**
      * Schedule job
      *
      * @return next date scheduled
      */
-    Date scheduleJob(JobDetail jobDetail, Trigger trigger) throws SchedulerException;
+    Date scheduleJob(@NotNull JobDetail jobDetail, @NotNull Trigger trigger) throws SchedulerException;
 
     /**
      * Schedule job for the given task entity
@@ -77,7 +80,7 @@ public interface SchedulerService {
      * @throws SchedulerException
      * @throws ParseException     when the cron expression is invalid
      */
-    Date scheduleJob(TaskVo tv) throws SchedulerException, ParseException;
+    Date scheduleJob(@NotNull TaskVo tv) throws SchedulerException, ParseException;
 
     /**
      * Get job by jobKey
@@ -85,19 +88,19 @@ public interface SchedulerService {
      * @param jobKey jobKey
      * @return a copy of jobDetail (modifying it doesn't change the jobDetail in scheduler)
      */
-    Optional<JobDetail> getJob(JobKey jobKey) throws SchedulerException;
+    Optional<JobDetail> getJob(@NotNull JobKey jobKey) throws SchedulerException;
 
     /**
      * Get set of JobKey by group matcher
      */
-    Set<JobKey> getJobKeySet(GroupMatcher<JobKey> gm) throws SchedulerException;
+    Set<JobKey> getJobKeySet(@NotNull GroupMatcher<JobKey> gm) throws SchedulerException;
 
     /**
      * Create a trigger for the given task entity
      *
      * @throws ParseException when cron expression is illegal
      */
-    Trigger createTrigger(TaskVo tv) throws ParseException;
+    Trigger createTrigger(@NotNull TaskVo tv) throws ParseException;
 
     /**
      * Remove all jobs
