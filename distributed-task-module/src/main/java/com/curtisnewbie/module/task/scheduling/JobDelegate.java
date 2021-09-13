@@ -37,6 +37,7 @@ public class JobDelegate implements Job, ListenableJob {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
+        ctx.jobExecutionContext = context;
         final JobKey jk = context.getJobDetail().getKey();
         if (context.getJobDetail().isConcurrentExectionDisallowed()) {
             try {
