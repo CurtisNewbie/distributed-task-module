@@ -50,6 +50,7 @@ public class SchedulerServiceImpl implements SchedulerService {
                 .startNow()
                 .forJob(jobKey)
                 .usingJobData(JobUtils.RUN_ONCE_TRIGGER, Boolean.TRUE.toString())
+                .usingJobData(TaskJobDetailWrapper.JOB_DATA_MAP_RUN_BY, triggeredBy)
                 .build();
         scheduler.scheduleJob(runOnceTrigger);
     }

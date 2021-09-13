@@ -204,10 +204,6 @@ public class MainNodeThread implements Runnable {
             if (!jobOpt.isPresent())
                 continue;
 
-            // temporary jobs are not validated, they are deleted by themselves in listener
-            if (JobUtils.isTempJob(jobOpt.get()))
-                continue;
-
             if (!taskService.exists(getIdFromJobKey(jk))) {
                 log.info("Task_id'{}' not found in database, removing it from scheduler", JobUtils.getIdFromJobKey(jk));
                 schedulerService.removeJob(jk);
@@ -231,13 +227,7 @@ public class MainNodeThread implements Runnable {
             Optional<JobDetail> opt = schedulerService.getJob(jk);
             if (opt.isPresent()) {
                 log.info("Triggering job id: '{}'", id);
-
-                // create temporary job (not scheduled), and triggers them, once they are done, remove them in listener
-                JobDetail tempJob = JobUtils.createTempJob(opt.get());
-                JobUtils.setRunBy(tempJob, sjk.getTriggerBy());
-                // todo rewrite the triggering, we don't a temp job to achieve this
-                schedulerService.addUnscheduledJob(tempJob, true);
-                schedulerService.createRunOnceTrigger(tempJob.getKey(), sjk.getTriggerBy());
+                schedulerService.createRunOnceTrigger(jk, sjk.getTriggerBy());
             } else {
                 log.warn("Job id: '{}' not found, can't be triggered (only enabled job can be triggered)", id);
             }

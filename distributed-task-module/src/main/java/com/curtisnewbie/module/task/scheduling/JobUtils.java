@@ -116,39 +116,6 @@ public final class JobUtils {
     }
 
     /**
-     * Create a temporary version of the given job
-     * <br><br>
-     * It's by modifying 'group' in {@link JobKey}, so it doesn't contradict to the original job, while at the same time
-     * preserve the ability to retrieve it's id by {@link #getIdFromJobKey(JobKey)}
-     */
-    public static JobDetail createTempJob(JobDetail oldJobDetail) {
-
-        if (isTempJob(oldJobDetail))
-            throw new IllegalArgumentException("This job is already a temporary job, can't create tempJob from it");
-
-        TaskVo taskVo = getTask(oldJobDetail);
-        taskVo.setAppGroup("temporary");
-        TaskJobDetailWrapper ntjw = new TaskJobDetailWrapper(taskVo);
-        setIsTempJob(ntjw);
-        return ntjw;
-    }
-
-    /**
-     * Check if the job is a temporary job
-     */
-    public static boolean isTempJob(JobDetail jobDetail) {
-        Object b = jobDetail.getJobDataMap().get(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TEMPORARY);
-        return b != null && Boolean.valueOf(b.toString());
-    }
-
-    /**
-     * Mark the job as a temporary job
-     */
-    public static void setIsTempJob(JobDetail jobDetail) {
-        jobDetail.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TEMPORARY, "true");
-    }
-
-    /**
      * Convert result string
      */
     public static String convertResult(JobDelegate.DelegatedJobContext ctx) {
