@@ -14,7 +14,6 @@ import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -26,7 +25,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.curtisnewbie.module.task.scheduling.JobUtils.getIdFromJobKey;
-import static com.curtisnewbie.module.task.scheduling.JobUtils.getNameFromJobKey;
 
 /**
  * Thread for main node coordination
@@ -211,7 +209,7 @@ public class MainNodeThread implements Runnable {
                 continue;
 
             if (!taskService.exists(getIdFromJobKey(jk))) {
-                log.info("Task '{}' not found in database, removing it from scheduler", getNameFromJobKey(jk));
+                log.info("Task_id'{}' not found in database, removing it from scheduler", JobUtils.getIdFromJobKey(jk));
                 schedulerService.removeJob(jk);
             }
         }
@@ -229,19 +227,19 @@ public class MainNodeThread implements Runnable {
         for (TriggeredJobKey sjk : triggeredJobKeys) {
             JobKey jk = sjk.toJobKey();
             int id = JobUtils.getIdFromJobKey(jk);
-            String name = JobUtils.getNameFromJobKey(jk);
 
             Optional<JobDetail> opt = schedulerService.getJob(jk);
             if (opt.isPresent()) {
-                log.info("Triggering job id: '{}', name: '{}'", id, name);
+                log.info("Triggering job id: '{}'", id);
 
                 // create temporary job (not scheduled), and triggers them, once they are done, remove them in listener
                 JobDetail tempJob = JobUtils.createTempJob(opt.get());
                 JobUtils.setRunBy(tempJob, sjk.getTriggerBy());
+                // todo rewrite the triggering, we don't a temp job to achieve this
                 schedulerService.addUnscheduledJob(tempJob, true);
                 schedulerService.triggerJob(tempJob.getKey());
             } else {
-                log.warn("Job id: '{}', name: '{}' not found, can't be triggered (only enabled job can be triggered)", id, name);
+                log.warn("Job id: '{}' not found, can't be triggered (only enabled job can be triggered)", id);
             }
         }
     }

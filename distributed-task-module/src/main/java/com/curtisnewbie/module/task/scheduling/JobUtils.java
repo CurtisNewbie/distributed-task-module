@@ -79,7 +79,8 @@ public final class JobUtils {
      * Get {@link JobKey} from {@link TaskVo}
      */
     public static JobKey getJobKey(TaskVo te) {
-        return new JobKey(te.getId() + "-" + te.getJobName(), te.getAppGroup());
+        Objects.requireNonNull(te.getId());
+        return new JobKey(String.valueOf(te.getId()), te.getAppGroup());
     }
 
     /**
@@ -87,16 +88,8 @@ public final class JobUtils {
      */
     public static int getIdFromJobKey(JobKey jobKey) {
         String name = jobKey.getName();
-        return Integer.parseInt(name.split("-")[0]);
-    }
-
-    /**
-     * Get task.name from {@link JobKey}
-     */
-    public static String getNameFromJobKey(JobKey jobKey) {
-        String name = jobKey.getName();
-        String[] sp = name.split("-");
-        return String.join("-", Arrays.copyOfRange(sp, 1, sp.length));
+        Objects.requireNonNull(name);
+        return Integer.parseInt(name);
     }
 
     /** See if the job detail has changed */
