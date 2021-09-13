@@ -52,11 +52,11 @@ public final class JobUtils {
     /**
      * Get run by
      *
-     * @param jobDetail job detail
+     * @param mergedJobDataMap merged JobDataMap
      * @return runBy
      */
-    public static String getRunBy(JobDetail jobDetail) {
-        return jobDetail.getJobDataMap().getString(TaskJobDetailWrapper.JOB_DATA_MAP_RUN_BY);
+    public static String getRunBy(JobDataMap mergedJobDataMap) {
+        return mergedJobDataMap.getString(TaskJobDetailWrapper.JOB_DATA_MAP_RUN_BY);
     }
 
     /**

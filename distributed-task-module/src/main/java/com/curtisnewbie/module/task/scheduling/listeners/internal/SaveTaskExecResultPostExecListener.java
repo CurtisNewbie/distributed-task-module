@@ -37,7 +37,7 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
         TaskVo utv = new TaskVo();
         utv.setId(tv.getId());
 
-        String runBy = JobUtils.getRunBy(jd);
+        String runBy = JobUtils.getRunBy(ctx.getJobExecutionContext().getMergedJobDataMap());
         if (runBy == null) {
             runBy = NamingConstants.SCHEDULER;
             // by default, we consider the job is run by scheduler, unless the user triggers the job manually

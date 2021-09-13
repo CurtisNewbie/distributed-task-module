@@ -37,7 +37,7 @@ public class TaskHistoryPostExecListener implements JobPostExecuteListener {
         final String result = JobUtils.convertResult(ctx);
         final JobDetail jd = ctx.getJobExecutionContext().getJobDetail();
         final TaskVo tv = JobUtils.getTask(jd);
-        String runBy = JobUtils.getRunBy(jd);
+        String runBy = JobUtils.getRunBy(ctx.getJobExecutionContext().getMergedJobDataMap());
         if (runBy == null) {
             runBy = NamingConstants.SCHEDULER;
             // by default, we consider the job is run by scheduler, unless the user triggers the job manually
