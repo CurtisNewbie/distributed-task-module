@@ -34,7 +34,8 @@ public class JobDelegate implements Job, ListenableJob {
         ctx.job = job;
         ctx.jobDetail = jobDetail;
     }
-@Override
+
+    @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         if (ctx.getJobDetail().isConcurrentExectionDisallowed()) {
             try {
@@ -47,18 +48,20 @@ public class JobDelegate implements Job, ListenableJob {
         doPreExecute();
 
         log.info("Execute job: '{}'", ctx.jobDetail.getKey().getName());
-        ctx.startTime = new Date();
         try {
+            ctx.startTime = new Date();
+
             // execute delegated job
             this.ctx.job.execute(context);
+
+            ctx.endTime = new Date();
         } catch (Exception e) {
             // record if any exception occurred as well the time it starts or ends
             ctx.exception = e;
+        } finally {
+            if (isLocked)
+                releaseMutexLock(ctx.getJobDetail().getKey());
         }
-        ctx.endTime = new Date();
-
-        if (isLocked)
-            releaseMutexLock(ctx.getJobDetail().getKey());
 
         doPostExecute();
     }
