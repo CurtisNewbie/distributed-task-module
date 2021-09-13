@@ -77,7 +77,8 @@ public class SchedulerServiceImpl implements SchedulerService {
         factoryBean.setName(tv.getJobName());
         factoryBean.setStartTime(new Date());
         factoryBean.setCronExpression(tv.getCronExpr());
-        factoryBean.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
+        // todo specify this in taskVo ?
+        factoryBean.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_FIRE_ONCE_NOW);
         factoryBean.afterPropertiesSet();
         return factoryBean.getObject();
     }
