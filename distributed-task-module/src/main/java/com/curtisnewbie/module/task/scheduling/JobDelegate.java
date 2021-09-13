@@ -83,8 +83,8 @@ public class JobDelegate implements Job, ListenableJob {
         RedisController redisController = applicationContext.getBean(RedisController.class);
         Objects.requireNonNull(redisController);
 
-        // looping until it gets the lock, the lock is hold for an hour to make sure the task is executed exclusively
-        while (!redisController.tryLock(getConcurrentLockKey(key), 0, 60, TimeUnit.HOURS))
+        // loop until it gets the lock
+        while (!redisController.tryLock(getConcurrentLockKey(key)))
             ;
         isLocked = true;
     }
