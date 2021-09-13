@@ -200,11 +200,14 @@ public class MainNodeThread implements Runnable {
     }
 
     private void dropNonExistingJobs() throws SchedulerException {
-        GroupMatcher<JobKey> any = GroupMatcher.anyJobGroup();
-        Set<JobKey> jobKeySet = schedulerService.getJobKeySet(any);
+        Set<JobKey> jobKeySet = schedulerService.getJobKeySet(GroupMatcher.anyJobGroup());
         for (JobKey jk : jobKeySet) {
+            Optional<JobDetail> jobOpt = schedulerService.getJob(jk);
+            if (!jobOpt.isPresent())
+                continue;
+
             // temporary jobs are not validated, they are deleted by themselves in listener
-            if (JobUtils.isTempJob(schedulerService.getJob(jk).get()))
+            if (JobUtils.isTempJob(jobOpt.get()))
                 continue;
 
             if (!taskService.exists(getIdFromJobKey(jk))) {
