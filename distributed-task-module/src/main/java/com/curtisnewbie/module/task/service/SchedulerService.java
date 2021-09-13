@@ -1,13 +1,12 @@
 package com.curtisnewbie.module.task.service;
 
+import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.vo.TaskVo;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.util.Date;
@@ -34,7 +33,7 @@ public interface SchedulerService {
     /**
      * Trigger the job immediately
      * <p>
-     * Job must exists so that it can be triggered.
+     * Job must exist so that it can be triggered.
      * </p>
      * <p>
      * Job should only be executed by main node, so do not call this method just to trigger a job, please use {@link
@@ -42,12 +41,32 @@ public interface SchedulerService {
      * </p>
      * <p>
      * Execution of this job might be affected by {@code TaskEntity#concurrentEnabled}, if it can't be executed
-     * concurrently, this method will simply be blocked.
+     * concurrently, the job will simply be blocked.
      * </p>
      *
      * @param jobKey jobKey
      */
     void triggerJob(@NotNull JobKey jobKey) throws SchedulerException;
+
+    /**
+     * Create and register trigger without any predefined schedule
+     * <p>
+     * The job specified (for the JobKey) will be fired by the created trigger for only once, then this trigger will no
+     * longer fire since on schedule is associated with it, user of this method may want to remove this 'run-once'
+     * trigger once it's used.
+     * </p>
+     * <p>
+     * This kind of 'run-once' trigger can be identified using {@link JobUtils#isRunOnceTrigger(JobDataMap)}
+     * </p>
+     *
+     * @param jobKey jobKey
+     */
+    void createRunOnceTrigger(@NotNull JobKey jobKey, @NotEmpty String triggeredBy) throws SchedulerException;
+
+    /**
+     * Remove a trigger
+     */
+    void removeTrigger(TriggerKey triggerKey) throws SchedulerException;
 
     /**
      * Remove job
@@ -60,7 +79,7 @@ public interface SchedulerService {
      * Add a job, but it's not scheduled
      *
      * @param jobDetail jobDetail
-     * @param replace replace
+     * @param replace   replace
      * @throws SchedulerException
      */
     void addUnscheduledJob(@NotNull JobDetail jobDetail, boolean replace) throws SchedulerException;

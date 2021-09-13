@@ -4,6 +4,7 @@ import com.curtisnewbie.common.util.AppContextHolder;
 import com.curtisnewbie.module.redisutil.RedisController;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPreExecuteListener;
+import com.curtisnewbie.module.task.vo.TaskVo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,14 +33,14 @@ public class JobDelegate implements Job, ListenableJob {
     public JobDelegate(Job job, JobDetail jobDetail) {
         log.debug("Creating delegate for job '{}'", jobDetail.getKey().getName());
         ctx.job = job;
-        ctx.jobDetail = jobDetail;
     }
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        if (ctx.getJobDetail().isConcurrentExectionDisallowed()) {
+        final JobKey jk = context.getJobDetail().getKey();
+        if (context.getJobDetail().isConcurrentExectionDisallowed()) {
             try {
-                acquireMutexLock(ctx.getJobDetail().getKey());
+                acquireMutexLock(jk);
             } catch (InterruptedException e) {
                 throw new JobExecutionException(e);
             }
@@ -47,7 +48,8 @@ public class JobDelegate implements Job, ListenableJob {
 
         doPreExecute();
 
-        log.info("Execute job: '{}'", ctx.jobDetail.getKey().getName());
+        TaskVo task = JobUtils.getTask(context.getJobDetail());
+        log.info("Execute job: id: '{}', name: '{}'", task.getId(), task.getJobName());
         try {
             ctx.startTime = new Date();
 
@@ -60,7 +62,7 @@ public class JobDelegate implements Job, ListenableJob {
             ctx.exception = e;
         } finally {
             if (isLocked)
-                releaseMutexLock(ctx.getJobDetail().getKey());
+                releaseMutexLock(jk);
         }
 
         doPostExecute();
@@ -105,19 +107,11 @@ public class JobDelegate implements Job, ListenableJob {
 
 
     private void doPreExecute() {
-        log.debug("Invoking {} registered {} on '{}'",
-                jobPreExecuteListenerList.size(),
-                JobPreExecuteListener.class.getSimpleName(),
-                ctx.jobDetail.getKey().getName());
         for (JobPreExecuteListener jl : jobPreExecuteListenerList)
             jl.preExecute(ctx.copy());
     }
 
     private void doPostExecute() {
-        log.debug("Invoking {} registered {} on '{}'",
-                jobPostExecuteListenerList.size(),
-                JobPostExecuteListener.class.getSimpleName(),
-                ctx.jobDetail.getKey().getName());
         for (JobPostExecuteListener jl : jobPostExecuteListenerList)
             jl.postExecute(ctx.copy());
     }
@@ -132,8 +126,8 @@ public class JobDelegate implements Job, ListenableJob {
         /** actual job that is executed */
         private Job job;
 
-        /** job' detail */
-        private JobDetail jobDetail;
+        /** Execution context of the job */
+        private JobExecutionContext jobExecutionContext;
 
         /** when the job starts */
         private Date startTime;
@@ -149,7 +143,7 @@ public class JobDelegate implements Job, ListenableJob {
         private DelegatedJobContext copy() {
             DelegatedJobContext copy = new DelegatedJobContext();
             copy.job = job;
-            copy.jobDetail = jobDetail;
+            copy.jobExecutionContext = jobExecutionContext;
             copy.startTime = startTime;
             copy.endTime = endTime;
             copy.exception = exception;

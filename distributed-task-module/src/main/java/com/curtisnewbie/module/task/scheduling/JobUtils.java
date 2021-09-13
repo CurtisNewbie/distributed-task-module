@@ -2,12 +2,9 @@ package com.curtisnewbie.module.task.scheduling;
 
 import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.vo.TaskVo;
-import org.quartz.CronExpression;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
+import org.quartz.*;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -17,6 +14,9 @@ import java.util.Objects;
  * @see TaskJobDetailWrapper
  */
 public final class JobUtils {
+
+    /** Key to check if job is fired by a 'run-once' Trigger */
+    public static final String RUN_ONCE_TRIGGER = "run-once-trigger";
 
     private JobUtils() {
 
@@ -30,27 +30,20 @@ public final class JobUtils {
      */
     public static void setRunBy(JobDetail jobDetail, String runBy) {
         jobDetail.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_RUN_BY, runBy);
-        jobDetail.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TRIGGERED, "true");
     }
 
     /**
-     * Set job is triggered
-     *
-     * @param jobDetail job detail
+     * Mark the job as being fired by a 'run-once' Trigger
      */
-    @Deprecated
-    public static void setIsTriggered(JobDetail jobDetail) {
-        jobDetail.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TRIGGERED, "true");
+    public static void setIsRunOnceTrigger(JobDataMap m) {
+        m.put(RUN_ONCE_TRIGGER, "true");
     }
 
     /**
-     * Set job is triggered
-     *
-     * @param jobDetail job detail
+     * Check if the job is fired by a 'run-once' Trigger
      */
-    @Deprecated
-    public static boolean isJobTriggered(JobDetail jobDetail) {
-        Object o = jobDetail.getJobDataMap().get(TaskJobDetailWrapper.JOB_DATA_MAP_IS_TRIGGERED);
+    public static boolean isRunOnceTrigger(JobDataMap m) {
+        Object o = m.get(RUN_ONCE_TRIGGER);
         if (o == null)
             return false;
         return Boolean.valueOf(o.toString());

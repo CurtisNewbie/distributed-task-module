@@ -31,7 +31,7 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
 
         final String result = JobUtils.convertResult(ctx);
 
-        JobDetail jd = ctx.getJobDetail();
+        JobDetail jd = ctx.getJobExecutionContext().getJobDetail();
         TaskVo tv = JobUtils.getTask(jd);
 
         TaskVo utv = new TaskVo();

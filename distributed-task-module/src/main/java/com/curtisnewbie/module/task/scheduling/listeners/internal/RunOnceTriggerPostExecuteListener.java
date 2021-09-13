@@ -4,39 +4,39 @@ import com.curtisnewbie.module.task.scheduling.JobDelegate;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
 import com.curtisnewbie.module.task.service.SchedulerService;
-import com.curtisnewbie.module.task.vo.TaskVo;
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.JobDetail;
+import org.quartz.JobDataMap;
+import org.quartz.JobKey;
 import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Post execute listener for temporary jobs (jobs that are triggered)
+ * <p>
+ * PostExecuteListener for removing run-once trigger
+ * </p>
  *
  * @author yongjie.zhuang
+ * @see SchedulerService#createRunOnceTrigger(JobKey, String)
+ * @see JobUtils#isRunOnceTrigger(JobDataMap)
  */
-@Deprecated
 @Slf4j
-//@Component
-public class TemporaryJobPostExecuteListener implements JobPostExecuteListener {
+@Component
+public class RunOnceTriggerPostExecuteListener implements JobPostExecuteListener {
 
     @Autowired
     private SchedulerService schedulerService;
 
     @Override
     public void postExecute(JobDelegate.DelegatedJobContext context) {
-        JobDetail jd = context.getJobExecutionContext().getJobDetail();
-        final TaskVo tv = JobUtils.getTask(jd);
-        // this job is a temporary job without triggers (i.e., manually triggered), we just remove it
-        if (JobUtils.isTempJob(jd)) {
+        Trigger trigger = context.getJobExecutionContext().getTrigger();
+        if (JobUtils.isRunOnceTrigger(trigger.getJobDataMap())) {
             try {
-                schedulerService.removeJob(jd.getKey());
-                log.info("Removed one-time, manually triggered job, id: {}, job_name: {}", tv.getId(), tv.getJobName());
+                schedulerService.removeTrigger(trigger.getKey());
             } catch (SchedulerException e) {
-                log.warn("Unable to remove temporary job", e);
+                log.error("Unable to remove 'run-once' trigger", e);
             }
         }
-
     }
 }

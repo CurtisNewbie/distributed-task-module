@@ -237,7 +237,7 @@ public class MainNodeThread implements Runnable {
                 JobUtils.setRunBy(tempJob, sjk.getTriggerBy());
                 // todo rewrite the triggering, we don't a temp job to achieve this
                 schedulerService.addUnscheduledJob(tempJob, true);
-                schedulerService.triggerJob(tempJob.getKey());
+                schedulerService.createRunOnceTrigger(tempJob.getKey(), sjk.getTriggerBy());
             } else {
                 log.warn("Job id: '{}' not found, can't be triggered (only enabled job can be triggered)", id);
             }

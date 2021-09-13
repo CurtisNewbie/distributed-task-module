@@ -2,6 +2,7 @@ package com.curtisnewbie.module.task.service;
 
 import com.curtisnewbie.common.util.EnumUtils;
 import com.curtisnewbie.module.task.constants.TaskConcurrentEnabled;
+import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.TaskJobDetailWrapper;
 import com.curtisnewbie.module.task.vo.TaskVo;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,8 @@ import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Optional;
@@ -34,6 +37,26 @@ public class SchedulerServiceImpl implements SchedulerService {
             throw new SchedulerException("Job " + jobKey.getName() + " doesn't exist, can't be scheduled");
         }
         scheduler.triggerJob(jobKey);
+    }
+
+    @Override
+    public void createRunOnceTrigger(@NotNull JobKey jobKey, @NotEmpty String triggeredBy) throws SchedulerException {
+        Scheduler scheduler = scheduler();
+        if (!scheduler.checkExists(jobKey)) {
+            throw new SchedulerException("Job " + jobKey.getName() + " doesn't exist, can't be scheduled");
+        }
+        // without any schedule configured, the trigger will only run once
+        Trigger runOnceTrigger = TriggerBuilder.newTrigger()
+                .startNow()
+                .forJob(jobKey)
+                .usingJobData(JobUtils.RUN_ONCE_TRIGGER, Boolean.TRUE.toString())
+                .build();
+        scheduler.scheduleJob(runOnceTrigger);
+    }
+
+    @Override
+    public void removeTrigger(TriggerKey triggerKey) throws SchedulerException {
+        scheduler().unscheduleJob(triggerKey);
     }
 
     @Override

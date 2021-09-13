@@ -20,9 +20,6 @@ public class TaskJobDetailWrapper implements JobDetail {
     /** Key to retrieve runBy from jobDataMap */
     public static final String JOB_DATA_MAP_RUN_BY = "runBy";
 
-    /** Key to check if job is triggered from jobDataMap */
-    public static final String JOB_DATA_MAP_IS_TRIGGERED = "isTriggered";
-
     /** Key in jobDataMap to check if a job is a temporary job */
     public static final String JOB_DATA_MAP_IS_TEMPORARY = "isTemp";
 
