@@ -60,9 +60,6 @@ public class MainNodeThread implements Runnable {
 
     @PreDestroy
     void shutdownBackgroundThread() {
-        if (!taskProperties.isEnabled())
-            return;
-
         log.info("Application shutting down, interrupting main node daemon thread");
         isShutdown.set(true);
         if (backgroundThread != null && backgroundThread.isAlive()) {
