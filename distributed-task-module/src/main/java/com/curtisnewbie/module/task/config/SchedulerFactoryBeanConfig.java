@@ -16,7 +16,6 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
  * @see ManagedBeanJobFactory
  */
 @Slf4j
-@Configuration
 public class SchedulerFactoryBeanConfig implements SchedulerFactoryBeanCustomizer {
 
     @Autowired

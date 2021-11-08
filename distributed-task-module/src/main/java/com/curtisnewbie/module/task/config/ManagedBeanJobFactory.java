@@ -26,7 +26,6 @@ import java.util.Objects;
  * @author yongjie.zhuang
  * @see
  */
-@Component
 public class ManagedBeanJobFactory implements JobFactory {
 
     @Autowired

@@ -34,7 +34,6 @@ import static com.curtisnewbie.module.task.scheduling.JobUtils.getIdFromJobKey;
  *
  * @author yongjie.zhuang
  */
-@Component
 @Slf4j
 public class MainNodeThread implements Runnable {
 
@@ -55,9 +54,6 @@ public class MainNodeThread implements Runnable {
     @Autowired
     private NodeCoordinationService nodeCoordinationService;
 
-    MainNodeThread() {
-    }
-
     @PreDestroy
     void shutdownBackgroundThread() {
         log.info("Application shutting down, interrupting main node daemon thread");
@@ -69,17 +65,11 @@ public class MainNodeThread implements Runnable {
 
     @PostConstruct
     void startMainNodeThread() {
-        if (!taskProperties.isEnabled()) {
-            log.info("Current node has disabled distributed task scheduling, it will not attempt to become the main node");
-            return;
-        }
-
         // background thread
         backgroundThread = new Thread(this);
         backgroundThread.setDaemon(true);
         backgroundThread.start();
-        log.info("Started main node daemon thread for distributed task scheduling, you can disable it by setting '{}=false'",
-                TaskProperties.IS_ENABLED_PROP_KEY);
+        log.info("Started main node daemon thread for distributed task scheduling");
     }
 
     @Override

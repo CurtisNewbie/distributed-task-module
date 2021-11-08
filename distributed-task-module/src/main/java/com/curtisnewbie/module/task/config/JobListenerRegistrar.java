@@ -13,7 +13,6 @@ import java.util.List;
  *
  * @author yongjie.zhuang
  */
-@Component
 public class JobListenerRegistrar {
 
     @Autowired(required = false)

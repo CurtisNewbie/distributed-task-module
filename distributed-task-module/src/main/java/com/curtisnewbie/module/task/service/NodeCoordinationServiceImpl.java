@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author yongjie.zhuang
  */
-@Service
 @Slf4j
 public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
@@ -34,9 +33,6 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
     @PostConstruct
     void postConstruct() {
-        if (!taskProperties.isEnabled())
-            return;
-
         if (Objects.equals(taskProperties.getAppGroup(), TaskProperties.DEFAULT_APP_GROUP)) {
             log.info("You are using default value for app/scheduling group, consider changing it for you cluster " +
                     "by setting '{}=yourClusterName'", TaskProperties.APP_GROUP_PROP_KEY);

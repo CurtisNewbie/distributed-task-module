@@ -24,7 +24,6 @@ import java.util.Set;
  * @author yongjie.zhuang
  */
 @Slf4j
-@Service
 public class SchedulerServiceImpl implements SchedulerService {
 
     @Autowired
