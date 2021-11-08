@@ -1,5 +1,7 @@
 package com.curtisnewbie.module.task.dao;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -44,7 +46,7 @@ public interface TaskMapper {
     /**
      * Select * by job_name, enabled, app_group
      */
-    List<TaskEntity> selectBy(TaskEntity param);
+    IPage<TaskEntity> selectBy(Page p, @Param("p") TaskEntity param);
 
     /**
      * Update job_name, target_bean, cron_expr, app_group, enabled, concurrent_enabled by id

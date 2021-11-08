@@ -1,23 +1,28 @@
 package com.curtisnewbie.module.task.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.curtisnewbie.common.util.BeanCopyUtils;
 import com.curtisnewbie.common.util.EnumUtils;
+import com.curtisnewbie.common.util.PagingUtil;
+import com.curtisnewbie.common.vo.PageablePayloadSingleton;
 import com.curtisnewbie.common.vo.PagingVo;
 import com.curtisnewbie.module.task.constants.TaskConcurrentEnabled;
 import com.curtisnewbie.module.task.constants.TaskEnabled;
+import com.curtisnewbie.module.task.converters.TaskConverter;
 import com.curtisnewbie.module.task.dao.TaskEntity;
 import com.curtisnewbie.module.task.dao.TaskMapper;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.vo.*;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import static com.curtisnewbie.common.util.PagingUtil.toPageList;
 
 /**
  * @author yongjie.zhuang
@@ -28,6 +33,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private TaskMapper taskMapper;
+
+    @Autowired
+    private TaskConverter taskConverter;
 
     @Override
     public List<TaskVo> selectAll() {
@@ -57,15 +65,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public PageInfo<ListTaskByPageRespVo> listByPage(ListTaskByPageReqVo param, PagingVo pagingVo) {
-        Objects.requireNonNull(param, "TaskEntity shouldn't be null");
-        Objects.requireNonNull(pagingVo, "Paging param shouldn't be null");
+    public PageablePayloadSingleton<List<ListTaskByPageRespVo>> listByPage(@NotNull ListTaskByPageReqVo param, @NotNull PagingVo pagingVo) {
         Objects.requireNonNull(pagingVo.getPage(), "Paging param shouldn't be null");
         Objects.requireNonNull(pagingVo.getLimit(), "Paging param shouldn't be null");
 
-        PageHelper.startPage(pagingVo.getPage(), pagingVo.getLimit());
-        PageInfo<TaskEntity> tp = PageInfo.of(taskMapper.selectBy(BeanCopyUtils.toType(param, TaskEntity.class)));
-        return BeanCopyUtils.toPageList(tp, ListTaskByPageRespVo.class);
+        IPage<TaskEntity> taskEntityIPage = taskMapper.selectBy(PagingUtil.forPage(pagingVo), taskConverter.toDo(param));
+        return toPageList(taskEntityIPage, taskConverter::toListTaskByPageResp);
     }
 
     @Override

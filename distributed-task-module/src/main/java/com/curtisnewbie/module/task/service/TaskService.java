@@ -1,5 +1,6 @@
 package com.curtisnewbie.module.task.service;
 
+import com.curtisnewbie.common.vo.PageablePayloadSingleton;
 import com.curtisnewbie.common.vo.PagingVo;
 import com.curtisnewbie.module.task.vo.*;
 import com.github.pagehelper.PageInfo;
@@ -33,7 +34,7 @@ public interface TaskService {
     /**
      * Select with pagination
      */
-    PageInfo<ListTaskByPageRespVo> listByPage(@NotNull ListTaskByPageReqVo param, @NotNull PagingVo pagingVo);
+    PageablePayloadSingleton<List<ListTaskByPageRespVo>> listByPage(@NotNull ListTaskByPageReqVo param, @NotNull PagingVo pagingVo);
 
     /**
      * Select by id

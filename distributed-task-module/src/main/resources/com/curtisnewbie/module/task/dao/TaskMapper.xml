@@ -99,14 +99,14 @@
     last_run_by, last_run_result, enabled, concurrent_enabled, update_by, update_date
     from task
     <where>
-      <if test="jobName != null and jobName != ''">
-        job_name like "%"#{jobName}"%"
+      <if test="p.jobName != null and p.jobName != ''">
+        job_name like "%"#{p.jobName}"%"
       </if>
-      <if test="enabled != null">
-        and enabled = #{enabled}
+      <if test="p.enabled != null">
+        and enabled = #{p.enabled}
       </if>
-      <if test="appGroup != null and appGroup != ''">
-        and app_group like "%"#{appGroup}"%"
+      <if test="p.appGroup != null and p.appGroup != ''">
+        and app_group like "%"#{p.appGroup}"%"
       </if>
     </where>
     order by enabled desc

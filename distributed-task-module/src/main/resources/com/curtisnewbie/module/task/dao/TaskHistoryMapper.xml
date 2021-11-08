@@ -17,20 +17,20 @@
     from task_history
     left join task on task_history.task_id = task.id
     <where>
-      <if test="taskId != null">
-        and task_id = #{taskId}
+      <if test="p.taskId != null">
+        and task_id = #{p.taskId}
       </if>
-      <if test="jobName != null and jobName != ''">
-        and job_name like "%"#{jobName}"%"
+      <if test="p.jobName != null and p.jobName != ''">
+        and job_name like "%"#{p.jobName}"%"
       </if>
-      <if test="startTime != null">
-        and start_time <![CDATA[ >= ]]> #{startTime}
+      <if test="p.startTime != null">
+        and start_time <![CDATA[ >= ]]> #{p.startTime}
       </if>
-      <if test="endTime != null">
-        and end_time <![CDATA[ <= ]]> #{endTime}
+      <if test="p.endTime != null">
+        and end_time <![CDATA[ <= ]]> #{p.endTime}
       </if>
-      <if test="runBy != null and runBy != ''">
-        and run_by like "%"#{runBy}"%"
+      <if test="p.runBy != null and p.runBy != ''">
+        and run_by like "%"#{p.runBy}"%"
       </if>
     </where>
     order by id desc

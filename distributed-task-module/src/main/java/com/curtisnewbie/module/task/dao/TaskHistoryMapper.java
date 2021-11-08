@@ -1,5 +1,9 @@
 package com.curtisnewbie.module.task.dao;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -16,5 +20,5 @@ public interface TaskHistoryMapper {
     /**
      * Select id, job_name, start_time, end_time, run_by, run_result
      */
-    List<TaskHistoryInfo> findList(TaskHistoryInfo param);
+    IPage<TaskHistoryInfo> findList(Page p, @Param("p") TaskHistoryInfo param);
 }

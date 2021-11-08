@@ -1,7 +1,11 @@
 package com.curtisnewbie.module.task.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.curtisnewbie.common.util.BeanCopyUtils;
+import com.curtisnewbie.common.util.PagingUtil;
+import com.curtisnewbie.common.vo.PageablePayloadSingleton;
 import com.curtisnewbie.common.vo.PagingVo;
+import com.curtisnewbie.module.task.converters.TaskHistoryConverter;
 import com.curtisnewbie.module.task.dao.TaskHistoryEntity;
 import com.curtisnewbie.module.task.dao.TaskHistoryInfo;
 import com.curtisnewbie.module.task.dao.TaskHistoryMapper;
@@ -14,7 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Objects;
+
+import static com.curtisnewbie.common.util.PagingUtil.forPage;
 
 /**
  * @author yongjie.zhuang
@@ -25,6 +33,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 
     @Autowired
     private TaskHistoryMapper mapper;
+    @Autowired
+    private TaskHistoryConverter taskHistoryConverter;
 
     @Override
     public void saveTaskHistory(TaskHistoryVo v) {
@@ -32,14 +42,11 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
     }
 
     @Override
-    public PageInfo<ListTaskHistoryByPageRespVo> findByPage(ListTaskHistoryByPageReqVo param) {
-        final PagingVo p = param.getPagingVo();
-        Objects.requireNonNull(p);
-        PageHelper.startPage(p.getPage(), p.getLimit());
-        PageInfo<TaskHistoryInfo> pl = PageInfo.of(
-                mapper.findList(BeanCopyUtils.toType(param, TaskHistoryInfo.class))
-        );
-        return BeanCopyUtils.toPageList(pl, ListTaskHistoryByPageRespVo.class);
+    public PageablePayloadSingleton<List<ListTaskHistoryByPageRespVo>> findByPage(@NotNull ListTaskHistoryByPageReqVo param) {
+        Objects.requireNonNull(param.getPagingVo());
+
+        IPage<TaskHistoryInfo> p = mapper.findList(forPage(param.getPagingVo()), taskHistoryConverter.toTaskHistoryInfo(param));
+        return PagingUtil.toPageList(p, taskHistoryConverter::toListTaskHistoryByPageRespVo);
     }
 
 }
