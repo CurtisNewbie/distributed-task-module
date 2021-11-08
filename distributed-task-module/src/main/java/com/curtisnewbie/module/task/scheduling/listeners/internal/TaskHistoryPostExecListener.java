@@ -25,7 +25,6 @@ import java.util.Date;
  */
 // in ascending order, right after TaskHistoryPostExecListener
 @Order(value = Ordered.HIGHEST_PRECEDENCE + 1)
-@Component
 @Slf4j
 public class TaskHistoryPostExecListener implements JobPostExecuteListener {
 

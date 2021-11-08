@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
-@Component
 public class SaveTaskExecResultPostExecListener implements JobPostExecuteListener {
 
     @Autowired

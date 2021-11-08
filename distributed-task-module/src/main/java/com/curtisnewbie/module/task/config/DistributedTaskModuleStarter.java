@@ -4,6 +4,10 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.curtisnewbie.module.task.scheduling.MainNodeThread;
+import com.curtisnewbie.module.task.scheduling.listeners.internal.RunOnceTriggerPostExecuteListener;
+import com.curtisnewbie.module.task.scheduling.listeners.internal.RunningTaskCounterListener;
+import com.curtisnewbie.module.task.scheduling.listeners.internal.SaveTaskExecResultPostExecListener;
+import com.curtisnewbie.module.task.scheduling.listeners.internal.TaskHistoryPostExecListener;
 import com.curtisnewbie.module.task.service.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -33,6 +37,26 @@ public class DistributedTaskModuleStarter {
     static class SchedulingComponentConfiguration {
 
         @Bean
+        public RunningTaskCounterListener runningTaskCounterListener() {
+            return new RunningTaskCounterListener();
+        }
+
+        @Bean
+        public RunOnceTriggerPostExecuteListener runOnceTriggerPostExecuteListener() {
+            return new RunOnceTriggerPostExecuteListener();
+        }
+
+        @Bean
+        public SaveTaskExecResultPostExecListener saveTaskExecResultPostExecListener() {
+            return new SaveTaskExecResultPostExecListener();
+        }
+
+        @Bean
+        public TaskHistoryPostExecListener taskHistoryPostExecListener() {
+            return new TaskHistoryPostExecListener();
+        }
+
+        @Bean
         public JobListenerRegistrar jobListenerRegistrar() {
             return new JobListenerRegistrar();
         }
@@ -50,11 +74,6 @@ public class DistributedTaskModuleStarter {
         @Bean
         public MainNodeThread mainNodeThread() {
             return new MainNodeThread();
-        }
-
-        @Bean
-        public NodeCoordinationService nodeCoordinationService() {
-            return new NodeCoordinationServiceImpl();
         }
 
         @Bean

@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @author yongjie.zhuang
  */
 @Slf4j
+@Service
 public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
     private static final String UUID = java.util.UUID.randomUUID().toString();

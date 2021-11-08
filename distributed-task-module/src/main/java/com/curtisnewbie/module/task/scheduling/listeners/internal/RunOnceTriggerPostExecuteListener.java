@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
  * @see JobUtils#isRunOnceTrigger(JobDataMap)
  */
 @Slf4j
-@Component
 public class RunOnceTriggerPostExecuteListener implements JobPostExecuteListener {
 
     @Autowired

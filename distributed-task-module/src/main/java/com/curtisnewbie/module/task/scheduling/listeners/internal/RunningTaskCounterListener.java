@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author yongjie.zhuang
  */
 @Slf4j
-@Component
 public class RunningTaskCounterListener implements JobPreExecuteListener, JobPostExecuteListener, RunningTaskCounter {
 
     private AtomicInteger atomicInteger = new AtomicInteger(0);
