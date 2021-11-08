@@ -48,6 +48,14 @@
  * }
  * </pre>
  * <br>
+ * <p>
+ * Note that if property "distributed-task-module.enabled" is set to false, this module will be disabled.
+ * </p>
+ * <p>
+ * And if the property "distributed-task-module.scheduling.disabled" is set to true, current node will not participate
+ * in node coordination or task execution. You can still autowire and use {@link com.curtisnewbie.module.task.service.NodeCoordinationService},
+ * {@link com.curtisnewbie.module.task.service.TaskService}, and {@link com.curtisnewbie.module.task.service.TaskHistoryService}
+ * <br>
  * More on services:
  * <ul>
  * <li>
@@ -63,6 +71,9 @@
  * You can also inject {@link com.curtisnewbie.module.task.scheduling.RunningTaskCounter} to get how many tasks
  * are currently running in this node (not for the whole cluster, if current node is not a main node, there won't be
  * any tasks running)
+ * </li>
+ * <li>
+ * For starter, see {@link com.curtisnewbie.module.task.config.DistributedTaskModuleStarter}
  * </li>
  * </ul>
  *
