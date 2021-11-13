@@ -3,7 +3,6 @@ package com.curtisnewbie.module.task.service;
 import com.curtisnewbie.common.vo.PageablePayloadSingleton;
 import com.curtisnewbie.common.vo.PagingVo;
 import com.curtisnewbie.module.task.vo.*;
-import com.github.pagehelper.PageInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;

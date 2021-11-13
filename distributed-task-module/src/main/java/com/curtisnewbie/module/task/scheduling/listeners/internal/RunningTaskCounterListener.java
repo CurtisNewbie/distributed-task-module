@@ -5,7 +5,6 @@ import com.curtisnewbie.module.task.scheduling.RunningTaskCounter;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPreExecuteListener;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

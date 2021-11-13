@@ -4,7 +4,6 @@ import com.curtisnewbie.common.vo.PageablePayloadSingleton;
 import com.curtisnewbie.module.task.vo.ListTaskHistoryByPageReqVo;
 import com.curtisnewbie.module.task.vo.ListTaskHistoryByPageRespVo;
 import com.curtisnewbie.module.task.vo.TaskHistoryVo;
-import com.github.pagehelper.PageInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;

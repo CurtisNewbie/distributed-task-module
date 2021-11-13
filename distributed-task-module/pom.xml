@@ -54,19 +54,18 @@
     <dependency>
       <groupId>com.curtisnewbie</groupId>
       <artifactId>common-module</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.pagehelper</groupId>
+          <artifactId>pagehelper</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
     </dependency>
-
-    <!--     https://github.com/CurtisNewbie/comment-generator-->
-    <!--    <dependency>-->
-    <!--      <groupId>com.curtisnewbie</groupId>-->
-    <!--      <artifactId>comment-generator</artifactId>-->
-    <!--      <version>1.0-SNAPSHOT</version>-->
-    <!--    </dependency>-->
   </dependencies>
 
   <build>
