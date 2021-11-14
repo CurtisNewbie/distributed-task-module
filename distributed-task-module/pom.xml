@@ -6,13 +6,13 @@
   <parent>
     <groupId>com.curtisnewbie</groupId>
     <artifactId>curtisnewbie-bom</artifactId>
-    <version>micro-2.0.1</version>
+    <version>micro-2.0.2</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
   <groupId>com.curtisnewbie</groupId>
   <artifactId>distributed-task-module</artifactId>
-  <version>2.0.1</version>
+  <version>2.0.2</version>
   <name>distributed-task-module</name>
   <description>Module for distributed task scheduling</description>
   <properties>
