@@ -6,17 +6,19 @@
   <parent>
     <groupId>com.curtisnewbie</groupId>
     <artifactId>curtisnewbie-bom</artifactId>
-    <version>micro-2.0.2</version>
+    <version>micro-2.0.3-SNAPSHOT</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
   <groupId>com.curtisnewbie</groupId>
   <artifactId>distributed-task-module</artifactId>
-  <version>2.0.2</version>
+  <version>2.0.3-SNAPSHOT</version>
   <name>distributed-task-module</name>
   <description>Module for distributed task scheduling</description>
   <properties>
     <java.version>8</java.version>
+    <redis-util-module.version>2.0.2-SNAPSHOT</redis-util-module.version>
+    <common-module.version>2.0.3-SNAPSHOT</common-module.version>
   </properties>
 
   <dependencies>
@@ -49,17 +51,13 @@
     <dependency>
       <groupId>com.curtisnewbie</groupId>
       <artifactId>redis-util-module</artifactId>
+      <version>${redis-util-module.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.curtisnewbie</groupId>
       <artifactId>common-module</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>com.github.pagehelper</groupId>
-          <artifactId>pagehelper</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>${common-module.version}</version>
     </dependency>
 
     <dependency>
