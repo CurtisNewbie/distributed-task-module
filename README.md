@@ -13,7 +13,8 @@ Module for distributed task scheduling
 Data Type | Property Name | Description | Default Value
 --------- | ------------- | ----------- | --------------
 String | distributed-task-module.application-group | name of application group, a cluster should share the same name such that they are managed together | default
-boolean | distributed-task-module.enabled | this configures whether current node enables distributed task scheduling, when this value is set to false, the node will not try to be the main node, and thus will not run any task at all. However, it will still be able to request triggering a task (i.e., run the selected task immediately), though the triggered task is still run by the main node | true
+boolean | distributed-task-module.enabled | whether this module is enabled | true
+boolean | distributed-task-module.scheduling.disabled | whether scheduling is disabled for current node. When it's set to false, it will not attempt to be become the main node. I.e., it will not run any task. However, it will still be able to request triggering a task, though the triggered task is still run by the main node | false
 
 ## Modules and Dependencies
 
