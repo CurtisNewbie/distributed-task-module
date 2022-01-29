@@ -62,6 +62,11 @@ public class MasterElectingThread implements Runnable {
         if (backgroundThread != null && backgroundThread.isAlive()) {
             backgroundThread.interrupt();
         }
+        try {
+            cleanUpScheduledTasks();
+        } catch (SchedulerException e) {
+            log.error("Failed to clean up scheduler on application shutdown");
+        }
     }
 
     @PostConstruct
@@ -76,7 +81,7 @@ public class MasterElectingThread implements Runnable {
     @Override
     public void run() {
         /*
-        this variable is used as an indicator of changes on the isMaster flag, e.g.,
+        this variable is used as an indicator of changes on the 'isMaster' flag, e.g.,
             1) we somehow become the master for current loop, but we are not previously,
             2) or we are no longer the master for current loop, but we previously are.
 
