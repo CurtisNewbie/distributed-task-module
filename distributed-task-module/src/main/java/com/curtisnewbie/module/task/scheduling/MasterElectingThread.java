@@ -88,8 +88,6 @@ public class MasterElectingThread implements Runnable {
         If such a change is found, we will need to either refresh all the scheduled tasks
             or clean up the scheduler.
          */
-        boolean wasMaster = false;
-
         // keep looping until the application is shutting down
         while (!isShutdown.get()) {
             try {
@@ -99,20 +97,16 @@ public class MasterElectingThread implements Runnable {
                 if (!(isMaster = nodeCoordinationService.isMaster()))
                     isMaster = nodeCoordinationService.tryBecomeMaster();
 
-                // check if 'isMaster' changed
-                final boolean isMasterFlagChanged = isMaster != wasMaster;
-                wasMaster = isMaster;
-
                 // only the master node of its group can actually run the tasks
-                if (isMasterFlagChanged)
-                    onMasterFlagChanged(isMaster);
+                postHandleIsMaster(isMaster);
 
                 // sleep for 1 sec on each loop
                 Thread.sleep(TimeUnit.SECONDS.toMillis(1));
 
             } catch (InterruptedException e) {
                 // never stop unless the application is shutting down
-                if (!isShutdown.get()) Thread.currentThread().interrupt();
+                if (!isShutdown.get())
+                    Thread.currentThread().interrupt();
             } catch (Exception e) {
                 log.error("Exception occurred and was ignored in MainNodeThread", e);
             }
@@ -121,7 +115,7 @@ public class MasterElectingThread implements Runnable {
 
     // ---------------------------------------- private helper methods -------------------------------------------------
 
-    private void onMasterFlagChanged(final boolean isMaster) {
+    private void postHandleIsMaster(final boolean isMaster) {
         // making this part async is intentional, so that this thread doesn't block here
         // when the database is exceptionally slow
         singleThreadExecutor.execute(() -> {
