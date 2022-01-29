@@ -121,13 +121,11 @@ public class MasterElectingThread implements Runnable {
         singleThreadExecutor.execute(() -> {
             try {
                 if (isMaster) {
-                    log.info("Becomes the master, refreshing scheduler");
                     // refresh jobs, compare scheduled jobs with records in database
                     refreshScheduledTasks();
                     // trigger jobs that need to be executed immediately
                     runTriggeredJobs();
                 } else {
-                    log.info("No longer the master, cleaning up scheduled tasks");
                     // if it's no-longer a main node, simply clear the scheduler
                     cleanUpScheduledTasks();
                 }
