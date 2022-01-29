@@ -97,17 +97,15 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
      * start up a timer to keep refreshing our lock in the background
      */
     private void startMasterLockRefreshingTimer() {
-        final long sec5 = TimeUnit.SECONDS.toMillis(5);
-
         // create a timer that refreshes the lock for every 5 sec
         final Timer timer = new Timer("masterLockRefresher");
         timer.schedule(new TimerTask() {
                            public void run() {
                                redisController.expire(getMasterNodeLockKey(), DEFAULT_TTL, DEFAULT_TIME_UNIT);
-                               log.info("Refreshing the masterNodeLockKey: '{}'", getMasterNodeLockKey()); // todo, make this debug level
+                               log.debug("Refreshing the masterNodeLockKey: '{}'", getMasterNodeLockKey());
                            }
                        },
-                sec5, sec5);
+                0, TimeUnit.SECONDS.toMillis(5));
 
         // swap the timer ref, if there was one, we cancel it
         final Timer oldTimer = masterLockRefreshingTimer.getAndSet(timer);
