@@ -76,7 +76,7 @@ public class MasterElectingThread implements Runnable {
     @Override
     public void run() {
         /*
-        this two boolean variables are used as an indicator of changes on being the master, e.g.,
+        this variable is used as an indicator of changes on the isMaster flag, e.g.,
             1) we somehow become the master for current loop, but we are not previously,
             2) or we are no longer the master for current loop, but we previously are.
 
@@ -84,7 +84,6 @@ public class MasterElectingThread implements Runnable {
             or clean up the scheduler.
          */
         boolean wasMaster = false;
-        boolean isMasterFlagChanged;
 
         // keep looping until the application is shutting down
         while (!isShutdown.get()) {
@@ -96,7 +95,7 @@ public class MasterElectingThread implements Runnable {
                     isMaster = nodeCoordinationService.tryBecomeMaster();
 
                 // check if 'isMaster' changed
-                isMasterFlagChanged = isMaster != wasMaster;
+                final boolean isMasterFlagChanged = isMaster != wasMaster;
                 wasMaster = isMaster;
 
                 // only the master node of its group can actually run the tasks
