@@ -96,7 +96,7 @@ public class MasterElectingThread implements Runnable {
                     isMaster = nodeCoordinationService.tryBecomeMaster();
 
                 // check if 'isMaster' changed
-                isMasterFlagChanged = isMaster == wasMaster;
+                isMasterFlagChanged = isMaster != wasMaster;
                 wasMaster = isMaster;
 
                 // only the master node of its group can actually run the tasks
