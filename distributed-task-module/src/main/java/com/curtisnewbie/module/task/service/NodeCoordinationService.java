@@ -1,5 +1,6 @@
 package com.curtisnewbie.module.task.service;
 
+import com.curtisnewbie.module.task.scheduling.MasterElectingThread;
 import com.curtisnewbie.module.task.scheduling.TriggeredJobKey;
 import com.curtisnewbie.module.task.vo.TaskVo;
 import org.springframework.validation.annotation.Validated;
@@ -11,7 +12,7 @@ import java.util.List;
  * Service that coordinates between nodes for task scheduling
  *
  * @author yongjie.zhuang
- * @see com.curtisnewbie.module.task.scheduling.MainNodeThread
+ * @see MasterElectingThread
  */
 @Validated
 public interface NodeCoordinationService {
@@ -35,10 +36,13 @@ public interface NodeCoordinationService {
     List<TriggeredJobKey> pollTriggeredJobKey(int limit);
 
     /**
-     * Try to become the main node
-     *
-     * @return true if current node is now the main node else false
+     * Whether we are the master
      */
-    boolean tryToBecomeMainNode();
+    boolean isMaster();
+
+    /**
+     * Try to become the master, returns immediately if failed, i.e., it's not blocked
+     */
+    boolean tryBecomeMaster();
 
 }

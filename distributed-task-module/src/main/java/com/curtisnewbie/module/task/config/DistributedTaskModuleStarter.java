@@ -3,7 +3,7 @@ package com.curtisnewbie.module.task.config;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.curtisnewbie.module.task.scheduling.MainNodeThread;
+import com.curtisnewbie.module.task.scheduling.MasterElectingThread;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.RunOnceTriggerPostExecuteListener;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.RunningTaskCounterListener;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.SaveTaskExecResultPostExecListener;
@@ -72,8 +72,8 @@ public class DistributedTaskModuleStarter {
         }
 
         @Bean
-        public MainNodeThread mainNodeThread() {
-            return new MainNodeThread();
+        public MasterElectingThread mainNodeThread() {
+            return new MasterElectingThread();
         }
 
         @Bean

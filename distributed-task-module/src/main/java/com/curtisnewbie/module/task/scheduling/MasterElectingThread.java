@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.curtisnewbie.module.task.scheduling.JobUtils.getIdFromJobKey;
@@ -28,15 +29,16 @@ import static com.curtisnewbie.module.task.scheduling.JobUtils.getIdFromJobKey;
 /**
  * Thread for main node coordination
  * <br><br>
- * This bean internally starts a single thread looping, trying to become the main node. It only does some scheduling
- * operation when it becomes the main node. Do not instantiate it, autowire it, or use it in another thread.
+ * This bean internally starts a single thread that keeps looping, trying to become the master node. It only does some
+ * scheduling operation (e.g., triggering tasks) when it becomes the master node. You should not instantiate it,
+ * autowire it, or use it in another thread.
  *
  * @author yongjie.zhuang
  */
 @Slf4j
-public class MainNodeThread implements Runnable {
+public class MasterElectingThread implements Runnable {
 
-    private static final int THREAD_SLEEP_INTERVAL = 500;
+    /** flag to indicate whether application is shutting down */
     private final AtomicBoolean isShutdown = new AtomicBoolean(false);
     private ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
     private Thread backgroundThread;
@@ -55,7 +57,7 @@ public class MainNodeThread implements Runnable {
 
     @PreDestroy
     void shutdownBackgroundThread() {
-        log.info("Application shutting down, interrupting main node daemon thread");
+        log.info("Application shutting down, interrupting daemon thread for master node election");
         isShutdown.set(true);
         if (backgroundThread != null && backgroundThread.isAlive()) {
             backgroundThread.interrupt();
@@ -63,59 +65,79 @@ public class MainNodeThread implements Runnable {
     }
 
     @PostConstruct
-    void startMainNodeThread() {
+    void startBackgroundThread() {
         // background thread
         backgroundThread = new Thread(this);
         backgroundThread.setDaemon(true);
         backgroundThread.start();
-        log.info("Started main node daemon thread for distributed task scheduling");
+        log.info("Started daemon thread for master node election");
     }
 
     @Override
     public void run() {
-        while (true) {
+        /*
+        this two boolean variables are used as an indicator of changes on being the master, e.g.,
+            1) we somehow become the master for current loop, but we are not previously,
+            2) or we are no longer the master for current loop, but we previously are.
+
+        If such a change is found, we will need to either refresh all the scheduled tasks
+            or clean up the scheduler.
+         */
+        boolean wasMaster = false;
+        boolean isMasterFlagChanged;
+
+        // keep looping until the application is shutting down
+        while (!isShutdown.get()) {
             try {
-                if (isShutdown.get()) {
-                    log.info("Application shutting down, terminate thread");
-                    return;
-                }
 
-                // try to obtain lock
-                boolean isMain = nodeCoordinationService.tryToBecomeMainNode();
-                log.debug("Try to become main node, is main node? {}", isMain);
+                // try to obtain the lock if we don't have it, but we may still fail
+                boolean isMaster;
+                if (!(isMaster = nodeCoordinationService.isMaster()))
+                    isMaster = nodeCoordinationService.tryBecomeMaster();
 
-                // only the main node of its group can actually run the tasks
-                try {
-                    if (isMain) {
-                        // making this part async is intentional, so that this thread doesn't block here
-                        // when the database is exceptionally slow, and we don't exceed our lock time because
-                        // of it
-                        singleThreadExecutor.execute(() -> {
-                            try {
-                                // refresh jobs, compare scheduled jobs with records in database
-                                refreshScheduledTasks();
-                                // trigger jobs that need to be executed immediately
-                                runTriggeredJobs();
-                            } catch (SchedulerException e) {
-                                log.error("Exception occurred while refreshing scheduled tasks from database", e);
-                            }
-                        });
-                    } else {
-                        // if it's no-longer a main node, simply clear the scheduler
-                        cleanUpScheduledTasks();
-                    }
-                } catch (SchedulerException e) {
-                    log.error("Exception occurred while refreshing scheduled tasks from database", e);
-                }
+                // check if 'isMaster' changed
+                isMasterFlagChanged = isMaster == wasMaster;
+                wasMaster = isMaster;
 
-                Thread.sleep(THREAD_SLEEP_INTERVAL);
+                // only the master node of its group can actually run the tasks
+                if (isMasterFlagChanged)
+                    onMasterFlagChanged(isMaster);
+
+                // sleep for 1 sec on each loop
+                Thread.sleep(TimeUnit.SECONDS.toMillis(1));
+
             } catch (InterruptedException e) {
                 // never stop unless the application is shutting down
-                if (!isShutdown.get())
-                    Thread.currentThread().interrupt();
+                if (!isShutdown.get()) Thread.currentThread().interrupt();
             } catch (Exception e) {
-                log.error("Exception occurred", e);
+                log.error("Exception occurred and was ignored in MainNodeThread", e);
             }
+        }
+    }
+
+    // ---------------------------------------- private helper methods -------------------------------------------------
+
+    private void onMasterFlagChanged(final boolean isMaster) {
+        try {
+            if (isMaster) {
+                // making this part async is intentional, so that this thread doesn't block here
+                // when the database is exceptionally slow
+                singleThreadExecutor.execute(() -> {
+                    try {
+                        // refresh jobs, compare scheduled jobs with records in database
+                        refreshScheduledTasks();
+                        // trigger jobs that need to be executed immediately
+                        runTriggeredJobs();
+                    } catch (SchedulerException e) {
+                        log.error("Exception occurred while refreshing scheduled tasks from database", e);
+                    }
+                });
+            } else {
+                // if it's no-longer a main node, simply clear the scheduler
+                cleanUpScheduledTasks();
+            }
+        } catch (SchedulerException e) {
+            log.error("Exception occurred while refreshing scheduled tasks from database", e);
         }
     }
 
