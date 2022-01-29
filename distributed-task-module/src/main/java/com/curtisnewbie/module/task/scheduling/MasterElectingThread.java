@@ -118,27 +118,25 @@ public class MasterElectingThread implements Runnable {
     // ---------------------------------------- private helper methods -------------------------------------------------
 
     private void onMasterFlagChanged(final boolean isMaster) {
-        try {
-            if (isMaster) {
-                // making this part async is intentional, so that this thread doesn't block here
-                // when the database is exceptionally slow
-                singleThreadExecutor.execute(() -> {
-                    try {
-                        // refresh jobs, compare scheduled jobs with records in database
-                        refreshScheduledTasks();
-                        // trigger jobs that need to be executed immediately
-                        runTriggeredJobs();
-                    } catch (SchedulerException e) {
-                        log.error("Exception occurred while refreshing scheduled tasks from database", e);
-                    }
-                });
-            } else {
-                // if it's no-longer a main node, simply clear the scheduler
-                cleanUpScheduledTasks();
+        // making this part async is intentional, so that this thread doesn't block here
+        // when the database is exceptionally slow
+        singleThreadExecutor.execute(() -> {
+            try {
+                if (isMaster) {
+                    log.info("Becomes the master, refreshing scheduler");
+                    // refresh jobs, compare scheduled jobs with records in database
+                    refreshScheduledTasks();
+                    // trigger jobs that need to be executed immediately
+                    runTriggeredJobs();
+                } else {
+                    log.info("No longer the master, cleaning up scheduled tasks");
+                    // if it's no-longer a main node, simply clear the scheduler
+                    cleanUpScheduledTasks();
+                }
+            } catch (SchedulerException e) {
+                log.error("Exception occurred while refreshing scheduled tasks from database", e);
             }
-        } catch (SchedulerException e) {
-            log.error("Exception occurred while refreshing scheduled tasks from database", e);
-        }
+        });
     }
 
     /**
