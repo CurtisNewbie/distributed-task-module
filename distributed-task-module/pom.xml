@@ -12,7 +12,7 @@
 
   <groupId>com.curtisnewbie</groupId>
   <artifactId>distributed-task-module</artifactId>
-  <version>2.0.4-SNAPSHOT</version>
+  <version>2.0.5-SNAPSHOT</version>
   <name>distributed-task-module</name>
   <description>Module for distributed task scheduling</description>
   <properties>
