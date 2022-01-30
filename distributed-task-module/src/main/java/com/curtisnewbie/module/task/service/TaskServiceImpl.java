@@ -15,6 +15,7 @@ import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
@@ -38,6 +39,7 @@ public class TaskServiceImpl implements TaskService {
     private TaskConverter taskConverter;
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public List<TaskVo> selectAll() {
         return BeanCopyUtils.toTypeList(taskMapper.selectAll(), TaskVo.class);
     }
@@ -65,6 +67,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public PageablePayloadSingleton<List<ListTaskByPageRespVo>> listByPage(@NotNull ListTaskByPageReqVo param, @NotNull PagingVo pagingVo) {
         Objects.requireNonNull(pagingVo.getPage(), "Paging param shouldn't be null");
         Objects.requireNonNull(pagingVo.getLimit(), "Paging param shouldn't be null");
@@ -74,6 +77,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public TaskVo selectById(int id) {
         return BeanCopyUtils.toType(taskMapper.selectByPrimaryKey(id), TaskVo.class);
     }
@@ -84,6 +88,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public boolean exists(int taskId) {
         return taskMapper.findOneById(taskId) != null;
     }

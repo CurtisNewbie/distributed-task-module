@@ -33,7 +33,7 @@ public class DistributedTaskModuleStarter {
     }
 
     @Configuration
-    @ConditionalOnProperty(value = "distributed-task-module.scheduling.disabled", havingValue = "false")
+    @ConditionalOnProperty(value = "distributed-task-module.scheduling.disabled", havingValue = "false", matchIfMissing = true)
     static class SchedulingComponentConfiguration {
 
         @Bean

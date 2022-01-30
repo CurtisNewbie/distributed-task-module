@@ -13,6 +13,7 @@ import com.curtisnewbie.module.task.vo.ListTaskHistoryByPageRespVo;
 import com.curtisnewbie.module.task.vo.TaskHistoryVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
@@ -39,6 +40,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public PageablePayloadSingleton<List<ListTaskHistoryByPageRespVo>> findByPage(@NotNull ListTaskHistoryByPageReqVo param) {
         Objects.requireNonNull(param.getPagingVo());
 
