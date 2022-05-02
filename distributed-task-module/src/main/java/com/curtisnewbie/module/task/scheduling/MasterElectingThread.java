@@ -18,11 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.curtisnewbie.module.task.scheduling.JobUtils.getIdFromJobKey;
 
@@ -38,9 +40,12 @@ import static com.curtisnewbie.module.task.scheduling.JobUtils.getIdFromJobKey;
 @Slf4j
 public class MasterElectingThread implements Runnable {
 
+    /** the last time that the jobs are refreshed, only the master can refresh jobs */
+    private final AtomicReference<LocalDateTime> lastTimeJobRefreshed = new AtomicReference<>(null);
     /** flag to indicate whether application is shutting down */
     private final AtomicBoolean isShutdown = new AtomicBoolean(false);
-    private ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+
     private Thread backgroundThread;
 
     @Autowired
@@ -80,14 +85,6 @@ public class MasterElectingThread implements Runnable {
 
     @Override
     public void run() {
-        /*
-        this variable is used as an indicator of changes on the 'isMaster' flag, e.g.,
-            1) we somehow become the master for current loop, but we are not previously,
-            2) or we are no longer the master for current loop, but we previously are.
-
-        If such a change is found, we will need to either refresh all the scheduled tasks
-            or clean up the scheduler.
-         */
         // keep looping until the application is shutting down
         while (!isShutdown.get()) {
             try {
@@ -116,6 +113,20 @@ public class MasterElectingThread implements Runnable {
     // ---------------------------------------- private helper methods -------------------------------------------------
 
     private void postHandleIsMaster(final boolean isMaster) {
+
+        // if we are master, check whether we need to refresh the jobs
+        if (isMaster) {
+            final LocalDateTime lastTimeRefreshed = lastTimeJobRefreshed.get();
+            final LocalDateTime now = LocalDateTime.now();
+
+            // now <= ( lastTimeRefreshed + 30 seconds ), i.e., refreshed every 30 seconds
+            if (lastTimeRefreshed != null && !now.isAfter(lastTimeRefreshed.plusSeconds(30)))
+                return;
+
+            // we are about to refresh jobs
+            lastTimeJobRefreshed.set(now);
+        }
+
         // making this part async is intentional, so that this thread doesn't block here
         // when the database is exceptionally slow
         singleThreadExecutor.execute(() -> {
@@ -164,7 +175,7 @@ public class MasterElectingThread implements Runnable {
                 Objects.requireNonNull(enabled, "task's field enabled value illegal, unable to parse it");
                 // new task, add it into scheduler
                 if (enabled.equals(TaskEnabled.ENABLED)) {
-                    log.info("Found new task '{}', add it into scheduler", tv.getJobName(), tv.getCronExpr());
+                    log.info("Found new task '{}', cron: '{}', add it into scheduler", tv.getJobName(), tv.getCronExpr());
                     scheduleJob(tv);
                 }
             } else {

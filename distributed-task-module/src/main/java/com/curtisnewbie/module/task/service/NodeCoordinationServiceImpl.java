@@ -69,17 +69,16 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     @Override
     public boolean isMaster() {
         final String id = redisController.get(getMasterNodeLockKey());
-        if (Objects.equals(id, UUID))
-            return true;
-        return false;
+        return Objects.equals(id, UUID);
     }
 
     @Override
     public boolean tryBecomeMaster() {
         final boolean hasLock = redisController.setIfNotExists(getMasterNodeLockKey(), UUID, DEFAULT_TTL, DEFAULT_TIME_UNIT);
-        if (hasLock)
+        if (hasLock) {
+            log.info("Elected to be the master node for group: {}", taskProperties.getAppGroup());
             startMasterLockRefreshingTimer();
-        else
+        } else
             cancelMasterLockRefreshingTimer();
         return hasLock;
     }
