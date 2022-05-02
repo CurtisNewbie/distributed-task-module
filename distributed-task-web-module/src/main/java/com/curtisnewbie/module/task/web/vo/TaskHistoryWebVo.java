@@ -1,5 +1,8 @@
-package com.curtisnewbie.module.task.vo;
+package com.curtisnewbie.module.task.web.vo;
 
+import com.curtisnewbie.common.util.DateUtils;
+import com.curtisnewbie.common.vo.PageableVo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +16,7 @@ import java.util.Date;
  */
 @NoArgsConstructor
 @Data
-public class ListTaskHistoryByPageRespVo {
+public class TaskHistoryWebVo extends PageableVo {
     /** id */
     private Integer id;
 
@@ -24,9 +27,11 @@ public class ListTaskHistoryByPageRespVo {
     private Integer taskId;
 
     /** start time */
+    @JsonFormat(pattern = DateUtils.DD_MM_YYYY_HH_MM)
     private Date startTime;
 
     /** end time */
+    @JsonFormat(pattern = DateUtils.DD_MM_YYYY_HH_MM)
     private Date endTime;
 
     /** task triggered by */
@@ -36,8 +41,8 @@ public class ListTaskHistoryByPageRespVo {
     private String runResult;
 
     @Builder
-    public ListTaskHistoryByPageRespVo(Integer id, String jobName, Integer taskId, Date startTime, Date endTime, String runBy,
-                                       String runResult) {
+    public TaskHistoryWebVo(Integer id, String jobName, Integer taskId, Date startTime, Date endTime, String runBy,
+                            String runResult) {
         this.id = id;
         this.jobName = jobName;
         this.taskId = taskId;
