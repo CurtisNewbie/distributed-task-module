@@ -1,9 +1,9 @@
 package com.curtisnewbie.module.task.web;
 
-import com.curtisnewbie.common.advice.RoleRequired;
+import com.curtisnewbie.common.advice.RoleControlled;
 import com.curtisnewbie.common.trace.TraceUtils;
 import com.curtisnewbie.common.util.EnumUtils;
-import com.curtisnewbie.common.vo.PageablePayloadSingleton;
+import com.curtisnewbie.common.vo.PageableList;
 import com.curtisnewbie.common.vo.Result;
 import com.curtisnewbie.module.task.constants.TaskConcurrentEnabled;
 import com.curtisnewbie.module.task.constants.TaskEnabled;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.curtisnewbie.common.util.AssertUtils.notNull;
@@ -44,13 +43,13 @@ public class TaskController {
     @Autowired
     private NodeCoordinationService nodeCoordinationService;
 
-    @RoleRequired(role = "admin")
+    @RoleControlled(rolesRequired = "admin")
     @PostMapping("/list")
     public Result<ListTaskByPageRespWebVo> listTaskByPage(@RequestBody ListTaskByPageReqWebVo reqVo) {
         notNull(reqVo.getPagingVo());
 
         final ListTaskByPageReqVo listTaskByPageReqVo = toType(reqVo, ListTaskByPageReqVo.class);
-        PageablePayloadSingleton<List<ListTaskByPageRespVo>> pi = taskService.listByPage(listTaskByPageReqVo, reqVo.getPagingVo());
+        PageableList<ListTaskByPageRespVo> pi = taskService.listByPage(listTaskByPageReqVo, reqVo.getPagingVo());
         ListTaskByPageRespWebVo resp = new ListTaskByPageRespWebVo();
         resp.setPagingVo(pi.getPagingVo());
         resp.setList(
@@ -62,12 +61,12 @@ public class TaskController {
         return Result.of(resp);
     }
 
-    @RoleRequired(role = "admin")
+    @RoleControlled(rolesRequired = "admin")
     @PostMapping("/history")
     public Result<ListTaskHistoryByPageRespWebVo> listTaskHistoryByPage(@RequestBody ListTaskHistoryByPageReqVo reqVo) {
 
         notNull(reqVo.getPagingVo());
-        PageablePayloadSingleton<List<ListTaskHistoryByPageRespVo>> pi = taskHistoryService.findByPage(reqVo);
+        PageableList<ListTaskHistoryByPageRespVo> pi = taskHistoryService.findByPage(reqVo);
 
         ListTaskHistoryByPageRespWebVo resp = new ListTaskHistoryByPageRespWebVo();
         resp.setList(
@@ -80,7 +79,7 @@ public class TaskController {
         return Result.of(resp);
     }
 
-    @RoleRequired(role = "admin")
+    @RoleControlled(rolesRequired = "admin")
     @PostMapping("/update")
     public Result<Void> update(@RequestBody UpdateTaskReqVo vo) {
         notNull(vo.getId());
@@ -101,7 +100,7 @@ public class TaskController {
         return Result.ok();
     }
 
-    @RoleRequired(role = "admin")
+    @RoleControlled(rolesRequired = "admin")
     @PostMapping("/trigger")
     public Result<Void> trigger(@RequestBody TriggerTaskReqVo vo) {
         notNull(vo.getId());

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.curtisnewbie.common.util.BeanCopyUtils;
 import com.curtisnewbie.common.util.EnumUtils;
 import com.curtisnewbie.common.util.PagingUtil;
-import com.curtisnewbie.common.vo.PageablePayloadSingleton;
+import com.curtisnewbie.common.vo.PageableList;
 import com.curtisnewbie.common.vo.PagingVo;
 import com.curtisnewbie.module.task.constants.TaskConcurrentEnabled;
 import com.curtisnewbie.module.task.constants.TaskEnabled;
@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.curtisnewbie.common.util.PagingUtil.toPageList;
+import static com.curtisnewbie.common.util.PagingUtil.toPageableList;
 
 /**
  * @author yongjie.zhuang
@@ -68,12 +68,12 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
-    public PageablePayloadSingleton<List<ListTaskByPageRespVo>> listByPage(@NotNull ListTaskByPageReqVo param, @NotNull PagingVo pagingVo) {
+    public PageableList<ListTaskByPageRespVo> listByPage(@NotNull ListTaskByPageReqVo param, @NotNull PagingVo pagingVo) {
         Objects.requireNonNull(pagingVo.getPage(), "Paging param shouldn't be null");
         Objects.requireNonNull(pagingVo.getLimit(), "Paging param shouldn't be null");
 
         IPage<TaskEntity> taskEntityIPage = taskMapper.selectBy(PagingUtil.forPage(pagingVo), taskConverter.toDo(param));
-        return toPageList(taskEntityIPage, taskConverter::toListTaskByPageResp);
+        return toPageableList(taskEntityIPage, taskConverter::toListTaskByPageResp);
     }
 
     @Override

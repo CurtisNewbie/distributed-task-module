@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.curtisnewbie</groupId>
+    <artifactId>curtisnewbie-bom</artifactId>
+    <version>micro-2.0.3-SNAPSHOT</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+
+  <artifactId>distributed-task-module-parent</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>distributed-task-module</name>
+  <description>Module for distributed task scheduling</description>
+  <packaging>pom</packaging>
+
+  <properties>
+    <api.version>2.0.7-SNAPSHOT</api.version>
+    <java.version>8</java.version>
+  </properties>
+
+  <modules>
+    <module>distributed-task-module</module>
+    <module>distributed-task-web-module</module>
+  </modules>
+
+</project>

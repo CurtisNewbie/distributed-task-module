@@ -3,7 +3,7 @@ package com.curtisnewbie.module.task.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.curtisnewbie.common.util.BeanCopyUtils;
 import com.curtisnewbie.common.util.PagingUtil;
-import com.curtisnewbie.common.vo.PageablePayloadSingleton;
+import com.curtisnewbie.common.vo.PageableList;
 import com.curtisnewbie.module.task.converters.TaskHistoryConverter;
 import com.curtisnewbie.module.task.dao.TaskHistoryEntity;
 import com.curtisnewbie.module.task.dao.TaskHistoryInfo;
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 import java.util.Objects;
 
 import static com.curtisnewbie.common.util.PagingUtil.forPage;
@@ -41,11 +40,11 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
-    public PageablePayloadSingleton<List<ListTaskHistoryByPageRespVo>> findByPage(@NotNull ListTaskHistoryByPageReqVo param) {
+    public PageableList<ListTaskHistoryByPageRespVo> findByPage(@NotNull ListTaskHistoryByPageReqVo param) {
         Objects.requireNonNull(param.getPagingVo());
 
         IPage<TaskHistoryInfo> p = mapper.findList(forPage(param.getPagingVo()), taskHistoryConverter.toTaskHistoryInfo(param));
-        return PagingUtil.toPageList(p, taskHistoryConverter::toListTaskHistoryByPageRespVo);
+        return PagingUtil.toPageableList(p, taskHistoryConverter::toListTaskHistoryByPageRespVo);
     }
 
 }

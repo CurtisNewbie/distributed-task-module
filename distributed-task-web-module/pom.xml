@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>com.curtisnewbie</groupId>
-    <artifactId>curtisnewbie-bom</artifactId>
-    <version>micro-2.0.3-SNAPSHOT</version>
+    <artifactId>distributed-task-module-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
   <artifactId>distributed-task-web-module</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>${api.version}</version>
   <name>distributed-task-web-module</name>
 
   <properties>
     <java.version>8</java.version>
-    <distributed-task-module.version>2.0.6-SNAPSHOT</distributed-task-module.version>
-    <common-module.version>2.0.9-SNAPSHOT</common-module.version>
+    <common-module.version>2.1.2-SNAPSHOT</common-module.version>
   </properties>
 
   <dependencies>
@@ -35,7 +35,7 @@
     <dependency>
       <groupId>com.curtisnewbie</groupId>
       <artifactId>distributed-task-module</artifactId>
-      <version>${distributed-task-module.version}</version>
+      <version>${api.version}</version>
     </dependency>
 
     <dependency>

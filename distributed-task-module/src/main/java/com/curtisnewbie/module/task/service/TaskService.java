@@ -1,6 +1,6 @@
 package com.curtisnewbie.module.task.service;
 
-import com.curtisnewbie.common.vo.PageablePayloadSingleton;
+import com.curtisnewbie.common.vo.PageableList;
 import com.curtisnewbie.common.vo.PagingVo;
 import com.curtisnewbie.module.task.vo.*;
 import org.springframework.validation.annotation.Validated;
@@ -33,7 +33,7 @@ public interface TaskService {
     /**
      * Select with pagination
      */
-    PageablePayloadSingleton<List<ListTaskByPageRespVo>> listByPage(@NotNull ListTaskByPageReqVo param, @NotNull PagingVo pagingVo);
+    PageableList<ListTaskByPageRespVo> listByPage(@NotNull ListTaskByPageReqVo param, @NotNull PagingVo pagingVo);
 
     /**
      * Select by id
