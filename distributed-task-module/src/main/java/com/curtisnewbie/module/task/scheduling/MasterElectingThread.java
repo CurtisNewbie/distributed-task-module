@@ -114,26 +114,24 @@ public class MasterElectingThread implements Runnable {
 
     private void postHandleIsMaster(final boolean isMaster) {
 
-        // if we are master, check whether we need to refresh the jobs
-        if (isMaster) {
-            final LocalDateTime lastTimeRefreshed = lastTimeJobRefreshed.get();
-            final LocalDateTime now = LocalDateTime.now();
-
-            // now <= ( lastTimeRefreshed + 30 seconds ), i.e., refreshed every 30 seconds
-            if (lastTimeRefreshed != null && !now.isAfter(lastTimeRefreshed.plusSeconds(30)))
-                return;
-
-            // we are about to refresh jobs
-            lastTimeJobRefreshed.set(now);
-        }
-
         // making this part async is intentional, so that this thread doesn't block here
         // when the database is exceptionally slow
         singleThreadExecutor.execute(() -> {
             try {
                 if (isMaster) {
-                    // refresh jobs, compare scheduled jobs with records in database
-                    refreshScheduledTasks();
+
+                    // if we are master, check whether we need to refresh the jobs
+                    final LocalDateTime lastTimeRefreshed = lastTimeJobRefreshed.get(); // nullable
+                    final LocalDateTime now = LocalDateTime.now();
+                    lastTimeJobRefreshed.set(now);
+
+                    /*
+                    first time refreshing, or now > ( lastTimeRefreshed + 30 seconds ),
+                    i.e., refreshed every 30 seconds
+                     */
+                    if (lastTimeRefreshed == null || now.isAfter(lastTimeRefreshed.plusSeconds(30)))
+                        refreshScheduledTasks();
+
                     // trigger jobs that need to be executed immediately
                     runTriggeredJobs();
                 } else {
