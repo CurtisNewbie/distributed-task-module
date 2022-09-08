@@ -3,7 +3,6 @@ package com.curtisnewbie.module.task.helper.impl;
 import com.curtisnewbie.module.task.helper.*;
 import com.curtisnewbie.module.task.service.*;
 import com.curtisnewbie.module.task.vo.*;
-import lombok.extern.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.stereotype.*;
@@ -24,8 +23,8 @@ public class LocalDBTaskHelper implements TaskHelper {
     private TaskService taskService;
 
     @Override
-    public List<TaskVo> fetchAllTasks() {
-        return taskService.selectAll();
+    public List<TaskVo> fetchAllTasks(String appGroup) {
+        return taskService.selectAll(appGroup);
     }
 
     @Override

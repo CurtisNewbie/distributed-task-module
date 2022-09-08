@@ -26,7 +26,7 @@ public interface TaskMapper {
     /**
      * Select *
      */
-    List<TaskEntity> selectAll();
+    List<TaskEntity> selectAll(@Param("appGroup") String appGroup);
 
     /**
      * Update last_run_start_time, last_run_end_time, last_run_result, last_run_by by id

@@ -5,7 +5,7 @@ import com.curtisnewbie.common.vo.PagingVo;
 import com.curtisnewbie.module.task.vo.*;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.util.List;
 
 /**
@@ -23,7 +23,7 @@ public interface TaskService {
     /**
      * Select all task entities
      */
-    List<TaskVo> selectAll();
+    List<TaskVo> selectAll(@NotEmpty String appGroup);
 
     /**
      * Update record by id

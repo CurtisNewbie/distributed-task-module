@@ -21,7 +21,7 @@ public interface TaskHelper {
     /**
      * Fetch all tasks
      */
-    List<TaskVo> fetchAllTasks();
+    List<TaskVo> fetchAllTasks(String appGroup);
 
     /**
      * Update last run info

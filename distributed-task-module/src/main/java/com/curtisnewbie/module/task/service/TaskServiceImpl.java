@@ -40,8 +40,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
-    public List<TaskVo> selectAll() {
-        return BeanCopyUtils.toTypeList(taskMapper.selectAll(), TaskVo.class);
+    public List<TaskVo> selectAll(String appGroup) {
+        return BeanCopyUtils.toTypeList(taskMapper.selectAll(appGroup), TaskVo.class);
     }
 
     @Override

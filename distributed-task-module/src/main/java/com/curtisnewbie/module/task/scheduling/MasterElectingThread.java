@@ -160,7 +160,7 @@ public class MasterElectingThread implements Runnable {
     }
 
     private void loadJobFromDatabase() throws SchedulerException {
-        List<TaskVo> tasks = taskHelper.fetchAllTasks();
+        List<TaskVo> tasks = taskHelper.fetchAllTasks(taskProperties.getAppGroup());
         for (TaskVo tv : tasks) {
 
             // only when the group matches, this job shall be added

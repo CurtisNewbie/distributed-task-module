@@ -89,6 +89,7 @@
     select id, job_name, target_bean, cron_expr, app_group, last_run_start_time, last_run_end_time,
     last_run_by, last_run_result, enabled, concurrent_enabled, update_by, update_date
     from task
+    where app_group = #{appGroup}
   </select>
   <select id="findOneById" resultType="java.lang.Integer">
     select 1 from task
