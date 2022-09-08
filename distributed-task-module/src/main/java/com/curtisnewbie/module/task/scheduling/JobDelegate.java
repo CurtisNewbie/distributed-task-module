@@ -1,10 +1,11 @@
 package com.curtisnewbie.module.task.scheduling;
 
-import com.curtisnewbie.common.util.AppContextHolder;
+import com.curtisnewbie.common.util.*;
 import com.curtisnewbie.module.redisutil.RedisController;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPreExecuteListener;
 import com.curtisnewbie.module.task.vo.TaskVo;
+import jodd.bean.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ public class JobDelegate implements Job, ListenableJob {
 
     private final List<JobPostExecuteListener> jobPostExecuteListenerList = new LinkedList<>();
     private final List<JobPreExecuteListener> jobPreExecuteListenerList = new LinkedList<>();
-    private DelegatedJobContext ctx = new DelegatedJobContext();
+    private final DelegatedJobContext ctx = new DelegatedJobContext();
     private boolean isLocked = false;
 
     public JobDelegate(Job job, JobDetail jobDetail) {
@@ -38,39 +39,39 @@ public class JobDelegate implements Job, ListenableJob {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         ctx.jobExecutionContext = context;
         final JobKey jk = context.getJobDetail().getKey();
-        if (context.getJobDetail().isConcurrentExectionDisallowed()) {
-            try {
-                acquireMutexLock(jk);
-            } catch (InterruptedException e) {
-                throw new JobExecutionException(e);
-            }
-        }
 
-        doPreExecute();
-
-        final TaskVo task = JobUtils.getTask(context.getJobDetail());
-        ctx.task = task;
-
-        log.info("Execute job: id: '{}', name: '{}'", task.getId(), task.getJobName());
         try {
-            ctx.startTime = new Date();
+            if (context.getJobDetail().isConcurrentExectionDisallowed()) {
+                try {
+                    acquireMutexLock(jk);
+                } catch (InterruptedException e) {
+                    throw new JobExecutionException(e);
+                }
+            }
+
+            // pre-execute lifecycle callbacks
+            doPreExecute();
+
+            ctx.task = JobUtils.getTask(context.getJobDetail());
+            log.info("About to execute job: id: '{}', name: '{}'", ctx.task.getId(), ctx.task.getJobName());
 
             // execute delegated job
+            ctx.startTime = new Date();
             this.ctx.job.execute(context);
-
             ctx.endTime = new Date();
-        } catch (Exception e) {
-            // record if any exception occurred as well the time it starts or ends
-            ctx.exception = e;
-        } finally {
-            if (isLocked)
-                releaseMutexLock(jk);
-        }
 
-        doPostExecute();
+            // post-execute lifecycle callbacks
+            doPostExecute();
+
+        } catch (Exception e) {
+            ctx.exception = e; // record exception
+        } finally {
+            releaseMutexLock(jk);
+        }
     }
 
     private void releaseMutexLock(JobKey key) {
+        if (!isLocked) return;
         ApplicationContext applicationContext = AppContextHolder.getApplicationContext();
         Objects.requireNonNull(applicationContext, ApplicationContext.class.getSimpleName() + " not found");
         RedisController redisController = applicationContext.getBean(RedisController.class);
@@ -86,9 +87,8 @@ public class JobDelegate implements Job, ListenableJob {
         Objects.requireNonNull(redisController);
 
         // loop until it gets the lock
-        while (!redisController.tryLock(getConcurrentLockKey(key)))
+        while (!(isLocked = redisController.tryLock(getConcurrentLockKey(key))))
             ;
-        isLocked = true;
     }
 
     @Override
@@ -147,6 +147,7 @@ public class JobDelegate implements Job, ListenableJob {
 
         private DelegatedJobContext copy() {
             DelegatedJobContext copy = new DelegatedJobContext();
+            copy.task = BeanCopyUtils.toType(task, TaskVo.class); // deep copy
             copy.job = job;
             copy.jobExecutionContext = jobExecutionContext;
             copy.startTime = startTime;
