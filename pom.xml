@@ -11,13 +11,13 @@
   </parent>
 
   <artifactId>distributed-task-module-parent</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>distributed-task-module</name>
   <description>Module for distributed task scheduling</description>
   <packaging>pom</packaging>
 
   <properties>
-    <api.version>2.0.9</api.version>
+    <api.version>2.1.0-SNAPSHOT</api.version>
     <java.version>8</java.version>
   </properties>
 
