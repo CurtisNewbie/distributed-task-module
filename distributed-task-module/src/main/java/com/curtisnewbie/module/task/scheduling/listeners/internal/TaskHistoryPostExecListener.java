@@ -1,10 +1,10 @@
 package com.curtisnewbie.module.task.scheduling.listeners.internal;
 
 import com.curtisnewbie.module.task.constants.NamingConstants;
+import com.curtisnewbie.module.task.helper.*;
 import com.curtisnewbie.module.task.scheduling.JobDelegate;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
-import com.curtisnewbie.module.task.service.TaskHistoryService;
 import com.curtisnewbie.module.task.vo.TaskHistoryVo;
 import com.curtisnewbie.module.task.vo.TaskVo;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ import java.util.Date;
 public class TaskHistoryPostExecListener implements JobPostExecuteListener {
 
     @Autowired
-    private TaskHistoryService taskHistoryService;
+    private TaskHistoryHelper taskHistoryHelper;
 
     @Override
     public void postExecute(JobDelegate.DelegatedJobContext ctx) {
@@ -41,7 +41,7 @@ public class TaskHistoryPostExecListener implements JobPostExecuteListener {
             // by default, we consider the job is run by scheduler, unless the user triggers the job manually
         }
 
-        taskHistoryService.saveTaskHistory(TaskHistoryVo.builder()
+        taskHistoryHelper.saveTaskHistory(TaskHistoryVo.builder()
                 .taskId(tv.getId())
                 .startTime(ctx.getStartTime())
                 .endTime(ctx.getEndTime())

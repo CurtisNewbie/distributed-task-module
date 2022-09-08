@@ -4,9 +4,9 @@ import com.curtisnewbie.common.util.EnumUtils;
 import com.curtisnewbie.module.task.config.TaskProperties;
 import com.curtisnewbie.module.task.constants.NamingConstants;
 import com.curtisnewbie.module.task.constants.TaskEnabled;
+import com.curtisnewbie.module.task.helper.*;
 import com.curtisnewbie.module.task.service.NodeCoordinationService;
 import com.curtisnewbie.module.task.service.SchedulerService;
-import com.curtisnewbie.module.task.service.TaskService;
 import com.curtisnewbie.module.task.vo.TaskVo;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
@@ -55,7 +55,7 @@ public class MasterElectingThread implements Runnable {
     private SchedulerService schedulerService;
 
     @Autowired
-    private TaskService taskService;
+    private TaskHelper taskHelper;
 
     @Autowired
     private NodeCoordinationService nodeCoordinationService;
@@ -160,7 +160,7 @@ public class MasterElectingThread implements Runnable {
     }
 
     private void loadJobFromDatabase() throws SchedulerException {
-        List<TaskVo> tasks = taskService.selectAll();
+        List<TaskVo> tasks = taskHelper.fetchAllTasks();
         for (TaskVo tv : tasks) {
 
             // only when the group matches, this job shall be added
@@ -204,7 +204,7 @@ public class MasterElectingThread implements Runnable {
         } catch (ParseException e) {
             log.error("Invalid cron expression found in task, id: '{}', name: '{}', cron_expr: '{}', task has been disabled",
                     te.getId(), te.getJobName(), te.getCronExpr());
-            taskService.setTaskDisabled(te.getId(), "Invalid cron expression", NamingConstants.SCHEDULER);
+            taskHelper.markTaskDisabled(te.getId(), "Invalid cron expression", NamingConstants.SCHEDULER);
         }
     }
 
@@ -215,7 +215,7 @@ public class MasterElectingThread implements Runnable {
             if (!jobOpt.isPresent())
                 continue;
 
-            if (!taskService.exists(getIdFromJobKey(jk))) {
+            if (!taskHelper.exists(getIdFromJobKey(jk))) {
                 log.info("Task_id'{}' not found in database, removing it from scheduler", JobUtils.getIdFromJobKey(jk));
                 schedulerService.removeJob(jk);
             }

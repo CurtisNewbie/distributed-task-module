@@ -61,9 +61,6 @@ public interface TaskService {
 
     /**
      * Update updateBy
-     *
-     * @param taskId
-     * @param updateBy
      */
     void updateUpdateBy(int taskId, @NotNull String updateBy);
 }

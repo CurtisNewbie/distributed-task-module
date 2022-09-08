@@ -1,10 +1,10 @@
 package com.curtisnewbie.module.task.scheduling.listeners.internal;
 
 import com.curtisnewbie.module.task.constants.NamingConstants;
+import com.curtisnewbie.module.task.helper.*;
 import com.curtisnewbie.module.task.scheduling.JobDelegate;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
-import com.curtisnewbie.module.task.service.TaskService;
 import com.curtisnewbie.module.task.vo.TaskVo;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
@@ -22,11 +22,12 @@ import org.springframework.core.annotation.Order;
 public class SaveTaskExecResultPostExecListener implements JobPostExecuteListener {
 
     @Autowired
-    private TaskService taskService;
+    private TaskHelper taskHelper;
 
     @Override
     public void postExecute(JobDelegate.DelegatedJobContext ctx) {
 
+        // todo, make the result a bit more meaningful
         final String result = JobUtils.convertResult(ctx);
 
         JobDetail jd = ctx.getJobExecutionContext().getJobDetail();
@@ -44,7 +45,7 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
         utv.setLastRunResult(result);
         utv.setLastRunStartTime(ctx.getStartTime());
         utv.setLastRunEndTime(ctx.getEndTime());
-        taskService.updateLastRunInfo(utv);
+        taskHelper.updateLastRunInfo(utv);
 
         log.info("Updated execution result for task, id: {}, job_name: {}", tv.getId(), tv.getJobName());
     }
