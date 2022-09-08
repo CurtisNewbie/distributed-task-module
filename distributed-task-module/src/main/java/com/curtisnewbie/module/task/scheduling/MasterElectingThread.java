@@ -129,7 +129,7 @@ public class MasterElectingThread implements Runnable {
                     first time refreshing, or now > ( lastTimeRefreshed + 30 seconds ),
                     i.e., refreshed every 30 seconds
                      */
-                    if (lastTimeRefreshed == null || now.isAfter(lastTimeRefreshed.plusSeconds(30)))
+                    if (lastTimeRefreshed == null || now.isAfter(lastTimeRefreshed.plusSeconds(taskProperties.getRefreshInterval())))
                         refreshScheduledTasks();
 
                     // trigger jobs that need to be executed immediately

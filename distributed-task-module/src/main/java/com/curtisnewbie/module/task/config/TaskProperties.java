@@ -13,9 +13,20 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TaskProperties {
 
+    public static final String REFRESH_INTERVAL_PROP_KEY = "distributed-task-module.refresh-interval";
     public static final String APP_GROUP_PROP_KEY = "distributed-task-module.application-group";
     public static final String DEFAULT_APP_GROUP = "default";
+    public static final String DEFAULT_REFRESH_INTERVAL = "30";
 
+    /**
+     * App Group
+     */
     @Value("${" + APP_GROUP_PROP_KEY + ":" + DEFAULT_APP_GROUP + "}")
     private String appGroup;
+
+    /**
+     * Refresh interval for jobs in seconds
+     */
+    @Value("${" + REFRESH_INTERVAL_PROP_KEY + ":" + DEFAULT_REFRESH_INTERVAL + "}")
+    private int refreshInterval;
 }
