@@ -1,5 +1,6 @@
 package com.curtisnewbie.module.task.helper;
 
+import com.curtisnewbie.module.task.helper.impl.*;
 import com.curtisnewbie.module.task.vo.*;
 
 import java.util.*;
@@ -9,6 +10,9 @@ import java.util.*;
  * <p>
  * Helper used by the scheduling functionalities, one may implement this interface as a bean to change how tasks are fetched,
  * updated, and so on
+ * <p>
+ * The default implementation is {@link LocalDBTaskHelper}, which essentially reads/updates the database connected by the service,
+ * and looks for a table called {@code task}
  *
  * @author yongj.zhuang
  */

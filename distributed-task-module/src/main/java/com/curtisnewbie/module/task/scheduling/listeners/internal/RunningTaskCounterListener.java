@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class RunningTaskCounterListener implements JobPreExecuteListener, JobPostExecuteListener, RunningTaskCounter {
 
-    private AtomicInteger atomicInteger = new AtomicInteger(0);
+    private final AtomicInteger atomicInteger = new AtomicInteger(0);
 
     @Override
     public void postExecute(JobDelegate.DelegatedJobContext context) {
