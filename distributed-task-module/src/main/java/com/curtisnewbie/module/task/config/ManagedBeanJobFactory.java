@@ -44,14 +44,14 @@ public class ManagedBeanJobFactory implements JobFactory {
         String beanName = tv.getTargetBean();
         Objects.requireNonNull(beanName, "Task.target_bean is null");
 
-        Job job = applicationContext.getBean(beanName, Job.class);
-        if (job == null) {
-            throw JobBeanNotFoundException.forBeanName(beanName);
-        }
+        final Job job = applicationContext.getBean(beanName, Job.class);
+
         // create a delegate of the job to better handle it's lifecycle
         JobDelegate jobDelegate = new JobDelegate(job, jd);
+
         // register listeners
         jobListenerRegistrar.registerListener(jobDelegate);
+
         return jobDelegate;
     }
 

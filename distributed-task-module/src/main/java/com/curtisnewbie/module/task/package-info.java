@@ -5,16 +5,14 @@
  * <p>
  * To use this module, make sure you properly configure your database and redis.
  * <p>
- * <br>
- * Then, all you have to do is to create your job instances by extending {@link com.curtisnewbie.module.task.scheduling.AbstractJob},
- * and make them spring managed beans. And configure your {@code task} table, set the {@code target_bean} field using
- * the same name as the bean, as well as the cron expression and 'group' property (which is the name of your cluster).
- * It should work just fine.
- * </p>
- * <br>
+ * First of all, you need to create your job instances by extending {@link com.curtisnewbie.module.task.scheduling.AbstractJob},
+ * and making them spring managed beans.
+ * <p>
+ * Then you need to configure your database table <b>'{@code task}'</b>: the {@code target_bean} field is
+ * the name of the job bean, and the <b>'app_group'</b> field is the name of your cluster, all services of the same cluster will for sure use the same 'app_group' value.
  * <p>
  * For example, our job is declared as a spring managed bean with bean name 'physicalDeletingFileJob' (this should be
- * same as the target_bean).
+ * same as the value in field 'target_bean').
  * <pre>
  * {@code
  * @Component
@@ -29,17 +27,18 @@
  * </pre>
  * <p>
  * Then in our table, we have
- * <ul>
- *    <li>id=1</li>
- *    <li>name='fileDeleteJob'</li>
- *    <li>target_bean='physicalDeletingFileJob'</li>
- *    <li>cron_expr='0 0/2 * ? * *'</li>
- *    <li>group='file-server'</li>
- * </ul>
- *
- * <br>
+ * <pre>
+ * {@code
+ * job_name='fileDeleteJob'
+ * target_bean='physicalDeletingFileJob'
+ * cron_expr='0 0/2 * ? * *'
+ * app_group='file-server'
+ * enabled=1
+ * concurrent_enabled=1
+ * }
+ * </pre>
  * <p>
- * Finally, in our property file, we configure the following property using the same value as the group in database.
+ * Finally, in our property file, we configure the following property using the same value as the 'app_group' in database.
  * </p>
  * <pre>
  * {@code
@@ -47,7 +46,6 @@
  * distributed-task-module.application-group=file-server
  * }
  * </pre>
- * <br>
  * <p>
  * Note that if property "distributed-task-module.enabled" is set to false, this module will be disabled.
  * </p>
@@ -65,15 +63,25 @@
  * {@link com.curtisnewbie.module.task.service.NodeCoordinationService} is used to coordinate task scheduling
  * between nodes of same cluster, use
  * {@link com.curtisnewbie.module.task.service.NodeCoordinationService#coordinateJobTriggering(com.curtisnewbie.module.task.vo.TaskVo, java.lang.String)}
- * to trigger job if you want it to run immediately.
+ * to trigger job if you want it to run 'immediately'.
  * </li>
  * <li>
  * You can also inject {@link com.curtisnewbie.module.task.scheduling.RunningTaskCounter} to get how many tasks
  * are currently running in this node (not for the whole cluster, if current node is not a main node, there won't be
- * any tasks running)
+ * any tasks running, so the count will always be 0)
  * </li>
  * <li>
  * For starter, see {@link com.curtisnewbie.module.task.config.DistributedTaskModuleStarter}
+ * </li>
+ * </ul>
+ * <br>
+ * Extension point:
+ * <ul>
+ * <li>
+ * {@link com.curtisnewbie.module.task.helper.TaskHelper}
+ * </li>
+ * <li>
+ * {@link com.curtisnewbie.module.task.helper.TaskHistoryHelper}
  * </li>
  * </ul>
  *

@@ -65,7 +65,7 @@ public final class JobUtils {
         Object o = m.get(RUN_ONCE_TRIGGER);
         if (o == null)
             return false;
-        return Boolean.valueOf(o.toString());
+        return Boolean.parseBoolean(o.toString());
     }
 
     /**

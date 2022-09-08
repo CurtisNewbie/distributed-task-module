@@ -4,7 +4,6 @@ import com.curtisnewbie.module.task.scheduling.ListenableJob;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPreExecuteListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
