@@ -78,10 +78,16 @@
  * Extension point:
  * <ul>
  * <li>
- * {@link com.curtisnewbie.module.task.helper.TaskHelper}
+ * {@link com.curtisnewbie.module.task.helper.TaskHelper} for querying & updating tasks
  * </li>
  * <li>
- * {@link com.curtisnewbie.module.task.helper.TaskHistoryHelper}
+ * {@link com.curtisnewbie.module.task.helper.TaskHistoryHelper} for updating task histories
+ * </li>
+ * <li>
+ * {@link com.curtisnewbie.module.task.scheduling.listeners.JobPreExecuteListener} for job's pre-execute lifecycle callback
+ * </li>
+ * <li>
+ * {@link com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener} for job's post-execute lifecycle callback
  * </li>
  * </ul>
  *

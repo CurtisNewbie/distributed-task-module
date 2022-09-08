@@ -23,7 +23,7 @@ import com.curtisnewbie.module.task.scheduling.JobDelegate;
 public interface JobPreExecuteListener {
 
     /**
-     * After execution
+     * Before execution
      */
     void preExecute(JobDelegate.DelegatedJobContext context);
 }

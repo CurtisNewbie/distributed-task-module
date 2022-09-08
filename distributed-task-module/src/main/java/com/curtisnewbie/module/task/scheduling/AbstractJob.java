@@ -4,7 +4,6 @@ import com.curtisnewbie.module.task.vo.TaskVo;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.util.*;
 
 /**
  * Abstract implementation of Job
