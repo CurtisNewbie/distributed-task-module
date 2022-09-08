@@ -17,6 +17,8 @@ public final class JobUtils {
 
     /** Key to check if job is fired by a 'run-once' Trigger */
     public static final String RUN_ONCE_TRIGGER = "run-once-trigger";
+    /** Key to obtain last run result */
+    public static final String LAST_RUN_RESULT = "last-run-result";
 
     private JobUtils() {
 
@@ -30,6 +32,23 @@ public final class JobUtils {
      */
     public static void setRunBy(JobDetail jobDetail, String runBy) {
         jobDetail.getJobDataMap().put(TaskJobDetailWrapper.JOB_DATA_MAP_RUN_BY, runBy);
+    }
+
+    /**
+     * Set last run result
+     */
+    public static void setLastRunResult(JobDataMap m, String lastRunResult) {
+        if (lastRunResult != null) {
+            m.put(LAST_RUN_RESULT, lastRunResult);
+        }
+    }
+
+    /**
+     * Get last run result
+     */
+    public static String getLastRunResult(JobDataMap m) {
+        Object o = m.get(LAST_RUN_RESULT);
+        return o == null ? null : (String) o;
     }
 
     /**
@@ -116,11 +135,18 @@ public final class JobUtils {
     }
 
     /**
-     * Convert result string
+     * Extract lastRunResult
      */
-    public static String convertResult(JobDelegate.DelegatedJobContext ctx) {
-        return ctx.getException() != null ?
-                "exception " + ctx.getException().getClass().getSimpleName() + " occurred"
-                : "success";
+    public static String extractLastRunResult(JobDelegate.DelegatedJobContext ctx) {
+        String lastRunResult = "";
+        if (ctx.getException() != null) {
+            lastRunResult = String.format("Exception: %s - %s", ctx.getException().getClass().getSimpleName(), ctx.getException().getMessage());
+        } else {
+            // some custom message set by the job executed
+            final TaskVo task = ctx.getTask();
+            if (StringUtils.hasText(task.getLastRunResult()))
+                lastRunResult = task.getLastRunResult();
+        }
+        return lastRunResult;
     }
 }

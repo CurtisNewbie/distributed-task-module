@@ -11,6 +11,7 @@ import org.quartz.JobDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.util.*;
 
 /**
  * JobPostExecuteListener that update last_run_* result for tasks
@@ -26,27 +27,23 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
 
     @Override
     public void postExecute(JobDelegate.DelegatedJobContext ctx) {
+        final TaskVo curr = ctx.getTask();
 
-        // todo, make the result a bit more meaningful
-        final String result = JobUtils.convertResult(ctx);
-
-        JobDetail jd = ctx.getJobExecutionContext().getJobDetail();
-        TaskVo tv = JobUtils.getTask(jd);
-
-        TaskVo utv = new TaskVo();
-        utv.setId(tv.getId());
+        TaskVo update = new TaskVo();
+        update.setId(curr.getId());
 
         String runBy = JobUtils.getRunBy(ctx.getJobExecutionContext().getMergedJobDataMap());
         if (runBy == null) {
             runBy = NamingConstants.SCHEDULER;
-            // by default, we consider the job is run by scheduler, unless the user triggers the job manually
+            // by default, we consider that the job is run by scheduler, unless the user triggers the job manually
         }
-        utv.setLastRunBy(runBy);
-        utv.setLastRunResult(result);
-        utv.setLastRunStartTime(ctx.getStartTime());
-        utv.setLastRunEndTime(ctx.getEndTime());
-        taskHelper.updateLastRunInfo(utv);
 
-        log.info("Updated execution result for task, id: {}, job_name: {}", tv.getId(), tv.getJobName());
+        update.setLastRunBy(runBy);
+        update.setLastRunResult(JobUtils.extractLastRunResult(ctx));
+        update.setLastRunStartTime(ctx.getStartTime());
+        update.setLastRunEndTime(ctx.getEndTime());
+        taskHelper.updateLastRunInfo(update);
+
+        log.info("Updated execution result for task, id: {}, job_name: {}", curr.getId(), curr.getJobName());
     }
 }

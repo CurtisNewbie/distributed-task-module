@@ -48,7 +48,9 @@ public class JobDelegate implements Job, ListenableJob {
 
         doPreExecute();
 
-        TaskVo task = JobUtils.getTask(context.getJobDetail());
+        final TaskVo task = JobUtils.getTask(context.getJobDetail());
+        ctx.task = task;
+
         log.info("Execute job: id: '{}', name: '{}'", task.getId(), task.getJobName());
         try {
             ctx.startTime = new Date();
@@ -122,6 +124,9 @@ public class JobDelegate implements Job, ListenableJob {
     @Data
     @NoArgsConstructor
     public static class DelegatedJobContext {
+
+        /** Task */
+        private TaskVo task;
 
         /** actual job that is executed */
         private Job job;

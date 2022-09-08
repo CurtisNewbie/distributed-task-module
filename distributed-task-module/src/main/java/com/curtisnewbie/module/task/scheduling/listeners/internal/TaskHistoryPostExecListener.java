@@ -32,9 +32,8 @@ public class TaskHistoryPostExecListener implements JobPostExecuteListener {
 
     @Override
     public void postExecute(JobDelegate.DelegatedJobContext ctx) {
-        final String result = JobUtils.convertResult(ctx);
-        final JobDetail jd = ctx.getJobExecutionContext().getJobDetail();
-        final TaskVo tv = JobUtils.getTask(jd);
+        final String result = JobUtils.extractLastRunResult(ctx);
+        final TaskVo tv = ctx.getTask();
         String runBy = JobUtils.getRunBy(ctx.getJobExecutionContext().getMergedJobDataMap());
         if (runBy == null) {
             runBy = NamingConstants.SCHEDULER;
