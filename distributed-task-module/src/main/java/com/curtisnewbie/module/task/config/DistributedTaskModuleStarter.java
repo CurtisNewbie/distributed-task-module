@@ -3,6 +3,7 @@ package com.curtisnewbie.module.task.config;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.curtisnewbie.module.task.helper.*;
 import com.curtisnewbie.module.task.scheduling.MasterElectingThread;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.RunOnceTriggerPostExecuteListener;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.RunningTaskCounterListener;
@@ -31,6 +32,21 @@ public class DistributedTaskModuleStarter {
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
+
+    @Configuration
+    @ConditionalOnProperty(value = "distributed-task-module.plugin.dtask-go.enabled", havingValue = "true", matchIfMissing = false)
+    static class DtaskGoPluginConfiguration {
+
+        public TaskHelper dtaskGoTaskHelper() {
+            return null;
+        }
+
+        public TaskHistoryHelper dtaskGoTaskHistoryHelper() {
+            return null;
+        }
+
+    }
+
 
     @Configuration
     @ConditionalOnProperty(value = "distributed-task-module.scheduling.disabled", havingValue = "false", matchIfMissing = true)
