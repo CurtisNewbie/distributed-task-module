@@ -1,5 +1,6 @@
 package com.curtisnewbie.module.task.vo;
 
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -27,9 +28,11 @@ public class TaskVo {
     private String appGroup;
 
     /** the last time this task was executed */
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date lastRunStartTime;
 
     /** the last time this task was finished */
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date lastRunEndTime;
 
     /** app that previously ran this task */
@@ -45,6 +48,7 @@ public class TaskVo {
     private Integer concurrentEnabled;
 
     /** update date */
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date updateDate;
 
     /** updated by */

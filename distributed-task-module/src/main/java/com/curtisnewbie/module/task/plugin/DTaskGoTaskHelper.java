@@ -6,14 +6,10 @@ import com.curtisnewbie.module.task.config.*;
 import com.curtisnewbie.module.task.helper.*;
 import com.curtisnewbie.module.task.vo.*;
 import com.fasterxml.jackson.core.type.*;
-import com.fasterxml.jackson.databind.*;
 import lombok.extern.slf4j.*;
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.client.*;
 
 import java.util.*;
-
-import static com.curtisnewbie.common.util.JsonUtils.*;
 
 /**
  * TaskHelper for dtask-go
@@ -23,12 +19,16 @@ import static com.curtisnewbie.common.util.JsonUtils.*;
 @Slf4j
 public class DTaskGoTaskHelper implements TaskHelper {
 
-    @Autowired
-    private TaskProperties taskProperties;
+    private final TaskProperties taskProperties;
+    private final RestTemplate rest;
+
+    public DTaskGoTaskHelper(TaskProperties taskProperties, RestTemplate restTemplate) {
+        this.taskProperties = taskProperties;
+        this.rest = restTemplate;
+    }
 
     @Override
     public List<TaskVo> fetchAllTasks(String appGroup) {
-        RestTemplate rest = new RestTemplate();
         final String payload = rest.getForObject(taskProperties.buildDTaskGoUrl("/task/all?appGroup=" + appGroup), String.class);
         Result<List<TaskVo>> result = JsonUtils.ureadValueAsObject(payload, new TypeReference<Result<List<TaskVo>>>() {
         });
@@ -39,19 +39,15 @@ public class DTaskGoTaskHelper implements TaskHelper {
 
     @Override
     public void updateLastRunInfo(UpdateLastRunInfoReq tv) {
-        RestTemplate rest = new RestTemplate();
         final Result<?> result = rest.postForObject(taskProperties.buildDTaskGoUrl("/task/lastRunInfo/update"), tv, Result.class);
         AssertUtils.notNull(result, "Failed to connect dtask-go");
         result.assertIsOk();
     }
 
     @Override
-    public boolean exists(int taskId) {
-        RestTemplate rest = new RestTemplate();
+    public boolean isEnabled(int taskId) {
         final Result<?> result = rest.getForObject(taskProperties.buildDTaskGoUrl("/task/valid?taskId=" + taskId), Result.class);
-        AssertUtils.notNull(result, "Failed to connect dtask-go");
-        result.assertIsOk();
-        return true;
+        return result.isOk();
     }
 
     @Override
@@ -62,7 +58,6 @@ public class DTaskGoTaskHelper implements TaskHelper {
         r.setUpdateBy(updateBy);
         r.setUpdateDate(new Date());
 
-        RestTemplate rest = new RestTemplate();
         final Result<?> result = rest.postForObject(taskProperties.buildDTaskGoUrl("/task/disable"), r, Result.class);
         AssertUtils.notNull(result, "Failed to fetch tasks from dtask-go");
         result.assertIsOk();

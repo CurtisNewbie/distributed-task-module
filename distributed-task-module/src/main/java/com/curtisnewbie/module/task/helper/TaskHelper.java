@@ -29,9 +29,9 @@ public interface TaskHelper {
     void updateLastRunInfo(UpdateLastRunInfoReq tv);
 
     /**
-     * Check if a task exists by its id
+     * Check if a task is enabled
      */
-    boolean exists(int taskId);
+    boolean isEnabled(int taskId);
 
     /**
      * Mark task as disabled

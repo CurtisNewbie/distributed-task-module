@@ -1,5 +1,6 @@
 package com.curtisnewbie.module.task.vo;
 
+import com.fasterxml.jackson.annotation.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,9 +23,11 @@ public class TaskHistoryVo {
     private Integer taskId;
 
     /** start time */
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date startTime;
 
     /** end time */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     /** task triggered by */
@@ -34,6 +37,7 @@ public class TaskHistoryVo {
     private String runResult;
 
     /** create time */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     @Builder

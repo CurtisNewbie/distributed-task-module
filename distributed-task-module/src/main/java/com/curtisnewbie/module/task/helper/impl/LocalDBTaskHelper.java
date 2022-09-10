@@ -38,7 +38,7 @@ public class LocalDBTaskHelper implements TaskHelper {
     }
 
     @Override
-    public boolean exists(int taskId) {
+    public boolean isEnabled(int taskId) {
         return taskService.exists(taskId);
     }
 

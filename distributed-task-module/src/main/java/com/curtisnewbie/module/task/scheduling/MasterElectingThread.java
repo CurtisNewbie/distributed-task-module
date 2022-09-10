@@ -215,7 +215,7 @@ public class MasterElectingThread implements Runnable {
             if (!jobOpt.isPresent())
                 continue;
 
-            if (!taskHelper.exists(getIdFromJobKey(jk))) {
+            if (!taskHelper.isEnabled(getIdFromJobKey(jk))) {
                 log.info("Task_id'{}' not found in database, removing it from scheduler", JobUtils.getIdFromJobKey(jk));
                 schedulerService.removeJob(jk);
             }
