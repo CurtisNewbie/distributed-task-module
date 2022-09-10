@@ -1,8 +1,10 @@
 package com.curtisnewbie.module.task.helper.impl;
 
+import com.curtisnewbie.common.util.*;
 import com.curtisnewbie.module.task.helper.*;
 import com.curtisnewbie.module.task.service.*;
 import com.curtisnewbie.module.task.vo.*;
+import jodd.bean.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.stereotype.*;
@@ -28,9 +30,11 @@ public class LocalDBTaskHelper implements TaskHelper {
     }
 
     @Override
-    public void updateLastRunInfo(TaskVo tv) {
+    public void updateLastRunInfo(UpdateLastRunInfoReq tv) {
+        TaskVo update = BeanCopyUtils.toType(tv, TaskVo.class);
+
         Assert.notNull(tv, "TaskVo == null, unable to update last run info");
-        taskService.updateLastRunInfo(tv);
+        taskService.updateLastRunInfo(update);
     }
 
     @Override

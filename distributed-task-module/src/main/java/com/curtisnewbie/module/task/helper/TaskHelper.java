@@ -26,7 +26,7 @@ public interface TaskHelper {
     /**
      * Update last run info
      */
-    void updateLastRunInfo(TaskVo tv);
+    void updateLastRunInfo(UpdateLastRunInfoReq tv);
 
     /**
      * Check if a task exists by its id

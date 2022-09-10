@@ -36,7 +36,7 @@ public class TaskProperties {
     /**
      * dtask-go base url
      * <p>
-     * https://localhost:8082/dtask/remote/
+     * http://localhost:8082/dtask/remote/
      */
     @Value("${" + DTASKGO_BASE_URL_PROP_KEY + ":}")
     private String dtaskGoBaseUrl;

@@ -5,7 +5,7 @@ import com.curtisnewbie.module.task.helper.*;
 import com.curtisnewbie.module.task.scheduling.JobDelegate;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
-import com.curtisnewbie.module.task.vo.TaskVo;
+import com.curtisnewbie.module.task.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
     public void postExecute(JobDelegate.DelegatedJobContext ctx) {
         final TaskVo curr = ctx.getTask();
 
-        TaskVo update = new TaskVo();
+        UpdateLastRunInfoReq update = new UpdateLastRunInfoReq();
         update.setId(curr.getId());
 
         String runBy = JobUtils.getRunBy(ctx.getJobExecutionContext().getMergedJobDataMap());

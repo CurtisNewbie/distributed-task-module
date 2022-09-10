@@ -25,23 +25,22 @@ public class DTaskGoTaskHelper implements TaskHelper {
 
     @Autowired
     private TaskProperties taskProperties;
-    private final ObjectMapper objectMapper = constructsJsonMapper();
 
     @Override
     public List<TaskVo> fetchAllTasks(String appGroup) {
         RestTemplate rest = new RestTemplate();
-        final String payload = rest.getForObject(taskProperties.buildDTaskGoUrl("/task/all"), String.class);
-        Result<List<TaskVo>> result = ExceptionUtils.throwIfError(() -> objectMapper.readValue(payload, new TypeReference<Result<List<TaskVo>>>() {
-        }));
+        final String payload = rest.getForObject(taskProperties.buildDTaskGoUrl("/task/all?appGroup=" + appGroup), String.class);
+        Result<List<TaskVo>> result = JsonUtils.ureadValueAsObject(payload, new TypeReference<Result<List<TaskVo>>>() {
+        });
         result.assertIsOk();
         AssertUtils.notNull(result, "Failed to connect dtask-go");
         return result.getData() != null ? result.getData() : new ArrayList<>();
     }
 
     @Override
-    public void updateLastRunInfo(TaskVo tv) {
+    public void updateLastRunInfo(UpdateLastRunInfoReq tv) {
         RestTemplate rest = new RestTemplate();
-        final Result<?> result = rest.postForObject(taskProperties.buildDTaskGoUrl("/task/update"), tv, Result.class);
+        final Result<?> result = rest.postForObject(taskProperties.buildDTaskGoUrl("/task/lastRunInfo/update"), tv, Result.class);
         AssertUtils.notNull(result, "Failed to connect dtask-go");
         result.assertIsOk();
     }
