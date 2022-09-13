@@ -170,9 +170,13 @@ public class MasterElectingThread implements Runnable {
             Optional<JobDetail> optionalJobDetail = schedulerService.getJob(JobUtils.getJobKey(tv));
             if (!optionalJobDetail.isPresent()) {
                 TaskEnabled enabled = EnumUtils.parse(tv.getEnabled(), TaskEnabled.class);
-                Objects.requireNonNull(enabled, "task's field enabled value illegal, unable to parse it");
+                if (enabled == null) {
+                    log.error("task's field enabled value illegal, unable to parse it, id: {}", tv.getId());
+                    continue;
+                }
+
                 // new task, add it into scheduler
-                if (enabled.equals(TaskEnabled.ENABLED)) {
+                if (enabled == TaskEnabled.ENABLED) {
                     log.info("Found new task '{}', cron: '{}', add it into scheduler", tv.getJobName(), tv.getCronExpr());
                     scheduleJob(tv);
                 }
@@ -185,7 +189,7 @@ public class MasterElectingThread implements Runnable {
 
                     TaskEnabled enabled = EnumUtils.parse(tv.getEnabled(), TaskEnabled.class);
                     Objects.requireNonNull(enabled, "task's field enabled value illegal, unable to parse it");
-                    if (!enabled.equals(TaskEnabled.ENABLED)) {
+                    if (enabled != TaskEnabled.ENABLED) {
                         log.info("Task '{}' disabled, removed from scheduler", tv.getJobName());
                         continue;
                     }
