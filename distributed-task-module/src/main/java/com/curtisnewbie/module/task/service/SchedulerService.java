@@ -49,11 +49,10 @@ public interface SchedulerService {
     void triggerJob(@NotNull JobKey jobKey) throws SchedulerException;
 
     /**
-     * Create and register trigger without any predefined schedule
+     * Create and register trigger that will be triggered for only once
      * <p>
-     * The job specified (for the JobKey) will be fired by the created trigger for only once, then this trigger will no
-     * longer fire since on schedule is associated with it, user of this method may want to remove this 'run-once'
-     * trigger once it's used.
+     * The job specified (for the JobKey) will be fired by the created trigger for only once. User of this method may
+     * want to remove this 'run-once' trigger by calling {@link #removeTrigger(TriggerKey)}.
      * </p>
      * <p>
      * This kind of 'run-once' trigger can be identified using {@link JobUtils#isRunOnceTrigger(JobDataMap)}
@@ -80,7 +79,6 @@ public interface SchedulerService {
      *
      * @param jobDetail jobDetail
      * @param replace   replace
-     * @throws SchedulerException
      */
     void addUnscheduledJob(@NotNull JobDetail jobDetail, boolean replace) throws SchedulerException;
 
@@ -96,8 +94,7 @@ public interface SchedulerService {
      *
      * @param tv task
      * @return next date scheduled
-     * @throws SchedulerException
-     * @throws ParseException     when the cron expression is invalid
+     * @throws ParseException when the cron expression is invalid
      */
     Date scheduleJob(@NotNull TaskVo tv) throws SchedulerException, ParseException;
 
