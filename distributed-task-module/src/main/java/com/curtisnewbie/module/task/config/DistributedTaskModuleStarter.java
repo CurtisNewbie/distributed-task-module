@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.curtisnewbie.module.task.helper.*;
+import com.curtisnewbie.module.task.helper.impl.*;
 import com.curtisnewbie.module.task.scheduling.MasterElectingThread;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.RunOnceTriggerPostExecuteListener;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.RunningTaskCounterListener;
@@ -33,20 +34,17 @@ public class DistributedTaskModuleStarter {
         return interceptor;
     }
 
-    @Configuration
-    @ConditionalOnProperty(value = "distributed-task-module.plugin.dtask-go.enabled", havingValue = "true", matchIfMissing = false)
-    static class DtaskGoPluginConfiguration {
-
-        public TaskHelper dtaskGoTaskHelper() {
-            return null;
-        }
-
-        public TaskHistoryHelper dtaskGoTaskHistoryHelper() {
-            return null;
-        }
-
+    @Bean
+    @ConditionalOnMissingBean
+    public TaskHelper localDBTaskHelper() {
+        return new LocalDBTaskHelper();
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    public TaskHistoryHelper localDBTaskHistoryHelper() {
+        return new LocalDBTaskHistoryHelper();
+    }
 
     @Configuration
     @ConditionalOnProperty(value = "distributed-task-module.scheduling.disabled", havingValue = "false", matchIfMissing = true)

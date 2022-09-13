@@ -17,8 +17,6 @@ import java.util.*;
  *
  * @author yongj.zhuang
  */
-@Component
-@ConditionalOnMissingBean(TaskHelper.class)
 public class LocalDBTaskHelper implements TaskHelper {
 
     @Autowired
