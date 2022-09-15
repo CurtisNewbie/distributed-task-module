@@ -14,8 +14,6 @@ import org.springframework.stereotype.*;
  * @author yongj.zhuang
  */
 @Slf4j
-@Component
-@ConditionalOnMissingBean(TaskHistoryHelper.class)
 public class LocalDBTaskHistoryHelper implements TaskHistoryHelper {
 
     @Autowired

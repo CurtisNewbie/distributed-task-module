@@ -3,19 +3,26 @@ package com.curtisnewbie.module.task.config;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.curtisnewbie.common.preconf.RestTemplatePreConfigured;
 import com.curtisnewbie.module.task.helper.*;
 import com.curtisnewbie.module.task.helper.impl.*;
+import com.curtisnewbie.module.task.plugin.DTaskGoTaskHelper;
+import com.curtisnewbie.module.task.plugin.DTaskGoTaskHistoryHelper;
 import com.curtisnewbie.module.task.scheduling.MasterElectingThread;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.RunOnceTriggerPostExecuteListener;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.RunningTaskCounterListener;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.SaveTaskExecResultPostExecListener;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.TaskHistoryPostExecListener;
 import com.curtisnewbie.module.task.service.*;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.quartz.SchedulerFactoryBeanCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Starter for distributed-task-module
@@ -34,16 +41,40 @@ public class DistributedTaskModuleStarter {
         return interceptor;
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public TaskHelper localDBTaskHelper() {
-        return new LocalDBTaskHelper();
+    /**
+     * Configuration for DTaskGoPlugin
+     *
+     * @author yongj.zhuang
+     */
+    @Configuration
+    @Import(RestTemplatePreConfigured.class)
+    @ConditionalOnProperty(value = "distributed-task-module.plugin.dtask-go.enabled", havingValue = "true", matchIfMissing = false)
+    public static class DTaskGoPluginConfiguration {
+
+        @Bean
+        public DTaskGoTaskHelper dTaskGoTaskHelper(TaskProperties taskProperties, RestTemplate restTemplate) {
+            return new DTaskGoTaskHelper(taskProperties, restTemplate);
+        }
+
+        @Bean
+        public DTaskGoTaskHistoryHelper dTaskGoTaskHistoryHelper(TaskProperties taskProperties, RestTemplate restTemplate) {
+            return new DTaskGoTaskHistoryHelper(taskProperties, restTemplate);
+        }
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public TaskHistoryHelper localDBTaskHistoryHelper() {
-        return new LocalDBTaskHistoryHelper();
+    @Configuration
+    public static class LocalTaskHelperConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(TaskHelper.class)
+        public TaskHelper localDBTaskHelper() {
+            return new LocalDBTaskHelper();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(TaskHistoryHelper.class)
+        public TaskHistoryHelper localDBTaskHistoryHelper() {
+            return new LocalDBTaskHistoryHelper();
+        }
     }
 
     @Configuration
