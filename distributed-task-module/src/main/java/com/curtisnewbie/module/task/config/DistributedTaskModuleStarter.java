@@ -14,8 +14,6 @@ import com.curtisnewbie.module.task.scheduling.listeners.internal.RunningTaskCou
 import com.curtisnewbie.module.task.scheduling.listeners.internal.SaveTaskExecResultPostExecListener;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.TaskHistoryPostExecListener;
 import com.curtisnewbie.module.task.service.*;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.quartz.SchedulerFactoryBeanCustomizer;
