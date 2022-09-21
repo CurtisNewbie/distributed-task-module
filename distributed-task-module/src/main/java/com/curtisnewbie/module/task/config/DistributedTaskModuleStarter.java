@@ -39,21 +39,19 @@ public class DistributedTaskModuleStarter {
     }
 
     @Bean
-    @ConditionalOnProperty(value = "distributed-task-module.enabled", havingValue = "false", matchIfMissing = true)
     @ConditionalOnMissingBean(TaskHelper.class)
     public TaskHelper localDBTaskHelper() {
         return new LocalDBTaskHelper();
     }
 
     @Bean
-    @ConditionalOnProperty(value = "distributed-task-module.enabled", havingValue = "false", matchIfMissing = true)
     @ConditionalOnMissingBean(TaskHistoryHelper.class)
     public TaskHistoryHelper localDBTaskHistoryHelper() {
         return new LocalDBTaskHistoryHelper();
     }
 
     @Configuration
-    @ConditionalOnProperty(value = "distributed-task-module.enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(value = "distributed-task-module.plugin.dtask-go.enabled", havingValue = "true", matchIfMissing = false)
     public static class DTaskGoConfiguration extends RestTemplatePreConfigured {
 
         @Bean
