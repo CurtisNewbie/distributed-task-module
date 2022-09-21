@@ -130,7 +130,7 @@ public class MasterElectingThread implements Runnable {
                      */
                     if (lastTimeRefreshed == null || now.isAfter(lastTimeRefreshed.plusSeconds(taskProperties.getRefreshInterval()))) {
                         lastTimeJobRefreshed.set(now);
-                        log.info("Refreshing jobs");
+                        log.debug("Refreshing jobs");
                         refreshScheduledTasks();
                     }
 
@@ -157,11 +157,11 @@ public class MasterElectingThread implements Runnable {
      * Reload the changed tasks and add tasks that are new, delete those that no-longer exists in database
      */
     private void refreshScheduledTasks() throws SchedulerException {
-        loadJobFromDatabase();
+        loadJobs();
         dropNonExistingJobs();
     }
 
-    private void loadJobFromDatabase() throws SchedulerException {
+    private void loadJobs() throws SchedulerException {
         List<TaskVo> tasks = taskHelper.fetchAllTasks(taskProperties.getAppGroup());
         for (TaskVo tv : tasks) {
 

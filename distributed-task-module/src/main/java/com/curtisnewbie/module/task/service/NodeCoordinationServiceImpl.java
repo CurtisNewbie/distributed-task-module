@@ -5,7 +5,12 @@ import com.curtisnewbie.module.task.config.TaskProperties;
 import com.curtisnewbie.module.task.scheduling.JobUtils;
 import com.curtisnewbie.module.task.scheduling.TriggeredJobKey;
 import com.curtisnewbie.module.task.vo.TaskVo;
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RDeque;
+import org.redisson.api.RedissonClient;
+import org.redisson.client.codec.Codec;
+import org.redisson.codec.TypedJsonJacksonCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +38,8 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MINUTES;
 
     @Autowired
+    private RedissonClient redissonClient;
+    @Autowired
     private RedisController redisController;
     @Autowired
     private TaskProperties taskProperties;
@@ -52,6 +59,7 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     @PreDestroy
     void _preDestroy() {
         cancelMasterLockRefreshingTimer();
+        tryReleaseMasterLock();
     }
 
     @Override
@@ -63,7 +71,11 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
     @Override
     public List<TriggeredJobKey> pollTriggeredJobKey(int limit) {
-        return redisController.listRightPop(getTriggeredJobListKey(), limit);
+        // for dtask-go compatibility, we use custom codec here
+        final Codec codec = new TypedJsonJacksonCodec(new TypeReference<TriggeredJobKey>() {
+        });
+        final RDeque<TriggeredJobKey> rd = redissonClient.getDeque(getTriggeredJobListKey(), codec);
+        return rd.pollLast(limit);
     }
 
     @Override
@@ -85,11 +97,28 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
 
     // ----------------------------------------------- private methods --------------------------------------------------
 
+    private void tryReleaseMasterLock() {
+        if (!isMaster()) return;
+
+        // make sure we still have the lock, 30 seconds of expiration should be enough
+        refreshMasterLockExpiration();
+
+        if (isMaster()) {
+            log.info("Releasing master lock");
+            redisController.expire(getMasterNodeLockKey(), 5, TimeUnit.SECONDS);
+        }
+    }
+
     /** cancel the timer for refreshing master lock if there is one */
     private void cancelMasterLockRefreshingTimer() {
         final Timer timer = masterLockRefreshingTimer.get();
         if (timer != null)
             timer.cancel();
+    }
+
+    private void refreshMasterLockExpiration() {
+        redisController.expire(getMasterNodeLockKey(), DEFAULT_TTL, DEFAULT_TIME_UNIT);
+        log.debug("Refreshing the masterNodeLockKey: '{}'", getMasterNodeLockKey());
     }
 
     /**
@@ -100,8 +129,7 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
         final Timer timer = new Timer("masterLockRefresher");
         timer.schedule(new TimerTask() {
                            public void run() {
-                               redisController.expire(getMasterNodeLockKey(), DEFAULT_TTL, DEFAULT_TIME_UNIT);
-                               log.debug("Refreshing the masterNodeLockKey: '{}'", getMasterNodeLockKey());
+                               refreshMasterLockExpiration();
                            }
                        },
                 0, TimeUnit.SECONDS.toMillis(5));
@@ -115,8 +143,8 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     /**
      * Get lock key for being the master node (for redis)
      * <p>
-     * Applications are grouped together as a cluster (each cluster is differentiated by its appGroup name {@link
-     * TaskProperties#getAppGroup()}), we only try to become the master node of our cluster
+     * Applications are grouped together as a cluster (each cluster is differentiated by its appGroup name
+     * {@link TaskProperties#getAppGroup()}), we only try to become the master node of our cluster
      * </p>
      */
     private String getMasterNodeLockKey() {
@@ -126,8 +154,8 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     /**
      * Get key for list of triggered job (in redis)
      * <p>
-     * Applications are grouped together as a cluster (each cluster is differentiated by its appGroup name {@link
-     * TaskProperties#getAppGroup()}), each group has a queue for these triggered jobs
+     * Applications are grouped together as a cluster (each cluster is differentiated by its appGroup name
+     * {@link TaskProperties#getAppGroup()}), each group has a queue for these triggered jobs
      * </p>
      */
     private String getTriggeredJobListKey() {

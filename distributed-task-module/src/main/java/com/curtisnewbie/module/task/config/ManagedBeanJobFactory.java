@@ -39,10 +39,10 @@ public class ManagedBeanJobFactory implements JobFactory {
         JobDetail jd = triggerFiredBundle.getJobDetail();
 
         TaskVo tv = JobUtils.getTask(jd);
-        Objects.requireNonNull(tv, "Task not found in jodDataMap");
+        Objects.requireNonNull(tv, String.format("Task not found in jodDataMap, jobDetail: %s", jd));
 
         String beanName = tv.getTargetBean();
-        Objects.requireNonNull(beanName, "Task.target_bean is null");
+        Objects.requireNonNull(beanName, String.format("Task.target_bean is null, task.id: %s", tv.getId()));
 
         final Job job = applicationContext.getBean(beanName, Job.class);
 

@@ -19,7 +19,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.quartz.SchedulerFactoryBeanCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -27,7 +27,6 @@ import org.springframework.web.client.RestTemplate;
  *
  * @author yongjie.zhuang
  */
-@Configuration
 @ConditionalOnProperty(value = "distributed-task-module.enabled", havingValue = "true", matchIfMissing = true)
 public class DistributedTaskModuleStarter {
 
@@ -39,39 +38,34 @@ public class DistributedTaskModuleStarter {
         return interceptor;
     }
 
-    /**
-     * Configuration for DTaskGoPlugin
-     *
-     * @author yongj.zhuang
-     */
+    @Bean
+    @ConditionalOnProperty(value = "distributed-task-module.enabled", havingValue = "false", matchIfMissing = true)
+    @ConditionalOnMissingBean(TaskHelper.class)
+    public TaskHelper localDBTaskHelper() {
+        return new LocalDBTaskHelper();
+    }
+
+    @Bean
+    @ConditionalOnProperty(value = "distributed-task-module.enabled", havingValue = "false", matchIfMissing = true)
+    @ConditionalOnMissingBean(TaskHistoryHelper.class)
+    public TaskHistoryHelper localDBTaskHistoryHelper() {
+        return new LocalDBTaskHistoryHelper();
+    }
+
     @Configuration
-    @Import(RestTemplatePreConfigured.class)
-    @ConditionalOnProperty(value = "distributed-task-module.plugin.dtask-go.enabled", havingValue = "true", matchIfMissing = false)
-    public static class DTaskGoPluginConfiguration {
+    @ConditionalOnProperty(value = "distributed-task-module.enabled", havingValue = "true", matchIfMissing = true)
+    public static class DTaskGoConfiguration extends RestTemplatePreConfigured {
 
         @Bean
-        public DTaskGoTaskHelper dTaskGoTaskHelper(TaskProperties taskProperties, RestTemplate restTemplate) {
+        @Primary
+        public TaskHelper dTaskGoTaskHelper(TaskProperties taskProperties, RestTemplate restTemplate) {
             return new DTaskGoTaskHelper(taskProperties, restTemplate);
         }
 
         @Bean
-        public DTaskGoTaskHistoryHelper dTaskGoTaskHistoryHelper(TaskProperties taskProperties, RestTemplate restTemplate) {
+        @Primary
+        public TaskHistoryHelper dTaskGoTaskHistoryHelper(TaskProperties taskProperties, RestTemplate restTemplate) {
             return new DTaskGoTaskHistoryHelper(taskProperties, restTemplate);
-        }
-    }
-
-    @Configuration
-    public static class LocalTaskHelperConfiguration {
-        @Bean
-        @ConditionalOnMissingBean(TaskHelper.class)
-        public TaskHelper localDBTaskHelper() {
-            return new LocalDBTaskHelper();
-        }
-
-        @Bean
-        @ConditionalOnMissingBean(TaskHistoryHelper.class)
-        public TaskHistoryHelper localDBTaskHistoryHelper() {
-            return new LocalDBTaskHistoryHelper();
         }
     }
 
