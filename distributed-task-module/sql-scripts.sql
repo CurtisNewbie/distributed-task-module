@@ -1,4 +1,3 @@
-
 CREATE TABLE task (
     id INT PRIMARY KEY AUTO_INCREMENT COMMENT "id",
     job_name VARCHAR(255) NOT NULL COMMENT "job's name",
@@ -12,7 +11,8 @@ CREATE TABLE task (
     enabled INT NOT NULL DEFAULT 0 COMMENT "whether the task is enabled: 0-disabled, 1-enabled",
     concurrent_enabled INT NULL DEFAULT 0 COMMENT "whether the task can be executed concurrently: 0-disabled, 1-enabled",
     update_date TIMESTAMP COMMENT 'update time',
-    update_by VARCHAR(255) COMMENT 'updated by'
+    update_by VARCHAR(255) COMMENT 'updated by',
+    KEY app_group_idx (app_group)
 ) ENGINE=InnoDB COMMENT "task";
 
 CREATE TABLE task_history (
@@ -22,6 +22,7 @@ CREATE TABLE task_history (
     end_time TIMESTAMP COMMENT "end time",
     run_by VARCHAR(255) COMMENT "task triggered by",
     run_result VARCHAR(255) COMMENT "result of last execution",
-    create_time DATETIME COMMENT "create time"
+    create_time DATETIME COMMENT "create time",
+    KEY task_id_idx (task_id)
 ) ENGINE=InnoDB COMMENT "task history";
 
