@@ -129,9 +129,17 @@ public class MasterElectingThread implements Runnable {
                     i.e., refreshed every 30 seconds
                      */
                     if (lastTimeRefreshed == null || now.isAfter(lastTimeRefreshed.plusSeconds(taskProperties.getRefreshInterval()))) {
-                        lastTimeJobRefreshed.set(now);
+
                         log.debug("Refreshing jobs");
-                        refreshScheduledTasks();
+                        try {
+                            refreshScheduledTasks();
+
+                            // if exception occurs, lastTimeJobRefreshed is not updated, next iteration will try to refresh
+                            // instead of waiting another 30s
+                            lastTimeJobRefreshed.set(now);
+                        } catch (Exception e) {
+                            log.error("Failed to refresh tasks in scheduler", e);
+                        }
                     }
 
                     // trigger jobs that need to be executed immediately
