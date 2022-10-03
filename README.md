@@ -1,4 +1,4 @@
-# distributed-task-module
+# distributed-task-module v2.1.0.1
 
 Module for simple distributed task scheduling :D
 
