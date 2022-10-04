@@ -1,4 +1,4 @@
-# distributed-task-module v2.1.0.1
+# distributed-task-module v2.1.1
 
 Module for simple distributed task scheduling :D
 
@@ -13,13 +13,13 @@ Module for simple distributed task scheduling :D
 
 ### Configuration
 
-Data Type | Property Name | Description | Default Value
---------- | ------------- | ----------- | --------------
-String | distributed-task-module.application-group | Name of application group, a cluster should share the same name such that they are managed together. | default
-boolean | distributed-task-module.enabled | Whether this module is enabled. When disabled, beans are not populated, this is good when you are running unit tests only. | true
-boolean | distributed-task-module.scheduling.disabled | Whether scheduling is disabled for current node. When it's set to false, it will not attempt to become the main node. I.e., it will not run any task. However, it will still be able to request triggering a task, though the triggered task is still run by the main node. | false
-boolean | distributed-task-module.plugin.dtask-go.enabled | Enable dtask-go plugin. This plugin is responsible for connecting `dtask-go` service to fetch tasks, update tasks, and record task histories. By default this is disabled, and this module will instead look for tables `task` and `task_history` in the connected database. | false
-String | distributed-task-module.plugin.dtask-go.base-url | Base url of `dtask-go` service. For example, `http://localhost:8083/remote/` | 
+| Data Type | Property Name                                    | Description                                                                                                                                                                                                                                                                  | Default Value |
+|-----------|--------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| String    | distributed-task-module.application-group        | Name of application group, a cluster should share the same name such that they are managed together.                                                                                                                                                                         | default       |
+| boolean   | distributed-task-module.enabled                  | Whether this module is enabled. When disabled, beans are not populated, this is good when you are running unit tests only.                                                                                                                                                   | true          |
+| boolean   | distributed-task-module.scheduling.disabled      | Whether scheduling is disabled for current node. When it's set to false, it will not attempt to become the main node. I.e., it will not run any task. However, it will still be able to request triggering a task, though the triggered task is still run by the main node.  | false         |
+| boolean   | distributed-task-module.plugin.dtask-go.enabled  | Enable dtask-go plugin. This plugin is responsible for connecting `dtask-go` service to fetch tasks, update tasks, and record task histories. By default this is disabled, and this module will instead look for tables `task` and `task_history` in the connected database. | false         |
+| String    | distributed-task-module.plugin.dtask-go.base-url | Base url of `dtask-go` service. For example, `http://localhost:8083/remote/`                                                                                                                                                                                                 |               |
 
 ### Modules and Dependencies
 

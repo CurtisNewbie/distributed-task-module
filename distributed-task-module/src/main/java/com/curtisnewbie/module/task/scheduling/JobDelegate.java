@@ -57,14 +57,16 @@ public class JobDelegate implements Job, ListenableJob {
 
             // execute delegated job
             ctx.startTime = new Date();
-            this.ctx.job.execute(context);
+            try {
+                this.ctx.job.execute(context);
+            } catch (Exception e) {
+                log.error("Job '{}' throws exception", ctx.task.getJobName(), e);
+                ctx.exception = e; // this will be handled by postExecute lifecycle callbacks
+            }
             ctx.endTime = new Date();
 
             // post-execute lifecycle callbacks
             doPostExecute();
-
-        } catch (Exception e) {
-            ctx.exception = e; // record exception
         } finally {
             releaseMutexLock(jk);
         }
@@ -114,8 +116,13 @@ public class JobDelegate implements Job, ListenableJob {
     }
 
     private void doPostExecute() {
-        for (JobPostExecuteListener jl : jobPostExecuteListenerList)
-            jl.postExecute(ctx.copy());
+        for (JobPostExecuteListener jl : jobPostExecuteListenerList) {
+            try {
+                jl.postExecute(ctx.copy());
+            } catch (Exception e) {
+                log.error("Exception thrown while trying to call #postExecute", e);
+            }
+        }
     }
 
     /**
