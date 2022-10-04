@@ -4,7 +4,7 @@ import com.curtisnewbie.common.util.DateUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Vo for task
@@ -28,11 +28,11 @@ public class TaskWebVo {
 
     /** the last time this task was executed */
     @JsonFormat(pattern = DateUtils.DD_MM_YYYY_HH_MM)
-    private Date lastRunStartTime;
+    private LocalDateTime lastRunStartTime;
 
     /** the last time this task was finished */
     @JsonFormat(pattern = DateUtils.DD_MM_YYYY_HH_MM)
-    private Date lastRunEndTime;
+    private LocalDateTime lastRunEndTime;
 
     /** app that previously ran this task */
     private String lastRunBy;
@@ -48,7 +48,7 @@ public class TaskWebVo {
 
     /** update date */
     @JsonFormat(pattern = DateUtils.DD_MM_YYYY_HH_MM)
-    private Date updateDate;
+    private LocalDateTime updateDate;
 
     /** updated by */
     private String updateBy;

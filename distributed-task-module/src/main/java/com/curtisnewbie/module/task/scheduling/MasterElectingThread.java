@@ -130,7 +130,7 @@ public class MasterElectingThread implements Runnable {
                      */
                     if (lastTimeRefreshed == null || now.isAfter(lastTimeRefreshed.plusSeconds(taskProperties.getRefreshInterval()))) {
 
-                        log.debug("Refreshing jobs");
+                        log.info("Refreshing jobs");
                         try {
                             refreshScheduledTasks();
 

@@ -5,14 +5,13 @@ import com.curtisnewbie.module.redisutil.RedisController;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPostExecuteListener;
 import com.curtisnewbie.module.task.scheduling.listeners.JobPreExecuteListener;
 import com.curtisnewbie.module.task.vo.TaskVo;
-import jodd.bean.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -56,14 +55,14 @@ public class JobDelegate implements Job, ListenableJob {
             log.info("About to execute job: id: '{}', name: '{}'", ctx.task.getId(), ctx.task.getJobName());
 
             // execute delegated job
-            ctx.startTime = new Date();
+            ctx.startTime = LocalDateTime.now();
             try {
                 this.ctx.job.execute(context);
             } catch (Exception e) {
                 log.error("Job '{}' throws exception", ctx.task.getJobName(), e);
                 ctx.exception = e; // this will be handled by postExecute lifecycle callbacks
             }
-            ctx.endTime = new Date();
+            ctx.endTime = LocalDateTime.now();
 
             // post-execute lifecycle callbacks
             doPostExecute();
@@ -142,10 +141,10 @@ public class JobDelegate implements Job, ListenableJob {
         private JobExecutionContext jobExecutionContext;
 
         /** when the job starts */
-        private Date startTime;
+        private LocalDateTime startTime;
 
         /** when the job ends */
-        private Date endTime;
+        private LocalDateTime endTime;
 
         /**
          * exception that may have occurred during the job execution, if not exception was thrown, it will be null

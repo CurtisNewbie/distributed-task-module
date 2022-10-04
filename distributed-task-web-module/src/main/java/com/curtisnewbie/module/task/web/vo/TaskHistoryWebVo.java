@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * task history
@@ -28,11 +28,11 @@ public class TaskHistoryWebVo extends PageableVo {
 
     /** start time */
     @JsonFormat(pattern = DateUtils.DD_MM_YYYY_HH_MM)
-    private Date startTime;
+    private LocalDateTime startTime;
 
     /** end time */
     @JsonFormat(pattern = DateUtils.DD_MM_YYYY_HH_MM)
-    private Date endTime;
+    private LocalDateTime endTime;
 
     /** task triggered by */
     private String runBy;
@@ -41,7 +41,7 @@ public class TaskHistoryWebVo extends PageableVo {
     private String runResult;
 
     @Builder
-    public TaskHistoryWebVo(Integer id, String jobName, Integer taskId, Date startTime, Date endTime, String runBy,
+    public TaskHistoryWebVo(Integer id, String jobName, Integer taskId, LocalDateTime startTime, LocalDateTime endTime, String runBy,
                             String runResult) {
         this.id = id;
         this.jobName = jobName;

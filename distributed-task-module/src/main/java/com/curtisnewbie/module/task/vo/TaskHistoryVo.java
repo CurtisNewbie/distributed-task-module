@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 /**
  * task history
@@ -23,12 +24,12 @@ public class TaskHistoryVo {
     private Integer taskId;
 
     /** start time */
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
-    private Date startTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime startTime;
 
     /** end time */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date endTime;
+    private LocalDateTime endTime;
 
     /** task triggered by */
     private String runBy;
@@ -38,11 +39,11 @@ public class TaskHistoryVo {
 
     /** create time */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
+    private LocalDateTime createTime;
 
     @Builder
-    public TaskHistoryVo(Integer id, Integer taskId, Date startTime, Date endTime, String runBy, String runResult,
-                         Date createTime) {
+    public TaskHistoryVo(Integer id, Integer taskId, LocalDateTime startTime, LocalDateTime endTime, String runBy, String runResult,
+                         LocalDateTime createTime) {
         this.id = id;
         this.taskId = taskId;
         this.startTime = startTime;

@@ -2,7 +2,8 @@ package com.curtisnewbie.module.task.vo;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 /**
  * Vo for task
@@ -24,10 +25,10 @@ public class ListTaskByPageRespVo {
     private String appGroup;
 
     /** the last time this task was executed */
-    private Date lastRunStartTime;
+    private LocalDateTime lastRunStartTime;
 
     /** the last time this task was finished */
-    private Date lastRunEndTime;
+    private LocalDateTime lastRunEndTime;
 
     /** app that previously ran this task */
     private String lastRunBy;
@@ -42,7 +43,7 @@ public class ListTaskByPageRespVo {
     private Integer concurrentEnabled;
 
     /** update date */
-    private Date updateDate;
+    private LocalDateTime updateDate;
 
     /** updated by */
     private String updateBy;

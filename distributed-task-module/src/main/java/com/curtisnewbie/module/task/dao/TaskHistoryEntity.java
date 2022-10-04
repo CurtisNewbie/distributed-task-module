@@ -2,7 +2,7 @@ package com.curtisnewbie.module.task.dao;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * task history
@@ -18,10 +18,10 @@ public class TaskHistoryEntity {
     private Integer taskId;
 
     /** start time */
-    private Date startTime;
+    private LocalDateTime startTime;
 
     /** end time */
-    private Date endTime;
+    private LocalDateTime endTime;
 
     /** task triggered by */
     private String runBy;
@@ -30,5 +30,5 @@ public class TaskHistoryEntity {
     private String runResult;
 
     /** create time */
-    private Date createTime;
+    private LocalDateTime createTime;
 }

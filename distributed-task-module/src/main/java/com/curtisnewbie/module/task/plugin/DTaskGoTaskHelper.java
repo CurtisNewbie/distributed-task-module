@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.type.*;
 import lombok.extern.slf4j.*;
 import org.springframework.web.client.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -56,7 +57,7 @@ public class DTaskGoTaskHelper implements TaskHelper {
         r.setId(taskId);
         r.setLastRunResult(lastRunResult);
         r.setUpdateBy(updateBy);
-        r.setUpdateDate(new Date());
+        r.setUpdateDate(LocalDateTime.now());
 
         final Result<?> result = rest.postForObject(taskProperties.buildDTaskGoUrl("/task/disable"), r, Result.class);
         AssertUtils.notNull(result, "Failed to fetch tasks from dtask-go");

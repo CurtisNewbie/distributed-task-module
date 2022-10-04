@@ -3,6 +3,7 @@ package com.curtisnewbie.module.task.vo;
 import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -18,8 +19,8 @@ public class DisableTaskReqVo {
     private String lastRunResult;
 
     /** update date */
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
-    private Date updateDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updateDate;
 
     /** updated by */
     private String updateBy;

@@ -43,7 +43,6 @@ public class SaveTaskExecResultPostExecListener implements JobPostExecuteListene
         update.setLastRunStartTime(ctx.getStartTime());
         update.setLastRunEndTime(ctx.getEndTime());
         taskHelper.updateLastRunInfo(update);
-
-        log.info("Updated execution result for task, id: {}, job_name: {}", curr.getId(), curr.getJobName());
+        log.info("Updated execution result for task, req: {}", update);
     }
 }

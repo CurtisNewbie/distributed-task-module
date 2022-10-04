@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,7 +62,7 @@ public class TaskServiceImpl implements TaskService {
             Objects.requireNonNull(tce, "task's field 'concurrent_enabled' value illegal");
         }
         TaskEntity param = BeanCopyUtils.toType(vo, TaskEntity.class);
-        param.setUpdateDate(new Date());
+        param.setUpdateDate(LocalDateTime.now());
         taskMapper.updateById(param);
     }
 
@@ -86,7 +86,7 @@ public class TaskServiceImpl implements TaskService {
     public void updateLastRunInfo(TaskVo te) {
         final TaskEntity update = BeanCopyUtils.toType(te, TaskEntity.class);
         update.setUpdateBy("Scheduler");
-        update.setUpdateDate(new Date());
+        update.setUpdateDate(LocalDateTime.now());
         taskMapper.updateLastRunInfo(update);
     }
 
@@ -101,7 +101,7 @@ public class TaskServiceImpl implements TaskService {
         TaskEntity t = new TaskEntity();
         t.setId(taskId);
         t.setEnabled(TaskEnabled.DISABLED.getValue());
-        t.setUpdateDate(new Date());
+        t.setUpdateDate(LocalDateTime.now());
         t.setUpdateBy(t.getUpdateBy());
         t.setLastRunResult(result);
         taskMapper.updateEnabledAndResult(t);

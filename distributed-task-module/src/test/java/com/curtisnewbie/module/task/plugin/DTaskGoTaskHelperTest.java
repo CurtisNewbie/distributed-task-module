@@ -9,6 +9,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.http.converter.json.*;
 import org.springframework.web.client.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -45,8 +46,8 @@ public class DTaskGoTaskHelperTest {
         UpdateLastRunInfoReq r = new UpdateLastRunInfoReq();
         r.setId(1);
         r.setLastRunBy("Unit Test");
-        r.setLastRunStartTime(new Date());
-        r.setLastRunEndTime(new Date());
+        r.setLastRunStartTime(LocalDateTime.now());
+        r.setLastRunEndTime(LocalDateTime.now());
         r.setLastRunResult("It works great");
 
         buildHelper().updateLastRunInfo(r);

@@ -3,7 +3,8 @@ package com.curtisnewbie.module.task.vo;
 import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 /**
  * Vo for task
@@ -28,12 +29,12 @@ public class TaskVo {
     private String appGroup;
 
     /** the last time this task was executed */
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
-    private Date lastRunStartTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastRunStartTime;
 
     /** the last time this task was finished */
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
-    private Date lastRunEndTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastRunEndTime;
 
     /** app that previously ran this task */
     private String lastRunBy;
@@ -48,8 +49,8 @@ public class TaskVo {
     private Integer concurrentEnabled;
 
     /** update date */
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
-    private Date updateDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updateLocalDateTime;
 
     /** updated by */
     private String updateBy;

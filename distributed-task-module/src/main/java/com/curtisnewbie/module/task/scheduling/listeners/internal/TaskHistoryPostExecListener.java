@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -40,15 +41,15 @@ public class TaskHistoryPostExecListener implements JobPostExecuteListener {
             // by default, we consider the job is run by scheduler, unless the user triggers the job manually
         }
 
-        taskHistoryHelper.saveTaskHistory(TaskHistoryVo.builder()
+        final TaskHistoryVo req = TaskHistoryVo.builder()
                 .taskId(tv.getId())
                 .startTime(ctx.getStartTime())
                 .endTime(ctx.getEndTime())
                 .runResult(result)
                 .runBy(runBy)
-                .createTime(new Date())
-                .build());
-
-        log.info("Saved task_history for task, id: {}, job_name: {}", tv.getId(), tv.getJobName());
+                .createTime(LocalDateTime.now())
+                .build();
+        taskHistoryHelper.saveTaskHistory(req);
+        log.info("Saved task_history for task, req: {}", req);
     }
 }

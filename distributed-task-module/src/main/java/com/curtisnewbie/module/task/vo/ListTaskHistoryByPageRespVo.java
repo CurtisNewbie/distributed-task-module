@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * task history
@@ -24,10 +24,10 @@ public class ListTaskHistoryByPageRespVo {
     private Integer taskId;
 
     /** start time */
-    private Date startTime;
+    private LocalDateTime startTime;
 
     /** end time */
-    private Date endTime;
+    private LocalDateTime endTime;
 
     /** task triggered by */
     private String runBy;
@@ -36,7 +36,7 @@ public class ListTaskHistoryByPageRespVo {
     private String runResult;
 
     @Builder
-    public ListTaskHistoryByPageRespVo(Integer id, String jobName, Integer taskId, Date startTime, Date endTime, String runBy,
+    public ListTaskHistoryByPageRespVo(Integer id, String jobName, Integer taskId, LocalDateTime startTime, LocalDateTime endTime, String runBy,
                                        String runResult) {
         this.id = id;
         this.jobName = jobName;
