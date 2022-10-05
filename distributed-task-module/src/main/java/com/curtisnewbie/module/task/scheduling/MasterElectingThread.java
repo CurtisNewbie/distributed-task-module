@@ -50,18 +50,17 @@ public class MasterElectingThread implements Runnable {
 
     @Autowired
     private TaskProperties taskProperties;
-
     @Autowired
     private SchedulerService schedulerService;
-
     @Autowired
     private TaskHelper taskHelper;
-
     @Autowired
     private NodeCoordinationService nodeCoordinationService;
 
     @PreDestroy
     void shutdownBackgroundThread() {
+        if (taskProperties.isSchedulingDisabled()) return;
+
         log.info("Application shutting down, interrupting daemon thread for master node election");
         isShutdown.set(true);
         if (backgroundThread != null && backgroundThread.isAlive()) {
@@ -76,6 +75,11 @@ public class MasterElectingThread implements Runnable {
 
     @PostConstruct
     void startBackgroundThread() {
+        if (taskProperties.isSchedulingDisabled()) {
+            log.info("Scheduling is disabled");
+            return;
+        }
+
         // background thread
         backgroundThread = new Thread(this);
         backgroundThread.setDaemon(true);

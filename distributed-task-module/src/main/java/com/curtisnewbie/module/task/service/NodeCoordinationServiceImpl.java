@@ -49,9 +49,9 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
     @PostConstruct
     void _postConstruct() {
         if (Objects.equals(taskProperties.getAppGroup(), TaskProperties.DEFAULT_APP_GROUP)) {
-            log.info("You are using default value for app/scheduling group, consider changing it for you cluster " +
-                    "by setting '{}=yourClusterName'", TaskProperties.APP_GROUP_PROP_KEY);
+            log.info("You are using default value for app group, you should change it for you cluster");
         }
+
         log.info("Distributed task scheduling for scheduling group: {}, master_node_lock_key: {}, identifier: {}",
                 taskProperties.getAppGroup(), getMasterNodeLockKey(), UUID);
     }

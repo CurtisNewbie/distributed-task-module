@@ -13,24 +13,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TaskProperties {
 
-    public static final String DTASKGO_BASE_URL_PROP_KEY = "distributed-task-module.plugin.dtask-go.base-url";
-
-    public static final String REFRESH_INTERVAL_PROP_KEY = "distributed-task-module.refresh-interval";
-    public static final String DEFAULT_REFRESH_INTERVAL = "30";
-
-    public static final String APP_GROUP_PROP_KEY = "distributed-task-module.application-group";
     public static final String DEFAULT_APP_GROUP = "default";
 
     /**
      * App Group
      */
-    @Value("${" + APP_GROUP_PROP_KEY + ":" + DEFAULT_APP_GROUP + "}")
+    @Value("${distributed-task-module.application-group:" + DEFAULT_APP_GROUP + "}")
     private String appGroup;
 
     /**
      * Refresh interval for jobs in seconds
      */
-    @Value("${" + REFRESH_INTERVAL_PROP_KEY + ":" + DEFAULT_REFRESH_INTERVAL + "}")
+    @Value("${distributed-task-module.refresh-interval:30}")
     private int refreshInterval;
 
     /**
@@ -38,8 +32,20 @@ public class TaskProperties {
      * <p>
      * http://localhost:8082/dtask/remote/
      */
-    @Value("${" + DTASKGO_BASE_URL_PROP_KEY + ":}")
+    @Value("${distributed-task-module.plugin.dtask-go.base-url:}")
     private String dtaskGoBaseUrl;
+
+    /**
+     * Whether scheduling is disabled, by default it's false
+     */
+    @Value("${distributed-task-module.scheduling.disabled:false}")
+    private boolean schedulingDisabled;
+
+    /**
+     * Whether dtask-go plugin is enabled, by default it's false
+     */
+    @Value("${distributed-task-module.plugin.dtask-go.enabled:false}")
+    private boolean dTaskGoPluginEnabled;
 
     public String buildDTaskGoUrl(String relUrl) {
         return (dtaskGoBaseUrl.endsWith("/") ? dtaskGoBaseUrl : dtaskGoBaseUrl + "/") + relUrl;
