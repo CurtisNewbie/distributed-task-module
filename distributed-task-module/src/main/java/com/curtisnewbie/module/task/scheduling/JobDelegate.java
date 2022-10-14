@@ -52,14 +52,15 @@ public class JobDelegate implements Job, ListenableJob {
             doPreExecute();
 
             ctx.task = JobUtils.getTask(context.getJobDetail());
-            log.info("About to execute job: id: '{}', name: '{}'", ctx.task.getId(), ctx.task.getJobName());
+            log.info("About to execute job, id: '{}', name: '{}'", ctx.task.getId(), ctx.task.getJobName());
 
             // execute delegated job
             ctx.startTime = LocalDateTime.now();
             try {
                 this.ctx.job.execute(context);
+                log.info("Job executed, id: '{}', name: '{}'", ctx.task.getId(), ctx.task.getJobName());
             } catch (Exception e) {
-                log.error("Job '{}' throws exception", ctx.task.getJobName(), e);
+                log.error("Job throws exception, id: '{}', name: '{}' ", ctx.task.getId(), ctx.task.getJobName(), e);
                 ctx.exception = e; // this will be handled by postExecute lifecycle callbacks
             }
             ctx.endTime = LocalDateTime.now();

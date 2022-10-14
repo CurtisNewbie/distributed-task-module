@@ -248,6 +248,8 @@ public class MasterElectingThread implements Runnable {
     private void runTriggeredJobs() throws SchedulerException {
         // poll at most 30 jobKeys for triggering
         List<TriggeredJobKey> triggeredJobKeys = nodeCoordinationService.pollTriggeredJobKey(30);
+        if (!triggeredJobKeys.isEmpty())
+            log.info("Pulled triggeredJobs: {}", triggeredJobKeys);
 
         for (TriggeredJobKey sjk : triggeredJobKeys) {
             JobKey jk = sjk.toJobKey();
