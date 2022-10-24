@@ -2,6 +2,7 @@ package com.curtisnewbie.module.task.dao;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.curtisnewbie.common.util.EnhancedMapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -11,12 +12,7 @@ import java.util.List;
  *
  * @author yongjie.zhuang
  */
-public interface TaskMapper {
-
-    /**
-     * Insert
-     */
-    int insert(TaskEntity record);
+public interface TaskMapper extends EnhancedMapper<TaskEntity> {
 
     /**
      * Select * by id
@@ -51,7 +47,7 @@ public interface TaskMapper {
     /**
      * Update job_name, target_bean, cron_expr, app_group, enabled, concurrent_enabled by id
      */
-    void updateById(TaskEntity entity);
+    void updateOneById(TaskEntity entity);
 
     /**
      * Update update_by by id

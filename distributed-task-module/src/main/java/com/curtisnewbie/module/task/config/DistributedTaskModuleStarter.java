@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.curtisnewbie.common.preconf.RestTemplatePreConfigured;
+import com.curtisnewbie.module.task.annotation.JobDeclarationReporter;
 import com.curtisnewbie.module.task.helper.*;
 import com.curtisnewbie.module.task.helper.impl.*;
 import com.curtisnewbie.module.task.plugin.DTaskGoTaskHelper;
@@ -14,6 +15,7 @@ import com.curtisnewbie.module.task.scheduling.listeners.internal.RunningTaskCou
 import com.curtisnewbie.module.task.scheduling.listeners.internal.SaveTaskExecResultPostExecListener;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.TaskHistoryPostExecListener;
 import com.curtisnewbie.module.task.service.*;
+import org.quartz.Job;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.quartz.SchedulerFactoryBeanCustomizer;
@@ -27,6 +29,11 @@ import org.springframework.web.client.RestTemplate;
  */
 @ConditionalOnProperty(value = "distributed-task-module.enabled", havingValue = "true", matchIfMissing = true)
 public class DistributedTaskModuleStarter extends RestTemplatePreConfigured {
+
+    @Bean
+    public JobDeclarationReporter jobDeclarationReporter() {
+        return new JobDeclarationReporter();
+    }
 
     @Bean
     @ConditionalOnMissingBean

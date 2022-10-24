@@ -1,4 +1,4 @@
-# distributed-task-module v2.1.1.2
+# distributed-task-module v2.1.1.3
 
 Module for simple distributed task scheduling :D
 
@@ -26,5 +26,5 @@ Module for simple distributed task scheduling :D
 This project depends on the following modules that you must manually install (using `mvn clean install`).
 
 - [curtisnewbie-bom](https://github.com/CurtisNewbie/curtisnewbie-bom)
-- [common-module v2.1.7](https://github.com/CurtisNewbie/common-module/tree/v2.1.7)
+- [common-module v2.1.9](https://github.com/CurtisNewbie/common-module/tree/v2.1.9)
 - [redis-util-module v2.0.3](https://github.com/CurtisNewbie/redis-util-module/tree/v2.0.3)

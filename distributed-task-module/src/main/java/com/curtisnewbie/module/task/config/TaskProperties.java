@@ -13,12 +13,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TaskProperties {
 
+    public static final String APP_GROUP_KEY = "distributed-task-module.application-group";
     public static final String DEFAULT_APP_GROUP = "default";
 
     /**
      * App Group
      */
-    @Value("${distributed-task-module.application-group:" + DEFAULT_APP_GROUP + "}")
+    @Value("${" + APP_GROUP_KEY + ":" + DEFAULT_APP_GROUP + "}")
     private String appGroup;
 
     /**

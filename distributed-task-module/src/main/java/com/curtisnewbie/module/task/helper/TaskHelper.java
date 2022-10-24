@@ -41,4 +41,10 @@ public interface TaskHelper {
      * @param updateBy      updated by
      */
     void markTaskDisabled(int taskId, String lastRunResult, String updateBy);
+
+    /**
+     * Declare task
+     */
+    void declareTask(DeclareTaskReq req);
+
 }

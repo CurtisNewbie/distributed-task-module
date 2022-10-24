@@ -1,11 +1,11 @@
 package com.curtisnewbie.module.task.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.curtisnewbie.common.util.BeanCopyUtils;
-import com.curtisnewbie.common.util.EnumUtils;
-import com.curtisnewbie.common.util.PagingUtil;
+import com.curtisnewbie.common.util.*;
 import com.curtisnewbie.common.vo.PageableList;
 import com.curtisnewbie.common.vo.PagingVo;
+import com.curtisnewbie.module.redisutil.RedisController;
+import com.curtisnewbie.module.task.config.TaskProperties;
 import com.curtisnewbie.module.task.constants.TaskConcurrentEnabled;
 import com.curtisnewbie.module.task.constants.TaskEnabled;
 import com.curtisnewbie.module.task.converters.TaskConverter;
@@ -22,7 +22,10 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
 
+import static com.curtisnewbie.common.util.MapperUtils.eq;
+import static com.curtisnewbie.common.util.MapperUtils.set;
 import static com.curtisnewbie.common.util.PagingUtil.toPageableList;
 
 /**
@@ -34,7 +37,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private TaskMapper taskMapper;
-
+    @Autowired
+    private RedisController redisController;
+    @Autowired
+    private TaskProperties taskProperties;
     @Autowired
     private TaskConverter taskConverter;
 
@@ -63,7 +69,7 @@ public class TaskServiceImpl implements TaskService {
         }
         TaskEntity param = BeanCopyUtils.toType(vo, TaskEntity.class);
         param.setUpdateDate(LocalDateTime.now());
-        taskMapper.updateById(param);
+        taskMapper.updateOneById(param);
     }
 
     @Override
@@ -113,5 +119,31 @@ public class TaskServiceImpl implements TaskService {
         te.setId(taskId);
         te.setUpdateBy(updateBy);
         taskMapper.updateUpdateBy(te);
+    }
+
+    @Override
+    public void declareTask(DeclareTaskReq req) {
+        final Lock lock = redisController.getLock("task:declare:local:" + taskProperties.getAppGroup());
+        LockUtils.lockAndRun(lock, () -> {
+            TaskEntity task = taskMapper.selectOne(
+                    eq(TaskEntity::getAppGroup, req.getAppGroup())
+                            .eq(TaskEntity::getTargetBean, req.getTargetBean())
+                            .last("limit 1"));
+            if (task == null) {
+                task = BeanCopyUtils.toType(req, TaskEntity.class);
+                task.setUpdateBy("JobDeclaration");
+                task.setUpdateDate(LocalDateTime.now());
+                taskMapper.insert(task);
+                return;
+            }
+
+            if (req.getOverridden() != null && req.getOverridden()) {
+                taskMapper.update(
+                        set(TaskEntity::getCronExpr, req.getCronExpr())
+                                .set(TaskEntity::getUpdateBy, "JobDeclaration")
+                                .set(TaskEntity::getUpdateDate, LocalDateTime.now())
+                                .eq(TaskEntity::getId, task.getId()));
+            }
+        });
     }
 }

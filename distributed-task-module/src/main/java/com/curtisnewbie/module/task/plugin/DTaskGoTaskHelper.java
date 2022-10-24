@@ -63,4 +63,9 @@ public class DTaskGoTaskHelper implements TaskHelper {
         AssertUtils.notNull(result, "Failed to fetch tasks from dtask-go");
         result.assertIsOk();
     }
+
+    @Override
+    public void declareTask(DeclareTaskReq req) {
+        // TODO impl this
+    }
 }

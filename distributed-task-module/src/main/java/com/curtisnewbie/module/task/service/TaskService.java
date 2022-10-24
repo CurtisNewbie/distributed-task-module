@@ -63,4 +63,9 @@ public interface TaskService {
      * Update updateBy
      */
     void updateUpdateBy(int taskId, @NotNull String updateBy);
+
+    /**
+     * Declare task
+     */
+    void declareTask(DeclareTaskReq req);
 }

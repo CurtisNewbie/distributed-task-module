@@ -1,6 +1,8 @@
 package com.curtisnewbie.module.task.helper.impl;
 
 import com.curtisnewbie.common.util.*;
+import com.curtisnewbie.module.redisutil.RedisController;
+import com.curtisnewbie.module.task.config.TaskProperties;
 import com.curtisnewbie.module.task.helper.*;
 import com.curtisnewbie.module.task.service.*;
 import com.curtisnewbie.module.task.vo.*;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.util.*;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Local database based TaskHelper
@@ -40,5 +43,10 @@ public class LocalDBTaskHelper implements TaskHelper {
     @Override
     public void markTaskDisabled(int taskId, String lastRunResult, String updateBy) {
         taskService.setTaskDisabled(taskId, lastRunResult, updateBy);
+    }
+
+    @Override
+    public void declareTask(DeclareTaskReq req) {
+        taskService.declareTask(req);
     }
 }
