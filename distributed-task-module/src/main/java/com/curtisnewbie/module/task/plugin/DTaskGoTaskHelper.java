@@ -7,10 +7,13 @@ import com.curtisnewbie.module.task.helper.*;
 import com.curtisnewbie.module.task.vo.*;
 import com.fasterxml.jackson.core.type.*;
 import lombok.extern.slf4j.*;
-import org.springframework.web.client.*;
+import okhttp3.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static com.curtisnewbie.common.util.ExceptionUtils.illegalState;
 
 /**
  * TaskHelper for dtask-go
@@ -20,35 +23,55 @@ import java.util.*;
 @Slf4j
 public class DTaskGoTaskHelper implements TaskHelper {
 
+    private final OkHttpClient client = new OkHttpClient();
     private final TaskProperties taskProperties;
-    private final RestTemplate rest;
 
-    public DTaskGoTaskHelper(TaskProperties taskProperties, RestTemplate restTemplate) {
+    public DTaskGoTaskHelper(TaskProperties taskProperties) {
         this.taskProperties = taskProperties;
-        this.rest = restTemplate;
     }
 
     @Override
     public List<TaskVo> fetchAllTasks(String appGroup) {
-        final String payload = rest.getForObject(taskProperties.buildDTaskGoUrl("/task/all?appGroup=" + appGroup), String.class);
-        Result<List<TaskVo>> result = JsonUtils.ureadValueAsObject(payload, new TypeReference<Result<List<TaskVo>>>() {
-        });
-        result.assertIsOk();
-        AssertUtils.notNull(result, "Failed to connect dtask-go");
-        return result.getData() != null ? result.getData() : new ArrayList<>();
+        final Request request = new Request.Builder()
+                .url(taskProperties.buildDTaskGoUrl("/task/all?appGroup=" + appGroup))
+                .get()
+                .build();
+        try (Response resp = client.newCall(request).execute()) {
+            Result<List<TaskVo>> result = JsonUtils.ureadValueAsObject(resp.body().string(), new TypeReference<Result<List<TaskVo>>>() {
+            });
+            result.assertIsOk();
+            return result.getData() != null ? result.getData() : new ArrayList<>();
+        } catch (IOException e) {
+            throw illegalState(e, "Failed to fetchAllTasks, appGroup: %s", appGroup);
+        }
     }
 
     @Override
     public void updateLastRunInfo(UpdateLastRunInfoReq tv) {
-        final Result<?> result = rest.postForObject(taskProperties.buildDTaskGoUrl("/task/lastRunInfo/update"), tv, Result.class);
-        AssertUtils.notNull(result, "Failed to connect dtask-go");
-        result.assertIsOk();
+        final Request request = new Request.Builder()
+                .url(taskProperties.buildDTaskGoUrl("/task/lastRunInfo/update"))
+                .post(JsonRequestBody.build(tv))
+                .build();
+        try (Response resp = client.newCall(request).execute()) {
+            final Result<?> result = JsonUtils.ureadValueAsObject(resp.body().string(), Result.class);
+            result.assertIsOk();
+        } catch (IOException e) {
+            throw illegalState(e, "Failed to updateLastRunInfo, req: %s", tv);
+        }
     }
 
     @Override
     public boolean isEnabled(int taskId) {
-        final Result<?> result = rest.getForObject(taskProperties.buildDTaskGoUrl("/task/valid?taskId=" + taskId), Result.class);
-        return result.isOk();
+        final Request request = new Request.Builder()
+                .url(taskProperties.buildDTaskGoUrl("/task/valid?taskId=" + taskId))
+                .get()
+                .build();
+        try (Response resp = client.newCall(request).execute();) {
+            final Result<?> result = JsonUtils.ureadValueAsObject(resp.body().string(), Result.class);
+            return result.isOk();
+        } catch (IOException e) {
+            throw illegalState(e, "Failed to check task's isEnabled, taskId: %s", taskId);
+        }
     }
 
     @Override
@@ -59,13 +82,32 @@ public class DTaskGoTaskHelper implements TaskHelper {
         r.setUpdateBy(updateBy);
         r.setUpdateDate(LocalDateTime.now());
 
-        final Result<?> result = rest.postForObject(taskProperties.buildDTaskGoUrl("/task/disable"), r, Result.class);
-        AssertUtils.notNull(result, "Failed to fetch tasks from dtask-go");
-        result.assertIsOk();
+        final Request request = new Request.Builder()
+                .url(taskProperties.buildDTaskGoUrl("/task/disable"))
+                .post(JsonRequestBody.build(r))
+                .build();
+
+        try (Response resp = client.newCall(request).execute();) {
+            final Result<?> result = JsonUtils.ureadValueAsObject(resp.body().string(), Result.class);
+            result.assertIsOk();
+        } catch (IOException e) {
+            throw illegalState(e, "Failed to markTaskDisabled, taskId: %s, lastRunResult: %s, updateBy: %s", taskId, lastRunResult, updateBy);
+        }
     }
 
     @Override
     public void declareTask(DeclareTaskReq req) {
-        // TODO impl this
+        final Request request = new Request.Builder()
+                .url(taskProperties.buildDTaskGoUrl("/task/declare"))
+                .post(JsonRequestBody.build(req))
+                .build();
+
+        try (Response resp = client.newCall(request).execute();) {
+            final Result<?> result = JsonUtils.ureadValueAsObject(resp.body().string(), Result.class);
+            result.assertIsOk();
+        } catch (IOException e) {
+            throw illegalState(e, "Failed to declareTask, req: %s", req);
+        }
+
     }
 }

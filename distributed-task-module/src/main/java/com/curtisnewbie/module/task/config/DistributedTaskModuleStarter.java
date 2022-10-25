@@ -15,12 +15,10 @@ import com.curtisnewbie.module.task.scheduling.listeners.internal.RunningTaskCou
 import com.curtisnewbie.module.task.scheduling.listeners.internal.SaveTaskExecResultPostExecListener;
 import com.curtisnewbie.module.task.scheduling.listeners.internal.TaskHistoryPostExecListener;
 import com.curtisnewbie.module.task.service.*;
-import org.quartz.Job;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.quartz.SchedulerFactoryBeanCustomizer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Starter for distributed-task-module
@@ -28,7 +26,7 @@ import org.springframework.web.client.RestTemplate;
  * @author yongjie.zhuang
  */
 @ConditionalOnProperty(value = "distributed-task-module.enabled", havingValue = "true", matchIfMissing = true)
-public class DistributedTaskModuleStarter extends RestTemplatePreConfigured {
+public class DistributedTaskModuleStarter {
 
     @Bean
     public JobDeclarationReporter jobDeclarationReporter() {
@@ -45,15 +43,15 @@ public class DistributedTaskModuleStarter extends RestTemplatePreConfigured {
 
     @Bean
     @ConditionalOnMissingBean(TaskHelper.class)
-    public TaskHelper taskHelper(TaskProperties taskProperties, RestTemplate restTemplate) {
-        if (taskProperties.isDTaskGoPluginEnabled()) return new DTaskGoTaskHelper(taskProperties, restTemplate);
+    public TaskHelper taskHelper(TaskProperties taskProperties) {
+        if (taskProperties.isDTaskGoPluginEnabled()) return new DTaskGoTaskHelper(taskProperties);
         return new LocalDBTaskHelper();
     }
 
     @Bean
     @ConditionalOnMissingBean(TaskHistoryHelper.class)
-    public TaskHistoryHelper taskHistoryHelper(TaskProperties taskProperties, RestTemplate restTemplate) {
-        if (taskProperties.isDTaskGoPluginEnabled()) return new DTaskGoTaskHistoryHelper(taskProperties, restTemplate);
+    public TaskHistoryHelper taskHistoryHelper(TaskProperties taskProperties) {
+        if (taskProperties.isDTaskGoPluginEnabled()) return new DTaskGoTaskHistoryHelper(taskProperties);
         return new LocalDBTaskHistoryHelper();
     }
 

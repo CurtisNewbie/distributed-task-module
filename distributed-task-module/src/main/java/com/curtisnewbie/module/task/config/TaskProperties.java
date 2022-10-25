@@ -49,6 +49,6 @@ public class TaskProperties {
     private boolean dTaskGoPluginEnabled;
 
     public String buildDTaskGoUrl(String relUrl) {
-        return (dtaskGoBaseUrl.endsWith("/") ? dtaskGoBaseUrl : dtaskGoBaseUrl + "/") + relUrl;
+        return (dtaskGoBaseUrl.endsWith("/") || relUrl.startsWith("/") ? dtaskGoBaseUrl : dtaskGoBaseUrl + "/") + relUrl;
     }
 }

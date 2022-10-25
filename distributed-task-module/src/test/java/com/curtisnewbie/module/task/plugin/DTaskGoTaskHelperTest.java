@@ -1,13 +1,9 @@
 package com.curtisnewbie.module.task.plugin;
 
-import com.curtisnewbie.common.preconf.*;
-import com.curtisnewbie.common.util.*;
 import com.curtisnewbie.module.task.config.*;
 import com.curtisnewbie.module.task.vo.*;
 import lombok.extern.slf4j.*;
 import org.junit.jupiter.api.*;
-import org.springframework.http.converter.json.*;
-import org.springframework.web.client.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -20,17 +16,12 @@ public class DTaskGoTaskHelperTest {
 
     public static TaskProperties buildTaskProperties() {
         TaskProperties t = new TaskProperties();
-        t.setDtaskGoBaseUrl("http://localhost:8082/dtask/remote/");
+        t.setDtaskGoBaseUrl("http://localhost:8083/remote");
         return t;
     }
 
-    public static RestTemplate restTemplate() {
-        final RestTemplatePreConfigured preConf = new RestTemplatePreConfigured();
-        return preConf.restTemplate(preConf.mappingJackson2HttpMessageConverter(JsonUtils.constructsJsonMapper()));
-    }
-
     public static DTaskGoTaskHelper buildHelper() {
-        return new DTaskGoTaskHelper(buildTaskProperties(), restTemplate());
+        return new DTaskGoTaskHelper(buildTaskProperties());
     }
 
     @Test
@@ -55,8 +46,8 @@ public class DTaskGoTaskHelperTest {
 
     @Test
     public void should_check_exists() {
-        Assertions.assertTrue(buildHelper().isEnabled(1));
         Assertions.assertFalse(buildHelper().isEnabled(2));
+        Assertions.assertTrue(buildHelper().isEnabled(1));
     }
 
     @Test

@@ -21,6 +21,7 @@
     <java.version>8</java.version>
     <redis-util-module.version>2.0.3</redis-util-module.version>
     <common-module.version>2.1.9</common-module.version>
+    <okhttp3.version>4.10.0</okhttp3.version>
   </properties>
 
   <modules>

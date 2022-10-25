@@ -7,7 +7,7 @@
     <groupId>com.curtisnewbie</groupId>
     <artifactId>distributed-task-module-parent</artifactId>
     <version>1.0.0</version>
-    <relativePath>../pom.xml</relativePath> 
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>distributed-task-module</artifactId>
@@ -55,6 +55,12 @@
       <groupId>com.curtisnewbie</groupId>
       <artifactId>redis-util-module</artifactId>
       <version>${redis-util-module.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>${okhttp3.version}</version>
     </dependency>
 
     <dependency>
