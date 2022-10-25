@@ -24,8 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 
-import static com.curtisnewbie.common.util.MapperUtils.eq;
-import static com.curtisnewbie.common.util.MapperUtils.set;
+import static com.curtisnewbie.common.util.MapperUtils.*;
 import static com.curtisnewbie.common.util.PagingUtil.toPageableList;
 
 /**
@@ -126,7 +125,8 @@ public class TaskServiceImpl implements TaskService {
         final Lock lock = redisController.getLock("task:declare:local:" + taskProperties.getAppGroup());
         LockUtils.lockAndRun(lock, () -> {
             TaskEntity task = taskMapper.selectOne(
-                    eq(TaskEntity::getAppGroup, req.getAppGroup())
+                    select(TaskEntity::getId)
+                            .eq(TaskEntity::getAppGroup, req.getAppGroup())
                             .eq(TaskEntity::getTargetBean, req.getTargetBean())
                             .last("limit 1"));
             if (task == null) {
@@ -140,6 +140,8 @@ public class TaskServiceImpl implements TaskService {
             if (req.getOverridden() != null && req.getOverridden()) {
                 taskMapper.update(
                         set(TaskEntity::getCronExpr, req.getCronExpr())
+                                .set(TaskEntity::getConcurrentEnabled, req.getConcurrentEnabled())
+                                .set(TaskEntity::getEnabled, req.getEnabled())
                                 .set(TaskEntity::getUpdateBy, "JobDeclaration")
                                 .set(TaskEntity::getUpdateDate, LocalDateTime.now())
                                 .eq(TaskEntity::getId, task.getId()));

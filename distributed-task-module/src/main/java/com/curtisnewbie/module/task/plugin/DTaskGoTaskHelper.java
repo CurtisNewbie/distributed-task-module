@@ -105,6 +105,7 @@ public class DTaskGoTaskHelper implements TaskHelper {
         try (Response resp = client.newCall(request).execute();) {
             final Result<?> result = JsonUtils.ureadValueAsObject(resp.body().string(), Result.class);
             result.assertIsOk();
+            log.info("DeclareTask success, resp: {}", result);
         } catch (IOException e) {
             throw illegalState(e, "Failed to declareTask, req: %s", req);
         }

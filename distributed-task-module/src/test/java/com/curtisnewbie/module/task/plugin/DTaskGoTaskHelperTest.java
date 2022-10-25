@@ -1,6 +1,9 @@
 package com.curtisnewbie.module.task.plugin;
 
+import com.curtisnewbie.common.util.JsonUtils;
 import com.curtisnewbie.module.task.config.*;
+import com.curtisnewbie.module.task.constants.TaskConcurrentEnabled;
+import com.curtisnewbie.module.task.constants.TaskEnabled;
 import com.curtisnewbie.module.task.vo.*;
 import lombok.extern.slf4j.*;
 import org.junit.jupiter.api.*;
@@ -53,6 +56,20 @@ public class DTaskGoTaskHelperTest {
     @Test
     public void should_mark_task_disabled() {
         buildHelper().markTaskDisabled(1, "Invalid Cron Expression", "Scheduler");
+    }
+
+    @Test
+    public void should_declare_task() {
+        DeclareTaskReq req = new DeclareTaskReq();
+        req.setJobName("TestJob");
+        req.setTargetBean("testBean");
+        req.setCronExpr("0 0 0/1 ? * *");
+        req.setAppGroup("go_group");
+        req.setEnabled(TaskEnabled.DISABLED.getValue());
+        req.setConcurrentEnabled(TaskConcurrentEnabled.DISABLED.getValue());
+        req.setOverridden(true);
+        log.info("req: {}", JsonUtils.uwriteValueAsString(req));
+        buildHelper().declareTask(req);
     }
 
 }
