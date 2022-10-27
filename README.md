@@ -4,7 +4,7 @@ Module for simple distributed task scheduling :D
 
 ### Plugins
 
-- `dtask-go` is a simple golang service that acts as a centralized manager for tasks and task histories. 
+- `dtask-go` is a simple golang service that acts as a centralized manager for tasks and task histories. It's completely optional.
 
 ### Requirement 
 
@@ -28,3 +28,23 @@ This project depends on the following modules that you must manually install (us
 - [curtisnewbie-bom](https://github.com/CurtisNewbie/curtisnewbie-bom)
 - [common-module v2.1.9](https://github.com/CurtisNewbie/common-module/tree/v2.1.9)
 - [redis-util-module v2.0.3](https://github.com/CurtisNewbie/redis-util-module/tree/v2.0.3)
+
+### Declaration of Tasks on Startup 
+
+The annotation `@JobDeclaration` can be used to declare tasks automatically on application startup, this frees you from preparing the SQL when a new job is added.
+
+```java
+/**
+ * My Special Job
+ *
+ * @author yongj.zhuang
+ */
+@Component
+@JobDeclaration(name = "my special job", cron = "0 0 0/1 * * ?", concurrent = false, enabled = true, overridden = true)
+public class SpecialJob extends AbstractJob {
+    @Override
+    protected void executeInternal(TaskVo task) throws JobExecutionException {
+        // do something
+    }
+}
+```
