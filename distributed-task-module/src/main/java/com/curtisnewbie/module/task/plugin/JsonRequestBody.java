@@ -15,7 +15,7 @@ public final class JsonRequestBody {
     }
 
     public static RequestBody build(Object payload) {
-        return RequestBody.create(JsonUtils.uwritePretty(payload), JSON);
+        return RequestBody.create(JSON, JsonUtils.uwriteValueAsString(payload));
     }
 }
 
