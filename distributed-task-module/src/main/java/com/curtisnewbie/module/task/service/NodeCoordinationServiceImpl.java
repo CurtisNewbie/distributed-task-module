@@ -101,11 +101,10 @@ public class NodeCoordinationServiceImpl implements NodeCoordinationService {
         if (!isMaster()) return;
 
         // make sure we still have the lock, 30 seconds of expiration should be enough
+        log.info("trying to release master lock");
         refreshMasterLockExpiration();
-
         if (isMaster()) {
-            log.info("Releasing master lock");
-            redisController.expire(getMasterNodeLockKey(), 5, TimeUnit.SECONDS);
+            redisController.expire(getMasterNodeLockKey(), 2, TimeUnit.SECONDS);
         }
     }
 
