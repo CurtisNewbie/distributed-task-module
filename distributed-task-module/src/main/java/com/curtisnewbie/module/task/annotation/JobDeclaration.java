@@ -25,5 +25,5 @@ public @interface JobDeclaration {
     boolean enabled() default true;
 
     /** Whether this declaration overrides existing configuration */
-    boolean overridden() default false;
+    boolean overriding() default false;
 }

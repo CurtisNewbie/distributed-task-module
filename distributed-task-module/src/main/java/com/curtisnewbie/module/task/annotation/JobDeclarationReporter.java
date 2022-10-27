@@ -53,7 +53,7 @@ public class JobDeclarationReporter implements ApplicationContextAware {
                     req.setCronExpr(jd.cron());
                     req.setEnabled(jd.enabled() ? TaskEnabled.ENABLED.getValue() : TaskEnabled.DISABLED.getValue());
                     req.setConcurrentEnabled(jd.concurrent() ? TaskConcurrentEnabled.ENABLED.getValue() : TaskConcurrentEnabled.DISABLED.getValue());
-                    req.setOverridden(jd.overridden());
+                    req.setOverridden(jd.overriding());
                     return req;
                 })
                 .filter(Objects::nonNull)
