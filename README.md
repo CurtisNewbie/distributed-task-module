@@ -4,8 +4,8 @@ Module for simple distributed task scheduling :D
 
 ### Plugins
 
-- `dtask-go` is a simple golang service that acts as a centralized manager for tasks and task histories. It's completely optional.
-
+- `dtask-go` is a simple golang service that acts as a centralized manager for managing tasks and task histories. It's completely optional. It's under repository (https://github.com/CurtisNewbie/dtask-go)
+.
 ### Requirement 
 
 - MySQL
